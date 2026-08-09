@@ -78,8 +78,8 @@
           <!-- 【修正處 2】：改用 sticky-lg-top，設定電腦版固定，手機版不擠壓 -->
           <div class="card bg-card-dark text-light border-0 shadow-sm sticky-lg-top" style="top: 20px; z-index: 10;">
             <div class="card-body p-3">
-              <div class="row g-2">
-                <div class="col-6"><img src="css/img1.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
+              <div class="row g-1">
+                <div class="col-6"><img src="css/img6.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img2.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img7.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img4.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
@@ -208,7 +208,7 @@
 
         <!-- 對話內容區 -->
         <div class="chat-body p-3 overflow-y-auto" id="chatBody">
-          <div class="chat-time-divider">週一 下午2:44</div>
+          <div class="chat-time-divider">現在</div>
         </div>
 
         <!-- 正在輸入提示 -->
@@ -224,20 +224,21 @@
         </div>
 
         <!-- 底部工具與輸入列 -->
-        <div
-          class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-2">
-          <i class="bi bi-mic-fill chat-blue-icon"></i>
-          <i class="bi bi-image-fill chat-blue-icon"></i>
-          <i class="bi bi-emoji-smile-upside-down-fill chat-blue-icon"></i>
-          <i class="bi bi-filetype-gif chat-blue-icon"></i>
+<!-- 底部工具與輸入列 -->
+<div class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-1">
+  
+  <!-- 中間輸入框 (自動伸展並垂直置中) -->
+  <div class="chat-input-pill flex-grow-1 d-flex align-items-center justify-content-between px-3">
+    <span class="small text-secondary">Aa</span>
+    <i class="bi bi-emoji-smile-fill text-primary opacity-75 fs-6" style="cursor: pointer;"></i>
+  </div>
 
-          <div class="chat-input-pill flex-grow-1 d-flex align-items-center justify-content-between px-3 py-1">
-            <span class="small text-secondary">Aa</span>
-            <i class="bi bi-emoji-smile-fill text-primary opacity-75"></i>
-          </div>
+  <!-- 右側讚按鈕 (獨立於輸入框右側) -->
+  <div class="d-flex align-items-center justify-content-center px-1">
+    <i class="bi bi-hand-thumbs-up-fill chat-blue-icon fs-5">👍</i>
+  </div>
 
-          <i class="bi bi-hand-thumbs-up-fill chat-blue-icon fs-5"></i>
-        </div>
+</div>
       </div>
     </div>
   </div>
@@ -283,11 +284,11 @@
       speed: 600,
     });
     const chatScript = [
-      { type: 'text', text: '嗨！我是獺克 🌮', delay: 2000 },
+      { type: 'text', text: '嗨！我是獺克 🌮', delay: 7000 },
       { type: 'text', text: '今天天氣超好，等等準備要去烤肉跟喝一杯酒精！🍻', delay: 5000 },
-      { type: 'text', text: '最近剛畫好的新設定集，你看這張如何？👇', delay: 7000 },
-      { type: 'image', url: 'css/img3.jpg', delay: 1000 },
-      { type: 'text', text: '是不是超壯超讚的！👀✨', delay: 3000 }
+      { type: 'text', text: '我自己剛畫好的小作品，你看這張如何？👇', delay: 1000 },
+      { type: 'image', url: 'css/img9.jpg', delay: 3000 },
+      { type: 'text', text: '是不是超可愛的！👀✨', delay: 4000 }
     ];
 
     const chatBody = document.getElementById('chatBody');
@@ -482,7 +483,44 @@
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
     transform-origin: bottom right;
   }
+/* 底部 Footer 整體容器 */
+.chat-footer {
+  background-color: #242526;
+  min-height: 52px; /* 固定最小高度，避免元件變形 */
+}
 
+/* 藍色圖示統一對齊與大小 */
+.chat-blue-icon {
+  color: #0084ff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.chat-blue-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  opacity: 0.9;
+}
+
+/* 輸入框藥丸形狀 (固定高度並嚴格垂直置中) */
+.chat-input-pill {
+  background-color: #3a3b3c;
+  border-radius: 18px;
+  height: 36px; /* 加高至 36px，視覺上更平衡 */
+  min-width: 0; /* 防止 Flex 子元素溢出 */
+}
+
+.chat-input-pill span {
+  line-height: 1; /* 修正文字基準線偏移 */
+  user-select: none;
+}
   /* 縮小狀態樣式 */
   .messenger-card.collapsed {
     transform: scale(0);

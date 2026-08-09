@@ -14,14 +14,14 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Bootstrap Icons CDN (修復：補上圖示庫 CDN) -->
+  <!-- Bootstrap Icons CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <!-- Swiper CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
-  <!-- CSS 樣式 (修復：統一放至 head 標籤內) -->
+  <!-- CSS 樣式 -->
   <style>
     body {
       background-color: #1E1E1E;
@@ -82,6 +82,17 @@
       opacity: 1;
     }
 
+    /* 聊天室內的超連結樣式 */
+    .chat-bubble a {
+      color: #5aa7ff !important;
+      font-weight: bold;
+      word-break: break-all;
+      text-decoration: underline !important;
+    }
+    .chat-bubble a:hover {
+      opacity: 0.8;
+    }
+
     /* 未讀紅點通知標籤 */
     .notification-dot {
       position: absolute;
@@ -98,17 +109,9 @@
     }
 
     @keyframes pulseDot {
-      0% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.2);
-      }
-
-      100% {
-        transform: scale(1);
-      }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
     }
 
     /* 右下角貼邊 Messenger 卡片 */
@@ -117,42 +120,31 @@
       bottom: 0;
       right: 20px;
       z-index: 9999;
-
       width: 330px;
       height: 460px;
       max-width: calc(100vw - 20px);
       max-height: 80vh;
-
       background-color: #242526;
-
       border-top-left-radius: 16px;
       border-top-right-radius: 16px;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
-
       overflow: hidden;
-
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-bottom: none;
-
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45),
-        0 2px 8px rgba(0, 0, 0, 0.3);
-
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
       display: flex;
       flex-direction: column;
-
       transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
       transform-origin: bottom right;
     }
 
-    /* 縮小狀態樣式 */
     .messenger-card.collapsed {
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
     }
 
-    /* 縮小後顯示的右下角浮動大頭貼按鈕 */
     .messenger-toggle-btn {
       position: fixed;
       bottom: 20px;
@@ -168,7 +160,6 @@
       transform: scale(1.08);
     }
 
-    /* 背景與區域顏色 */
     .chat-header,
     .chat-body,
     .typing-indicator-container,
@@ -196,13 +187,11 @@
       font-size: 1.1rem;
     }
 
-    /* 底部 Footer 整體容器 */
     .chat-footer {
       background-color: #242526;
       min-height: 52px;
     }
 
-    /* 藍色圖示統一對齊與大小 */
     .chat-blue-icon {
       color: #0084ff;
       cursor: pointer;
@@ -222,7 +211,6 @@
       opacity: 0.9;
     }
 
-    /* 輸入框藥丸形狀 */
     .chat-input-pill {
       background-color: #3a3b3c;
       border-radius: 18px;
@@ -277,52 +265,23 @@
       animation: bounce 1.3s infinite ease-in-out;
     }
 
-    .dot:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-
-    .dot:nth-child(3) {
-      animation-delay: 0.3s;
-    }
+    .dot:nth-child(2) { animation-delay: 0.15s; }
+    .dot:nth-child(3) { animation-delay: 0.3s; }
 
     @keyframes bounce {
-
-      0%,
-      80%,
-      100% {
-        transform: translateY(0);
-      }
-
-      40% {
-        transform: translateY(-4px);
-      }
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-4px); }
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @media (min-width: 768px) {
-      .banner-img {
-        height: 480px;
-      }
-
-      .avatar-img {
-        width: 250px;
-        height: 250px;
-      }
-
-      .profile-header {
-        margin-top: -40px;
-      }
+      .banner-img { height: 480px; }
+      .avatar-img { width: 250px; height: 250px; }
+      .profile-header { margin-top: -40px; }
     }
   </style>
 </head>
@@ -490,11 +449,11 @@
             <div class="fw-bold lh-1 d-flex align-items-center gap-1" style="font-size: 0.9rem;">
               🌮 獺克 <i class="bi bi-chevron-down text-secondary" style="font-size: 0.7rem;"></i>
             </div>
-            <span class="text-secondary opacity-75" style="font-size: 0.7rem;">1小時前在線上</span>
+            <span class="text-secondary opacity-75" style="font-size: 0.7rem;">目前在線上</span>
           </div>
         </div>
 
-        <!-- 右側功能按鈕 (修復：補回紫色通話/縮小按鈕) -->
+        <!-- 右側功能按鈕 -->
         <div class="fs-5 d-flex align-items-center gap-3" onclick="event.stopPropagation()">
           <i class="bi bi-telephone-fill header-purple-icon"></i>
           <i class="bi bi-camera-video-fill header-purple-icon"></i>
@@ -519,7 +478,7 @@
         </div>
       </div>
 
-      <!-- 底部工具與輸入列 (修復：補回完整的 Footer 工具列) -->
+      <!-- 底部工具與輸入列 -->
       <div class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-1">
         <div class="d-flex align-items-center gap-2 px-1">
           <i class="bi bi-plus-circle-fill chat-blue-icon fs-5"></i>
@@ -584,7 +543,9 @@
       { type: 'text', text: '今天天氣超好，等等準備要去烤肉跟喝一杯🍻', delay: 2200 },
       { type: 'text', text: '這是我最近的小作品我想把它放進遊戲裡面當角色👇', delay: 2800 },
       { type: 'image', url: 'css/img9.jpg', delay: 3200 },
-      { type: 'text', text: '是不是超可愛的！！！👀✨', delay: 1800 }
+      { type: 'text', text: '是不是超可愛的！！！👀✨', delay: 1800 },
+      { type: 'text', text: '這邊有我剛剛做的小遊戲你可以玩玩看，你會喜歡的！再把你的分數拍下來分享給我。', delay: 1800 },
+      { type: 'text', text: '<a href="zuma/index.html" target="_blank">點擊前往遊玩</a>', delay: 3200 }
     ];
 
     const chatBody = document.getElementById('chatBody');
@@ -632,11 +593,12 @@
       if (typingIndicator) typingIndicator.classList.add('d-none');
     }
 
+    // 補回原本遺漏的音效播放函式
     function playMessageSound() {
       if (msgSound) {
         msgSound.currentTime = 0;
         msgSound.play().catch(err => {
-          console.log('請先點擊頁面允許聲音播放');
+          console.log('瀏覽器阻擋自動播放音效，請先與網頁互動');
         });
       }
     }
@@ -688,7 +650,7 @@
       messengerCard.classList.add('collapsed');
       messengerToggleBtn.classList.remove('d-none');
     });
-  </script> <!-- 修復：補上 script 閉合標籤 -->
+  </script>
 
 </body>
 

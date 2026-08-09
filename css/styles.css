@@ -1,0 +1,57 @@
+	body{
+		background-color: #1E1E1E;
+		margin: 0;
+		color: #F7F7F7;
+		font-family: Microsoft JhengHei;
+		font-size:24px
+	}
+
+	.banner-img {
+  height: 220px;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.banner-edit-btn {
+  bottom: 12px;
+  right: 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+/* 大頭貼基本樣式 */
+.avatar-img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-width: 4px !important;
+}
+
+/* 核心 RWD 區塊 */
+.profile-header {
+  margin-top: -80px; /* 手機版：強制向上抽大頭貼半身高度，且寬度由內而外置中 */
+  position: relative;
+  z-index: 10;
+}
+
+.profile-list {
+  color: #e4e6eb;
+  font-size: 0.9rem;
+}
+
+/* ----------------------------------------- */
+/* 電腦版樣式微調（螢幕寬度 768px 以上） */
+/* ----------------------------------------- */
+@media (min-width: 768px) {
+  .banner-img {
+    height: 350px;
+  }
+  .avatar-img {
+    width: 168px;
+    height: 168px;
+  }
+  .profile-header {
+    margin-top: 0px; /* 電腦版：恢復稍微切入 Banner 的高度 */
+  }
+}

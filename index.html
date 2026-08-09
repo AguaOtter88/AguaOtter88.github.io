@@ -94,8 +94,9 @@
           <p class="fw-bold mb-2">釘選貼文</p>
 
           <!-- 貼文卡片 1 -->
-          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4">
-            <div class="card-body p-3">
+          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
+            <!-- 1. 文字與頭像區塊（保留 p-3 內邊距） -->
+            <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
                   alt="頭像">
@@ -104,23 +105,25 @@
                   <div class="text-secondary opacity-75" style="font-size: 0.75rem;">2026/04/21 · 🌐</div>
                 </div>
               </div>
-              <p class="card-text small mb-3">
-                設定集！把我畫的好壯好喜歡！
+              <p class="card-text small mb-2">
+                水獺設定集！
               </p>
-              <p class="card-text small mb-3" style="color: #5aa7ff;">
+              <p class="card-text small mb-0" style="color: #5aa7ff;">
                 #設定集 #水獺救生員
               </p>
-              <div class="post-img-wrapper rounded overflow-hidden mb-3">
-                <img src="css/img3.jpg" class="img-fluid w-100" alt="貼文圖片">
-              </div>
             </div>
+
+            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
+            <img src="css/img3.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
           <p class="fw-bold mb-2">其他貼文</p>
 
           <!-- 貼文卡片 2 -->
-          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4">
-            <div class="card-body p-3">
+
+          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
+            <!-- 1. 文字與頭像區塊（保留 p-3 內邊距） -->
+            <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
                   alt="頭像">
@@ -129,36 +132,38 @@
                   <div class="text-secondary opacity-75" style="font-size: 0.75rem;">2 小時前 · 🌐</div>
                 </div>
               </div>
-              <p class="card-text small mb-3">
-                被畫的好壯好喜歡！
+              <p class="card-text small mb-2">
+                這個筆刷的光影呈現看起來超壯的💪💪💪
               </p>
-              <div class="post-img-wrapper rounded overflow-hidden mb-3">
-                <img src="css/img8.jpg" class="img-fluid w-100" alt="貼文圖片">
-              </div>
             </div>
+
+            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
+            <img src="css/img8.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
           <!-- 貼文卡片 3 -->
-          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4">
-            <div class="card-body p-3">
+
+          <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
+
+            <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
                   alt="頭像">
                 <div>
                   <div class="fw-bold small">@AguaOtter88</div>
-                  <div class="text-secondary opacity-75" style="font-size: 0.75rem;">週三 · 🌐</div>
+                  <div class="text-secondary opacity-75" style="font-size: 0.75rem;">2026/08/05 週三 · 🌐</div>
                 </div>
               </div>
-              <p class="card-text small mb-3">
+              <p class="card-text small mb-2">
                 趁店裡現在沒有人改快擺拍一下！👀👀💦
               </p>
-              <p class="card-text small mb-3" style="color: #5aa7ff;">
-                #洗衣日
+              <p class="card-text small mb-0" style="color: #5aa7ff;">
+                #週三洗衣日
               </p>
-              <div class="post-img-wrapper rounded overflow-hidden mb-3">
-                <img src="css/img5.jpg" class="img-fluid w-100" alt="貼文圖片">
-              </div>
             </div>
+
+            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
+            <img src="css/img5.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
         </div>

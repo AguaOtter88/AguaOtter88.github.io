@@ -40,23 +40,26 @@
     </div>
 
     <!-- 2. 個人資訊區塊 -->
-    <div class="container pb-4 px-4 position-relative text-center text-md-start">
-      <!-- 透過 profile-header 控制 RWD：手機版垂直置中，電腦版水平靠左、底部對齊 -->
-      <div class="profile-header d-flex flex-column align-items-start d-md-row align-items-md-end">
+<!-- 個人資訊區塊 -->
+<div class="container pb-4 px-4 position-relative">
+  <!-- 1. 最外層 Profile Header -->
+  <div class="profile-header d-flex flex-column d-md-flex flex-md-row align-items-center align-items-md-end text-center text-md-start">
+    
+    <!-- 2. 大頭貼 -->
+    <div class="avatar-box flex-shrink-0">
+      <img src="css/title.jpg" class="rounded-circle img-thumbnail bg-dark border-secondary avatar-img" alt="大頭貼">
+    </div>
+
+    <!-- 3. 大頭貼右側的整個內容容器 -->
+    <div class="w-100 mt-3 mt-md-0 ps-md-4">
+      <!-- 利用 Bootstrap Grid 欄位分割左右兩區 -->
+      <div class="row g-3 align-items-end">
         
-
-        <!-- 文字介紹區塊 -->
-         
-        <div class="w-100 mt-3 mt-md-0 ps-md-4">
-                  <!-- 大頭貼容器 -->
-        <div class="avatar-box flex-shrink-0">
-          <img src="css/title.jpg" class="rounded-circle img-thumbnail bg-dark border-secondary avatar-img" alt="大頭貼">
-        </div>
-
+        <!-- 【左欄】：原本的名字、地點與簡介 -->
+        <div class="col-12 col-md-3">
           <h2 class="fw-bold mb-1 fs-3">胡獺克</h2>
           <p class="text-secondary small mb-3 mb-md-2">📍 Hsinchu</p>
           
-          <!-- 自我介紹清單 -->
           <div class="text-center text-md-start">
             <ul class="list-unstyled mb-0 small text-start d-inline-block profile-list">
               <li class="mb-1">💖 塔克｜粉紅色的水獺雪貂</li>
@@ -65,6 +68,27 @@
             </ul>
           </div>
         </div>
+
+        <!-- 【右欄】：新增的右側內容區塊 -->
+        <div class="col-12 col-md-9">
+          <div class="p-3 bg-dark bg-opacity-50 rounded-3 text-start">
+            <h6 class="fw-bold mb-2 text-primary">🚀 最新動態 / 數據統計</h6>
+            <div class="d-flex gap-3 mb-2 small">
+              <div><strong>128</strong> <span class="text-secondary">文章</span></div>
+              <div><strong>1.2k</strong> <span class="text-secondary">追蹤者</span></div>
+              <div><strong>350</strong> <span class="text-secondary">追縱中</span></div>
+            </div>
+            <p class="small text-secondary mb-0">
+              目前正在開發 HTML5 遊戲與 Web UI 設計，歡迎交流！
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
 
       </div>
     </div>

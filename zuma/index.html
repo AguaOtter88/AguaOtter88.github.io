@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+    <title>Zuma 蟾蜍三消 - 磁吸連爆版</title>
+    <style>
+        :root {
+            --bg: #0f1720;
+            --accent: #06d6a0;
+            --accent-hover: #05b889;
+            --panel-bg: rgba(21, 32, 43, 0.88);
+            --panel-border: rgba(255, 255, 255, 0.12);
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: min(550px, 100vw);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        /* UI Overlay & Panels */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 32, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            padding: 36px 28px;
+            width: 82%;
+            max-width: 360px;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: panelPop 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes panelPop {
+            0% {
+                transform: scale(0.85);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .panel h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .panel p {
+            margin: 0;
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .score-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 24px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 8px 0;
+        }
+
+        .score-box .label {
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-box .value {
+            font-size: 42px;
+            font-weight: 900;
+            color: #ffd166;
+            margin-top: 4px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #05b889 100%);
+            color: #0b1220;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 36px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(6, 214, 160, 0.3);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            user-select: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(6, 214, 160, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 12px rgba(6, 214, 160, 0.2);
+        }
+
+        .screen-panel {
+            display: none;
+            width: 100%;
+        }
+
+        .screen-panel.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game-container">
+        <canvas id="game"></canvas>
+
+        <div id="ui-overlay" class="overlay">
+            <div class="panel">
+                <div id="start-panel" class="screen-panel active">
+                    <h1>祖瑪珠子消消樂</h1>
+                    <p>瞄準發射珠子，湊齊 3 個相同顏色進行消除。利用同色磁吸觸發連擊 Combo！</p>
+                    <button id="btn-start" class="btn">開始遊戲</button>
+                </div>
+
+                <div id="gameover-panel" class="screen-panel">
+                    <h1>遊戲結束</h1>
+                    <div class="score-box">
+                        <div class="label">FINAL SCORE</div>
+                        <div id="final-score-val" class="value">0</div>
+                    </div>
+                    <button id="btn-restart" class="btn">再來一局</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* CONFIG */
+        const CONFIG = {
+            canvasLogicalW: 1080,
+            canvasLogicalH: 1920,
+            colors: ['#ff2e63', '#ffd60a', '#00e676', '#00b4d8', '#8338ec'],
+            ballRadius: 36,
+            chainSpacing: 78,
+            chainSpeed: 60,
+            pullbackSpeed: 850,
+            gapCloseSpeed: 550,
+            spawnInterval: 0.8,
+            shooterCooldown: 0.18,
+            minMatch: 3,
+            maxChainLength: 80
+        };
+
+        /* GAME STATES */
+        const STATE = { START: 'START', PLAYING: 'PLAYING', GAMEOVER: 'GAMEOVER' };
+        let gameState = STATE.START;
+
+        /* SETUP CANVAS */
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        function resize() {
+            const container = document.getElementById('game-container');
+            const cssW = container.clientWidth;
+            const cssH = container.clientHeight;
+            canvas.style.width = cssW + 'px';
+            canvas.style.height = cssH + 'px';
+            canvas.width = Math.floor(CONFIG.canvasLogicalW * dpr);
+            canvas.height = Math.floor(CONFIG.canvasLogicalH * dpr);
+            ctx.setTransform(canvas.width / CONFIG.canvasLogicalW, 0, 0, canvas.height / CONFIG.canvasLogicalH, 0, 0);
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        /* PATH */
+        const pathPoints = [
+            { x: 120, y: 1600 }, { x: 260, y: 1400 }, { x: 420, y: 1200 }, { x: 540, y: 980 },
+            { x: 500, y: 760 }, { x: 380, y: 580 }, { x: 300, y: 420 }, { x: 420, y: 250 },
+            { x: 600, y: 180 }, { x: 820, y: 260 }, { x: 920, y: 420 }, { x: 920, y: 700 },
+            { x: 820, y: 900 }, { x: 680, y: 1080 }, { x: 520, y: 1280 }, { x: 360, y: 1480 }
+        ];
+
+        let samples = [];
+        function buildSamples() {
+            samples = [];
+            const stepsPerSeg = 24;
+            function catmull(p0, p1, p2, p3, t) {
+                const t2 = t * t, t3 = t2 * t;
+                return {
+                    x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+                    y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+                };
+            }
+            for (let i = 0; i < pathPoints.length - 1; i++) {
+                const p0 = pathPoints[Math.max(0, i - 1)];
+                const p1 = pathPoints[i];
+                const p2 = pathPoints[i + 1];
+                const p3 = pathPoints[Math.min(pathPoints.length - 1, i + 2)];
+                for (let s = 0; s < stepsPerSeg; s++) {
+                    const pos = catmull(p0, p1, p2, p3, s / stepsPerSeg);
+                    samples.push(pos);
+                }
+            }
+            samples.push(pathPoints[pathPoints.length - 1]);
+            let cum = 0;
+            for (let i = 0; i < samples.length; i++) {
+                if (i > 0) {
+                    const dx = samples[i].x - samples[i - 1].x, dy = samples[i].y - samples[i - 1].y;
+                    cum += Math.hypot(dx, dy);
+                }
+                samples[i].len = cum;
+            }
+            samples.totalLen = cum;
+        }
+        buildSamples();
+
+        function posAt(dist) {
+            if (dist <= 0) {
+                const s0 = samples[0], s1 = samples[1];
+                const dx = s0.x - s1.x, dy = s0.y - s1.y, len = Math.hypot(dx, dy) || 1;
+                return { x: s0.x + (dx / len) * (-dist), y: s0.y + (dy / len) * (-dist) };
+            }
+            if (dist >= samples.totalLen) {
+                const sLast = samples[samples.length - 1], sPrev = samples[samples.length - 2];
+                const dx = sLast.x - sPrev.x, dy = sLast.y - sPrev.y, len = Math.hypot(dx, dy) || 1;
+                return { x: sLast.x + (dx / len) * (dist - samples.totalLen), y: sLast.y + (dy / len) * (dist - samples.totalLen) };
+            }
+            let lo = 0, hi = samples.length - 1;
+            while (lo < hi) {
+                const mid = (lo + hi) >> 1;
+                if (samples[mid].len < dist) lo = mid + 1; else hi = mid;
+            }
+            const i = Math.max(1, lo);
+            const s0 = samples[i - 1], s1 = samples[i];
+            const segLen = s1.len - s0.len;
+            const t = segLen === 0 ? 0 : (dist - s0.len) / segLen;
+            return { x: s0.x + (s1.x - s0.x) * t, y: s0.y + (s1.y - s0.y) * t };
+        }
+
+        function posAtWithAngle(dist) {
+            const p = posAt(dist);
+            const pNext = posAt(dist + 2);
+            return { x: p.x, y: p.y, angle: Math.atan2(pNext.y - p.y, pNext.x - p.x) };
+        }
+
+        /* GAME VARS */
+        let lastTime = performance.now() / 1000;
+        let running = true;
+        let animTime = 0;
+        let comboCount = 0;
+
+        const chain = [];
+        let nextSpawnTimer = 0;
+        let shooter = {
+            x: CONFIG.canvasLogicalW / 2,
+            y: CONFIG.canvasLogicalH - 220,
+            angle: -Math.PI / 2,
+            currentBall: randomColor(),
+            nextBall: randomColor(),
+            cooldown: 0
+        };
+        let score = 0;
+
+        const projectiles = [];
+        const particles = [];
+        const floatingTexts = [];
+
+        /* UTILS */
+        function randomColor() {
+            if (Math.random() < 0.2) return 'rainbow';
+            return CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+        }
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+        function resetGame() {
+            chain.length = 0;
+            projectiles.length = 0;
+            particles.length = 0;
+            floatingTexts.length = 0;
+            comboCount = 0;
+
+            const initialCount = 12;
+            const headStart = Math.max(0, samples.totalLen - initialCount * CONFIG.chainSpacing - 40);
+            for (let i = 0; i < initialCount; i++) {
+                chain.push({
+                    color: randomColor(),
+                    dist: headStart + i * CONFIG.chainSpacing,
+                    distOffset: 0,
+                    scaleX: 1, scaleY: 1, popScale: 1
+                });
+            }
+            score = 0;
+            nextSpawnTimer = CONFIG.spawnInterval;
+            shooter.currentBall = randomColor();
+            shooter.nextBall = randomColor();
+        }
+
+        /* UI MANAGEMENT */
+        const uiOverlay = document.getElementById('ui-overlay');
+        const startPanel = document.getElementById('start-panel');
+        const gameoverPanel = document.getElementById('gameover-panel');
+        const finalScoreVal = document.getElementById('final-score-val');
+
+        function startGame() {
+            initAudio();
+            if (audio && audio.state === 'suspended') audio.resume().catch(() => { });
+            resetGame();
+            gameState = STATE.PLAYING;
+            uiOverlay.classList.add('hidden');
+        }
+
+        function triggerGameOver() {
+            gameState = STATE.GAMEOVER;
+            finalScoreVal.textContent = score;
+            startPanel.classList.remove('active');
+            gameoverPanel.classList.add('active');
+            uiOverlay.classList.remove('hidden');
+        }
+
+        document.getElementById('btn-start').addEventListener('click', startGame);
+        document.getElementById('btn-restart').addEventListener('click', startGame);
+
+        /* INPUT */
+        let pointer = { x: shooter.x, y: shooter.y };
+        function screenToLogical(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const cssX = clientX - rect.left;
+            const cssY = clientY - rect.top;
+            return {
+                x: cssX * (CONFIG.canvasLogicalW / rect.width),
+                y: cssY * (CONFIG.canvasLogicalH / rect.height)
+            };
+        }
+        function onPointerMove(e) {
+            if (gameState !== STATE.PLAYING) return;
+            const p = (e.touches ? e.touches[0] : e);
+            const pos = screenToLogical(p.clientX, p.clientY);
+            pointer = pos;
+            shooter.angle = Math.atan2(pos.y - shooter.y, pos.x - shooter.x);
+            const upAngle = -Math.PI / 2, maxDelta = Math.PI * 0.88 / 2;
+            let delta = shooter.angle - upAngle;
+            while (delta < -Math.PI) delta += Math.PI * 2;
+            while (delta > Math.PI) delta -= Math.PI * 2;
+            shooter.angle = upAngle + clamp(delta, -maxDelta, maxDelta);
+        }
+        function onPointerDown(e) {
+            if (gameState !== STATE.PLAYING || e.target.tagName === 'BUTTON') return;
+            e.preventDefault();
+            shoot();
+        }
+        canvas.addEventListener('mousemove', onPointerMove);
+        canvas.addEventListener('touchmove', onPointerMove, { passive: false });
+        canvas.addEventListener('mousedown', onPointerDown);
+        canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+
+        /* AUDIO */
+        let audio = null;
+        function initAudio() {
+            if (audio) return;
+            try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { }
+        }
+        function playShoot() {
+            if (!audio) return;
+            const t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(880, t);
+            o.frequency.exponentialRampToValueAtTime(560, t + 0.12);
+            g.gain.setValueAtTime(0.0001, t);
+            g.gain.exponentialRampToValueAtTime(0.4, t + 0.01);
+            g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+            o.connect(g); g.connect(audio.destination);
+            o.start(t); o.stop(t + 0.18);
+        }
+        function playInsert() {
+            if (!audio) return;
+            const t = audio.currentTime, buf = audio.createBuffer(1, audio.sampleRate * 0.08, audio.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+            const src = audio.createBufferSource();
+            src.buffer = buf;
+            const g = audio.createGain();
+            g.gain.setValueAtTime(0.5, t);
+            g.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+            src.connect(g); g.connect(audio.destination);
+            src.start(t);
+        }
+        function playShatter() {
+            if (!audio) return;
+            const t = audio.currentTime;
+            for (let i = 0; i < 3; i++) {
+                const o = audio.createOscillator(), g = audio.createGain();
+                o.type = (i === 0) ? 'triangle' : 'sine';
+                o.frequency.setValueAtTime(900 + Math.random() * 900, t);
+                o.frequency.exponentialRampToValueAtTime(180, t + 0.35);
+                g.gain.setValueAtTime(0.0001, t);
+                g.gain.exponentialRampToValueAtTime(0.5 * (1 - i * 0.2), t + 0.01);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+                o.connect(g); g.connect(audio.destination);
+                o.start(t + i * 0.02); o.stop(t + 0.48 + i * 0.02);
+            }
+        }
+
+        /* GAME LOGIC */
+        function shoot() {
+            if (shooter.cooldown > 0) return;
+            shooter.cooldown = CONFIG.shooterCooldown;
+            comboCount = 0;
+            const speed = 1450;
+            projectiles.push({
+                x: shooter.x, y: shooter.y,
+                vx: Math.cos(shooter.angle) * speed,
+                vy: Math.sin(shooter.angle) * speed,
+                color: shooter.currentBall, lifetime: 3
+            });
+            shooter.currentBall = shooter.nextBall;
+            shooter.nextBall = randomColor();
+            playShoot();
+        }
+
+        function insertProjectileIntoChain(proj, hitIndex) {
+            const hitBall = chain[hitIndex];
+            const posBefore = posAt(hitBall.dist - CONFIG.chainSpacing * 0.5);
+            const posAfter = posAt(hitBall.dist + CONFIG.chainSpacing * 0.5);
+            const dBefore = Math.hypot(proj.x - posBefore.x, proj.y - posBefore.y);
+            const dAfter = Math.hypot(proj.x - posAfter.x, proj.y - posAfter.y);
+
+            let insertAt = (dAfter < dBefore) ? hitIndex + 1 : hitIndex;
+            let newDist = (dAfter < dBefore) ? hitBall.dist + CONFIG.chainSpacing : hitBall.dist - CONFIG.chainSpacing;
+
+            const newBall = {
+                color: proj.color, dist: newDist, distOffset: 0,
+                scaleX: 0.35, scaleY: 1.5, popScale: 1.35
+            };
+            chain.splice(insertAt, 0, newBall);
+
+            for (let i = insertAt + 1; i < chain.length; i++) {
+                const prev = chain[i - 1], cur = chain[i];
+                const minDist = prev.dist + CONFIG.chainSpacing;
+                if (cur.dist < minDist) {
+                    const shift = minDist - cur.dist;
+                    cur.dist = minDist;
+                    cur.distOffset = (cur.distOffset || 0) - shift;
+                }
+            }
+
+            if (insertAt - 1 >= 0) { chain[insertAt - 1].scaleX = 1.3; chain[insertAt - 1].scaleY = 0.7; }
+            if (insertAt + 1 < chain.length) { chain[insertAt + 1].scaleX = 1.3; chain[insertAt + 1].scaleY = 0.7; }
+
+            checkMatchesAround(insertAt);
+            playInsert();
+        }
+
+        function checkMatchesAround(index) {
+            if (index < 0 || index >= chain.length) return false;
+
+            let color = chain[index].color;
+            if (color === 'rainbow') {
+                if (index - 1 >= 0 && chain[index - 1].color !== 'rainbow') color = chain[index - 1].color;
+                else if (index + 1 < chain.length && chain[index + 1].color !== 'rainbow') color = chain[index + 1].color;
+                else color = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+                chain[index].color = color;
+            }
+
+            let left = index, right = index;
+            while (left - 1 >= 0 && (chain[left - 1].color === color || chain[left - 1].color === 'rainbow')) left--;
+            while (right + 1 < chain.length && (chain[right + 1].color === color || chain[right + 1].color === 'rainbow')) right++;
+
+            const count = right - left + 1;
+            if (count >= CONFIG.minMatch) {
+                comboCount++;
+                const centerPos = posAt(chain[Math.floor((left + right) / 2)].dist);
+
+                for (let i = left; i <= right; i++) {
+                    const ppos = posAt(chain[i].dist);
+                    spawnShatterParticles(ppos.x, ppos.y, chain[i].color);
+                }
+                playShatter();
+
+                const pts = count * 100 * comboCount;
+                score += pts;
+
+                let text = `+${pts}`;
+                if (comboCount > 1) text = `COMBO x${comboCount}! +${pts}`;
+                spawnFloatingText(centerPos.x, centerPos.y, text, comboCount > 1 ? '#ffd166' : '#ffffff');
+
+                chain.splice(left, count);
+                return true;
+            }
+            return false;
+        }
+
+        function spawnFloatingText(x, y, text, color) {
+            floatingTexts.push({ x, y, text, color, life: 0, ttl: 0.8 });
+        }
+
+        /* UPDATE LOOP */
+        function update(dt) {
+            animTime += dt;
+            if (gameState !== STATE.PLAYING) return;
+
+            for (let i = 0; i < chain.length; i++) {
+                const b = chain[i];
+                b.dist -= CONFIG.chainSpeed * dt;
+
+                if (b.distOffset) b.distOffset += (0 - b.distOffset) * Math.min(1, dt * 18);
+                if (b.scaleX) b.scaleX += (1 - b.scaleX) * Math.min(1, dt * 20);
+                if (b.scaleY) b.scaleY += (1 - b.scaleY) * Math.min(1, dt * 20);
+                if (b.popScale) b.popScale += (1 - b.popScale) * Math.min(1, dt * 20);
+            }
+
+            for (let i = 1; i < chain.length; i++) {
+                const prev = chain[i - 1];
+                const cur = chain[i];
+                const targetDist = prev.dist + CONFIG.chainSpacing;
+                const gap = cur.dist - targetDist;
+
+                if (gap > 1.5) {
+                    const isMagnetic = (prev.color === cur.color || prev.color === 'rainbow' || cur.color === 'rainbow');
+
+                    if (isMagnetic) {
+                        const step = Math.min(gap, CONFIG.pullbackSpeed * dt);
+                        cur.dist -= step * 0.6;
+                        for (let k = 0; k < i; k++) {
+                            chain[k].dist += step * 0.4;
+                        }
+                    } else {
+                        const step = Math.min(gap, CONFIG.gapCloseSpeed * dt);
+                        cur.dist -= step;
+                    }
+
+                    if (cur.dist <= targetDist + 2) {
+                        cur.dist = targetDist;
+                        prev.scaleX = 1.35; prev.scaleY = 0.65; prev.popScale = 1.25;
+                        cur.scaleX = 0.65; cur.scaleY = 1.35; cur.popScale = 1.25;
+                        playInsert();
+
+                        if (checkMatchesAround(i)) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (let i = 1; i < chain.length; i++) {
+                const prev = chain[i - 1], cur = chain[i];
+                const minDist = prev.dist + CONFIG.chainSpacing;
+                if (cur.dist < minDist) cur.dist = minDist;
+            }
+
+            nextSpawnTimer -= dt;
+            if (nextSpawnTimer <= 0) {
+                const tailDist = (chain.length > 0) ? chain[chain.length - 1].dist + CONFIG.chainSpacing : samples.totalLen;
+                if (chain.length < CONFIG.maxChainLength && tailDist <= samples.totalLen + 300) {
+                    chain.push({
+                        color: randomColor(), dist: tailDist,
+                        distOffset: 0, scaleX: 1, scaleY: 1, popScale: 1
+                    });
+                }
+                nextSpawnTimer = CONFIG.spawnInterval;
+            }
+
+            if (chain.length > 0 && chain[0].dist <= 0) {
+                triggerGameOver();
+                return;
+            }
+
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                const p = projectiles[i];
+                p.lifetime -= dt;
+                if (p.lifetime <= 0) { projectiles.splice(i, 1); continue; }
+
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+
+                let collidedIndex = -1;
+                for (let j = 0; j < chain.length; j++) {
+                    const ballPos = posAt(chain[j].dist);
+                    if (Math.hypot(p.x - ballPos.x, p.y - ballPos.y) <= CONFIG.ballRadius * 1.6) {
+                        collidedIndex = j; break;
+                    }
+                }
+
+                if (collidedIndex !== -1) {
+                    insertProjectileIntoChain(p, collidedIndex);
+                    projectiles.splice(i, 1);
+                    continue;
+                }
+
+                if (p.x < -100 || p.x > CONFIG.canvasLogicalW + 100 || p.y < -100 || p.y > CONFIG.canvasLogicalH + 100) {
+                    projectiles.splice(i, 1);
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const pt = particles[i];
+                pt.vy += 1800 * dt * 0.5;
+                pt.x += pt.vx * dt;
+                pt.y += pt.vy * dt;
+                pt.angle += pt.spin * dt;
+                pt.life += dt;
+                if (pt.life >= pt.ttl) particles.splice(i, 1);
+            }
+
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                const ft = floatingTexts[i];
+                ft.y -= 80 * dt;
+                ft.life += dt;
+                if (ft.life >= ft.ttl) floatingTexts.splice(i, 1);
+            }
+
+            shooter.cooldown = Math.max(0, shooter.cooldown - dt);
+        }
+
+        /* RENDER LOOP */
+        function drawRoundedBall(x, y, r, color, stroke = false, angle = 0, scaleX = 1, scaleY = 1, popScale = 1) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.scale(scaleX * popScale, scaleY * popScale);
+
+            let g;
+            if (color === 'rainbow') {
+                const a = animTime * 0.9;
+                const dx = Math.cos(a) * r, dy = Math.sin(a) * r;
+                g = ctx.createLinearGradient(-dx, -dy, dx, dy);
+                g.addColorStop(0.00, '#ff508c');
+                g.addColorStop(0.20, '#ffc832');
+                g.addColorStop(0.40, '#50dc8c');
+                g.addColorStop(0.60, '#3caee6');
+                g.addColorStop(0.80, '#a050dc');
+                g.addColorStop(1.00, '#ff8cc8');
+            } else {
+                g = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.05, 0, 0, r);
+                g.addColorStop(0, '#ffffff');
+                g.addColorStop(0.25, color);
+                g.addColorStop(1, hexToDarker(color, 0.4));
+            }
+
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, Math.PI * 2);
+            ctx.fillStyle = g;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.ellipse(-r * 0.35, -r * 0.4, r * 0.2, r * 0.28, -Math.PI / 8, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fill();
+
+            if (stroke) {
+                ctx.lineWidth = Math.max(1, r * 0.06);
+                ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function hexToDarker(hex, factor = 0.3) {
+            const h = hex.replace('#', '');
+            let r = parseInt(h.substring(0, 2), 16), g = parseInt(h.substring(2, 4), 16), b = parseInt(h.substring(4, 6), 16);
+            return `rgb(${Math.floor(r * (1 - factor))},${Math.floor(g * (1 - factor))},${Math.floor(b * (1 - factor))})`;
+        }
+
+        function render() {
+            ctx.fillStyle = '#0b1220';
+            ctx.fillRect(0, 0, CONFIG.canvasLogicalW, CONFIG.canvasLogicalH);
+
+            ctx.lineWidth = 28;
+            ctx.strokeStyle = '#0d1a12';
+            ctx.beginPath();
+            for (let i = 0; i < samples.length; i++) {
+                const s = samples[i];
+                if (i === 0) ctx.moveTo(s.x, s.y); else ctx.lineTo(s.x, s.y);
+            }
+            ctx.stroke();
+
+            for (let i = chain.length - 1; i >= 0; i--) {
+                const b = chain[i];
+                const renderDist = b.dist + (b.distOffset || 0);
+                if (renderDist > samples.totalLen + CONFIG.ballRadius * 2) continue;
+
+                const p = posAtWithAngle(renderDist);
+                drawRoundedBall(p.x, p.y, CONFIG.ballRadius, b.color, true, p.angle, b.scaleX || 1, b.scaleY || 1, b.popScale || 1);
+            }
+
+            for (const p of projectiles) {
+                drawRoundedBall(p.x, p.y, CONFIG.ballRadius, p.color, true, Math.atan2(p.vy, p.vx));
+            }
+
+            for (const pt of particles) {
+                ctx.save();
+                ctx.translate(pt.x, pt.y);
+                ctx.rotate(pt.angle);
+                ctx.globalAlpha = 1 - (pt.life / pt.ttl);
+                ctx.fillStyle = pt.color;
+                ctx.beginPath();
+                ctx.moveTo(-pt.size, -pt.size * 0.4);
+                ctx.lineTo(pt.size, pt.size * 0.1);
+                ctx.lineTo(-pt.size, pt.size * 0.6);
+                ctx.fill();
+                ctx.restore();
+            }
+            ctx.globalAlpha = 1;
+
+            // 繪製瞄準虛線 (位於底層)
+            if (gameState === STATE.PLAYING) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([12, 12]);
+                ctx.moveTo(shooter.x, shooter.y);
+                ctx.lineTo(shooter.x + Math.cos(shooter.angle) * 1500, shooter.y + Math.sin(shooter.angle) * 1500);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 繪製砲台與雙球
+            ctx.save();
+            ctx.translate(shooter.x, shooter.y);
+            ctx.fillStyle = '#355e3b';
+            ctx.beginPath(); ctx.ellipse(0, 18, 96, 66, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#f8f7f3';
+            ctx.beginPath(); ctx.ellipse(-40, -36, 28, 36, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(40, -36, 28, 36, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#163e2a';
+            ctx.beginPath(); ctx.ellipse(-40, -30, 12, 16, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(40, -30, 12, 16, 0, 0, Math.PI * 2); ctx.fill();
+
+            // 1. 蟾蜍背部：繪製預備球 (nextBall)
+            drawRoundedBall(0, 36, CONFIG.ballRadius * 0.75, shooter.nextBall, true);
+
+            // 2. 蟾蜍砲口：繪製當前發射球 (currentBall)
+            ctx.rotate(shooter.angle);
+            ctx.translate(120, 0);
+            drawRoundedBall(0, 0, CONFIG.ballRadius * 0.9, shooter.currentBall, true);
+            ctx.restore();
+
+            for (const ft of floatingTexts) {
+                const alpha = 1 - (ft.life / ft.ttl);
+                ctx.save();
+                ctx.font = 'bold 44px system-ui, Segoe UI, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = ft.color;
+                ctx.globalAlpha = alpha;
+                ctx.shadowColor = 'rgba(0,0,0,0.8)';
+                ctx.shadowBlur = 8;
+                ctx.fillText(ft.text, ft.x, ft.y);
+                ctx.restore();
+            }
+
+            if (gameState === STATE.PLAYING) {
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.font = 'bold 48px system-ui,Segoe UI,Roboto';
+                ctx.textBaseline = 'top';
+                ctx.fillText(`分數 ${score}`, 32, 32);
+            }
+        }
+
+        function spawnShatterParticles(x, y, color) {
+            const count = 12 + Math.floor(Math.random() * 6);
+            for (let i = 0; i < count; i++) {
+                const speed = 200 + Math.random() * 450;
+                const ang = Math.random() * Math.PI * 2;
+                particles.push({
+                    x, y,
+                    vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed,
+                    color, life: 0, ttl: 0.45 + Math.random() * 0.4,
+                    size: 6 + Math.random() * 10, angle: Math.random() * Math.PI * 2, spin: (Math.random() - 0.5) * 8
+                });
+            }
+        }
+
+        function loop(nowRaw) {
+            const now = nowRaw / 1000;
+            let dt = Math.min(0.05, now - lastTime);
+            lastTime = now;
+
+            update(dt);
+            render();
+
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) running = false;
+            else { running = true; lastTime = performance.now() / 1000; }
+        });
+    </script>
+</body>
+
+</html>

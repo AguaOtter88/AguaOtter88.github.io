@@ -9,16 +9,327 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>個人主頁</title>
+
+  <!-- Bootstrap CSS & JS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Bootstrap Icons CDN (修復：補上圖示庫 CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Swiper CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!-- CSS 樣式 (修復：統一放至 head 標籤內) -->
+  <style>
+    body {
+      background-color: #1E1E1E;
+      margin: 0;
+      color: #F7F7F7;
+      font-family: "Microsoft JhengHei", sans-serif;
+    }
+
+    a {
+      text-decoration: none !important;
+    }
+
+    a:hover {
+      opacity: 0.8;
+    }
+
+    .profile-container {
+      position: relative;
+      background-color: #212529;
+    }
+
+    .banner-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+
+    .gallery-img {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .avatar-img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-width: 4px !important;
+    }
+
+    .profile-header {
+      margin-top: -80px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .profile-list {
+      color: #e4e6eb;
+      font-size: 0.9rem;
+    }
+
+    .bg-card-dark {
+      background-color: #2b3036 !important;
+      border: none !important;
+    }
+
+    .hr-light {
+      border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+      opacity: 1;
+    }
+
+    /* 未讀紅點通知標籤 */
+    .notification-dot {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      width: 14px;
+      height: 14px;
+      background-color: #ff3b30;
+      border: 2px solid #242526;
+      border-radius: 50%;
+      z-index: 10;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* 右下角貼邊 Messenger 卡片 */
+    .messenger-card {
+      position: fixed;
+      bottom: 0;
+      right: 20px;
+      z-index: 9999;
+
+      width: 330px;
+      height: 460px;
+      max-width: calc(100vw - 20px);
+      max-height: 80vh;
+
+      background-color: #242526;
+
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      overflow: hidden;
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: none;
+
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+
+      display: flex;
+      flex-direction: column;
+
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
+      transform-origin: bottom right;
+    }
+
+    /* 縮小狀態樣式 */
+    .messenger-card.collapsed {
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* 縮小後顯示的右下角浮動大頭貼按鈕 */
+    .messenger-toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      z-index: 9998;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .messenger-toggle-btn:hover {
+      transform: scale(1.08);
+    }
+
+    /* 背景與區域顏色 */
+    .chat-header,
+    .chat-body,
+    .typing-indicator-container,
+    .chat-footer {
+      background-color: #242526;
+    }
+
+    .chat-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chat-time-divider {
+      text-align: center;
+      color: #b0b3b8;
+      font-size: 0.725rem;
+      margin: 6px 0;
+    }
+
+    .header-purple-icon {
+      color: #a855f7;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    /* 底部 Footer 整體容器 */
+    .chat-footer {
+      background-color: #242526;
+      min-height: 52px;
+    }
+
+    /* 藍色圖示統一對齊與大小 */
+    .chat-blue-icon {
+      color: #0084ff;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+
+    .chat-blue-icon:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      opacity: 0.9;
+    }
+
+    /* 輸入框藥丸形狀 */
+    .chat-input-pill {
+      background-color: #3a3b3c;
+      border-radius: 18px;
+      height: 36px;
+      min-width: 0;
+    }
+
+    .chat-input-pill span {
+      line-height: 1;
+      user-select: none;
+    }
+
+    .chat-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      animation: fadeInUp 0.25s ease-out forwards;
+    }
+
+    .chat-bubble {
+      max-width: 75%;
+      padding: 8px 12px;
+      border-radius: 18px;
+      font-size: 0.875rem;
+      line-height: 1.35;
+      word-wrap: break-word;
+      background-color: #3a3b3c;
+      color: #e4e6eb;
+    }
+
+    .chat-img-bubble {
+      max-width: 70%;
+      border-radius: 14px;
+      overflow: hidden;
+      animation: fadeInUp 0.25s ease-out forwards;
+    }
+
+    .typing-bubble {
+      background-color: #3a3b3c;
+      padding: 6px 10px;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      background-color: #b0b3b8;
+      border-radius: 50%;
+      animation: bounce 1.3s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-4px);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .banner-img {
+        height: 480px;
+      }
+
+      .avatar-img {
+        width: 250px;
+        height: 250px;
+      }
+
+      .profile-header {
+        margin-top: -40px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- 主頁面外層包覆：確保相對定位正確 -->
+  <!-- 主頁面外層包覆 -->
   <div class="profile-container">
 
     <!-- Swiper 輪播圖 -->
@@ -42,7 +353,6 @@
 
         <div class="w-100 mt-3 mt-lg-0 ps-lg-4 pt-lg-2">
           <div class="row g-3">
-
             <div class="col-12 col-lg-6 text-center text-lg-start">
               <h2 class="fw-bold mb-1 fs-3">🌮 獺克</h2>
               <p class="text-secondary small fw-bold mb-2"> @AguaOtter88</p>
@@ -61,10 +371,8 @@
                     class="text-light">你猜</a></li>
               </ul>
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
 
@@ -75,16 +383,14 @@
         <!-- 【左側】：照片相簿區塊 -->
         <div class="col-12 col-lg-5">
           <p class="fw-bold mb-2">相簿</p>
-          <!-- 【修正處 2】：改用 sticky-lg-top，設定電腦版固定，手機版不擠壓 -->
           <div class="card bg-card-dark text-light border-0 shadow-sm sticky-lg-top" style="top: 20px; z-index: 10;">
             <div class="card-body p-3">
-              <div class="row g-1">
+              <div class="row g-2">
                 <div class="col-6"><img src="css/img6.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img2.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img7.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
                 <div class="col-6"><img src="css/img4.jpg" class="img-fluid rounded gallery-img" alt="相片"></div>
               </div>
-
             </div>
           </div>
         </div>
@@ -95,7 +401,6 @@
 
           <!-- 貼文卡片 1 -->
           <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
-            <!-- 1. 文字與頭像區塊（保留 p-3 內邊距） -->
             <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
@@ -112,17 +417,13 @@
                 #設定集 #水獺救生員
               </p>
             </div>
-
-            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
             <img src="css/img3.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
           <p class="fw-bold mb-2">其他貼文</p>
 
           <!-- 貼文卡片 2 -->
-
           <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
-            <!-- 1. 文字與頭像區塊（保留 p-3 內邊距） -->
             <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
@@ -136,15 +437,11 @@
                 這個筆刷的光影呈現看起來超壯的💪💪💪
               </p>
             </div>
-
-            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
             <img src="css/img8.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
           <!-- 貼文卡片 3 -->
-
           <div class="card bg-card-dark text-light border-0 shadow-sm mb-4 overflow-hidden">
-
             <div class="card-body p-3 pb-2">
               <div class="d-flex align-items-center gap-2 mb-3">
                 <img src="css/title.jpg" class="rounded-circle" width="42" height="42" style="object-fit: cover;"
@@ -161,92 +458,90 @@
                 #週三洗衣日
               </p>
             </div>
-
-            <!-- 2. 圖片區塊（移到 card-body 外面，貼合卡片邊框與寬度） -->
             <img src="css/img5.jpg" class="card-img-bottom w-100" style="object-fit: cover;" alt="貼文圖片">
           </div>
 
         </div>
 
       </div>
-
-      <!-- Messenger 右下角浮動對話框（對齊視窗最下緣） -->
-      <!-- 1. 縮小狀態時顯示的右下角圓圈按鈕 -->
-      <div class="messenger-toggle-btn shadow-lg d-none" id="messengerToggleBtn" onclick="toggleMessenger()">
-        <img src="css/title.jpg" class="rounded-circle w-100 h-100" style="object-fit: cover;" alt="獺克">
-        <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
-      </div>
-
-      <!-- 2. Messenger 右下角浮動對話框 -->
-      <div class="messenger-card shadow-lg text-light" id="messengerCard">
-
-        <!-- 頂部標題列 (點擊整條 Header 或減號皆可縮小) -->
-        <div
-          class="chat-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary border-opacity-25"
-          style="cursor: pointer;" onclick="toggleMessenger()">
-          <div class="d-flex align-items-center gap-2">
-            <div class="position-relative">
-              <img src="css/title.jpg" class="rounded-circle" width="36" height="36" style="object-fit: cover;"
-                alt="頭像">
-              <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
-            </div>
-            <div>
-              <div class="fw-bold lh-1 d-flex align-items-center gap-1" style="font-size: 0.9rem;">
-                🌮 獺克 <i class="bi bi-chevron-down text-secondary" style="font-size: 0.7rem;"></i>
-              </div>
-              <span class="text-secondary opacity-75" style="font-size: 0.7rem;">1小時前在線上</span>
-            </div>
-          </div>
-
-          <!-- 右側功能按鈕 -->
-          <div class="fs-5 d-flex align-items-center gap-3" onclick="event.stopPropagation()">
-            <i class="bi bi-telephone-fill header-purple-icon"></i>
-            <i class="bi bi-camera-video-fill header-purple-icon"></i>
-            <i class="bi bi-dash-lg header-purple-icon" onclick="toggleMessenger()"></i>
-          </div>
-        </div>
-
-        <!-- 對話內容區 -->
-        <div class="chat-body p-3 overflow-y-auto" id="chatBody">
-          <div class="chat-time-divider">現在</div>
-        </div>
-
-        <!-- 正在輸入提示 -->
-        <div class="typing-indicator-container px-3 pb-2 d-none" id="typingIndicator">
-          <div class="d-flex align-items-center gap-2">
-            <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
-            <div class="typing-bubble">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 底部工具與輸入列 -->
-<!-- 底部工具與輸入列 -->
-<div class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-1">
-  
-  <!-- 中間輸入框 (自動伸展並垂直置中) -->
-  <div class="chat-input-pill flex-grow-1 d-flex align-items-center justify-content-between px-3">
-    <span class="small text-secondary">Aa</span>
-    <i class="bi bi-emoji-smile-fill text-primary opacity-75 fs-6" style="cursor: pointer;"></i>
-  </div>
-
-  <!-- 右側讚按鈕 (獨立於輸入框右側) -->
-  <div class="d-flex align-items-center justify-content-center px-1">
-    <i class="bi bi-hand-thumbs-up-fill chat-blue-icon fs-5">👍</i>
-  </div>
-
-</div>
-      </div>
     </div>
+
+    <!-- 1. 縮小狀態時顯示的右下角圓圈按鈕 (帶紅點通知) -->
+    <div class="messenger-toggle-btn shadow-lg" id="messengerToggleBtn" onclick="toggleMessenger()">
+      <img src="css/title.jpg" class="rounded-circle w-100 h-100" style="object-fit: cover;" alt="獺克">
+      <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
+      <span class="notification-dot" id="notifyDot"></span>
+    </div>
+
+    <!-- 2. Messenger 右下角浮動對話框 -->
+    <div class="messenger-card shadow-lg text-light collapsed" id="messengerCard">
+
+      <!-- 頂部標題列 -->
+      <div
+        class="chat-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary border-opacity-25"
+        style="cursor: pointer;" onclick="toggleMessenger()">
+        <div class="d-flex align-items-center gap-2">
+          <div class="position-relative">
+            <img src="css/title.jpg" class="rounded-circle" width="36" height="36" style="object-fit: cover;"
+              alt="頭像">
+            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
+          </div>
+          <div>
+            <div class="fw-bold lh-1 d-flex align-items-center gap-1" style="font-size: 0.9rem;">
+              🌮 獺克 <i class="bi bi-chevron-down text-secondary" style="font-size: 0.7rem;"></i>
+            </div>
+            <span class="text-secondary opacity-75" style="font-size: 0.7rem;">1小時前在線上</span>
+          </div>
+        </div>
+
+        <!-- 右側功能按鈕 (修復：補回紫色通話/縮小按鈕) -->
+        <div class="fs-5 d-flex align-items-center gap-3" onclick="event.stopPropagation()">
+          <i class="bi bi-telephone-fill header-purple-icon"></i>
+          <i class="bi bi-camera-video-fill header-purple-icon"></i>
+          <i class="bi bi-dash-lg header-purple-icon" onclick="toggleMessenger()"></i>
+        </div>
+      </div>
+
+      <!-- 對話內容區 -->
+      <div class="chat-body p-3 overflow-y-auto" id="chatBody">
+        <div class="chat-time-divider">現在</div>
+      </div>
+
+      <!-- 正在輸入提示 -->
+      <div class="typing-indicator-container px-3 pb-2 d-none" id="typingIndicator">
+        <div class="d-flex align-items-center gap-2">
+          <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+          <div class="typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部工具與輸入列 (修復：補回完整的 Footer 工具列) -->
+      <div class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-1">
+        <div class="d-flex align-items-center gap-2 px-1">
+          <i class="bi bi-plus-circle-fill chat-blue-icon fs-5"></i>
+          <i class="bi bi-image-fill chat-blue-icon"></i>
+          <i class="bi bi-sticky-fill chat-blue-icon"></i>
+          <i class="bi bi-filetype-gif chat-blue-icon"></i>
+        </div>
+
+        <div class="chat-input-pill flex-grow-1 d-flex align-items-center justify-content-between px-3">
+          <span class="small text-secondary">Aa</span>
+          <i class="bi bi-emoji-smile-fill text-primary opacity-75 fs-6" style="cursor: pointer;"></i>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center px-1">
+          <i class="bi bi-hand-thumbs-up-fill chat-blue-icon fs-5"></i>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
-
-
-
-  </div>
   <!-- Footer 頁尾 -->
   <footer class="footer-section py-4">
     <div class="container px-4">
@@ -283,27 +578,42 @@
       },
       speed: 600,
     });
+
     const chatScript = [
-      { type: 'text', text: '嗨！我是獺克 🌮', delay: 7000 },
-      { type: 'text', text: '今天天氣超好，等等準備要去烤肉跟喝一杯酒精！🍻', delay: 5000 },
-      { type: 'text', text: '我自己剛畫好的小作品，你看這張如何？👇', delay: 1000 },
-      { type: 'image', url: 'css/img9.jpg', delay: 3000 },
-      { type: 'text', text: '是不是超可愛的！👀✨', delay: 4000 }
+      { type: 'text', text: '嗨！我是獺克 🌮', delay: 1500 },
+      { type: 'text', text: '今天天氣超好，等等準備要去烤肉跟喝一杯酒精！🍻', delay: 2200 },
+      { type: 'text', text: '最近剛畫好的新設定集，你看這張如何？👇', delay: 2800 },
+      { type: 'image', url: 'css/img3.jpg', delay: 3200 },
+      { type: 'text', text: '是不是超壯超讚的！👀✨', delay: 1800 }
     ];
 
     const chatBody = document.getElementById('chatBody');
     const typingIndicator = document.getElementById('typingIndicator');
     const messengerCard = document.getElementById('messengerCard');
     const messengerToggleBtn = document.getElementById('messengerToggleBtn');
+    const notifyDot = document.getElementById('notifyDot');
+    const msgSound = new Audio('css/pop.mp3');
 
-    // 切換展開/縮小狀態
+    let hasAnimated = false;
+
     function toggleMessenger() {
       const isCollapsed = messengerCard.classList.toggle('collapsed');
+
       if (isCollapsed) {
         messengerToggleBtn.classList.remove('d-none');
       } else {
         messengerToggleBtn.classList.add('d-none');
-        scrollToBottom();
+
+        if (notifyDot) {
+          notifyDot.classList.add('d-none');
+        }
+
+        if (!hasAnimated) {
+          hasAnimated = true;
+          startChatAnimation();
+        } else {
+          scrollToBottom();
+        }
       }
     }
 
@@ -322,28 +632,39 @@
       if (typingIndicator) typingIndicator.classList.add('d-none');
     }
 
+    function playMessageSound() {
+      if (msgSound) {
+        msgSound.currentTime = 0;
+        msgSound.play().catch(err => {
+          console.log('請先點擊頁面允許聲音播放');
+        });
+      }
+    }
+
     function appendTextMessage(text) {
       const row = document.createElement('div');
       row.className = 'chat-row';
       row.innerHTML = `
-    <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
-    <div class="chat-bubble">${text}</div>
-  `;
+        <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+        <div class="chat-bubble">${text}</div>
+      `;
       chatBody.appendChild(row);
       scrollToBottom();
+      playMessageSound();
     }
 
     function appendImageMessage(url) {
       const row = document.createElement('div');
       row.className = 'chat-row';
       row.innerHTML = `
-    <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
-    <div class="chat-img-bubble">
-      <img src="${url}" class="w-100 d-block" alt="傳送圖片">
-    </div>
-  `;
+        <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+        <div class="chat-img-bubble">
+          <img src="${url}" class="w-100 d-block" alt="傳送圖片">
+        </div>
+      `;
       chatBody.appendChild(row);
       scrollToBottom();
+      playMessageSound();
     }
 
     async function startChatAnimation() {
@@ -364,321 +685,11 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      // 手機版預設縮小（螢幕寬度小於 768px 時）
-      if (window.innerWidth < 768) {
-        messengerCard.classList.add('collapsed');
-        messengerToggleBtn.classList.remove('d-none');
-      }
-
-      startChatAnimation();
+      messengerCard.classList.add('collapsed');
+      messengerToggleBtn.classList.remove('d-none');
     });
-  </script>
-
+  </script> <!-- 修復：補上 script 閉合標籤 -->
 
 </body>
-<style>
-  body {
-    background-color: #1E1E1E;
-    margin: 0;
-    color: #F7F7F7;
-    font-family: "Microsoft JhengHei", sans-serif;
-  }
-
-  a {
-    text-decoration: none !important;
-  }
-
-  /* （選填）懸停時可自訂漸變效果，維持良好的互動感 */
-  a:hover {
-    opacity: 0.8;
-  }
-
-  .profile-container {
-    position: relative;
-    background-color: #212529;
-    /* 貼近原本 bg-dark 的顏色 */
-  }
-
-  .banner-img {
-    width: 100%;
-    height: 250px;
-    /* 手機版橫幅高度 */
-    object-fit: cover;
-  }
-
-  .gallery-img {
-    height: 200px;
-    object-fit: cover;
-  }
-
-  /* 大頭貼樣式控制 */
-  .avatar-img {
-    width: 200px;
-    /* 手機版大頭貼大小 */
-    height: 200px;
-    object-fit: cover;
-    border-width: 4px !important;
-  }
-
-  /* 核心 RWD 區塊：利用負邊距向上重疊 */
-  .profile-header {
-    margin-top: -80px;
-    /* 手機版：向上移動大頭貼直徑的一半 (160/2)，達成正中央切線 */
-    position: relative;
-    z-index: 10;
-  }
-
-  .profile-list {
-    color: #e4e6eb;
-    font-size: 0.9rem;
-  }
-
-  .bg-card-dark {
-    background-color: #2b3036 !important;
-    /* 稍淺的深灰色，可依喜好微調 */
-    border: none !important;
-    /* 強制移除邊框 */
-  }
-
-  /* 分隔線改為更隱約的淡灰色 */
-  .hr-light {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    opacity: 1;
-  }
-
-  /* 右下角貼邊 Messenger 卡片 */
-  .messenger-card {
-    position: fixed;
-    bottom: 0;
-    right: 20px;
-    z-index: 9999;
-
-    width: 330px;
-    height: 460px;
-    max-width: calc(100vw - 20px);
-    max-height: 80vh;
-
-    background-color: #242526;
-
-    /* 左上角與右上角圓弧收邊 */
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-
-    overflow: hidden;
-
-    /* 1. 細緻半透明邊框，將卡片從深色背景中切割出來 */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-bottom: none;
-    /* 貼平底部的邊不加邊框 */
-
-    /* 2. 雙層陰影：近距離細微陰影 + 廣域擴散陰影，創造自然懸浮質感 */
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45),
-      0 2px 8px rgba(0, 0, 0, 0.3);
-
-    display: flex;
-    flex-direction: column;
-
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
-    transform-origin: bottom right;
-  }
-/* 底部 Footer 整體容器 */
-.chat-footer {
-  background-color: #242526;
-  min-height: 52px; /* 固定最小高度，避免元件變形 */
-}
-
-/* 藍色圖示統一對齊與大小 */
-.chat-blue-icon {
-  color: #0084ff;
-  cursor: pointer;
-  font-size: 1.1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  transition: background-color 0.2s, opacity 0.2s;
-}
-
-.chat-blue-icon:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  opacity: 0.9;
-}
-
-/* 輸入框藥丸形狀 (固定高度並嚴格垂直置中) */
-.chat-input-pill {
-  background-color: #3a3b3c;
-  border-radius: 18px;
-  height: 36px; /* 加高至 36px，視覺上更平衡 */
-  min-width: 0; /* 防止 Flex 子元素溢出 */
-}
-
-.chat-input-pill span {
-  line-height: 1; /* 修正文字基準線偏移 */
-  user-select: none;
-}
-  /* 縮小狀態樣式 */
-  .messenger-card.collapsed {
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  /* 縮小後顯示的右下角浮動大頭貼按鈕 */
-  .messenger-toggle-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 52px;
-    height: 52px;
-    z-index: 9998;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-
-  .messenger-toggle-btn:hover {
-    transform: scale(1.08);
-  }
-
-  /* 背景與區域顏色 */
-  .chat-header,
-  .chat-body,
-  .typing-indicator-container,
-  .chat-footer {
-    background-color: #242526;
-  }
-
-  .chat-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .chat-time-divider {
-    text-align: center;
-    color: #b0b3b8;
-    font-size: 0.725rem;
-    margin: 6px 0;
-  }
-
-  .header-purple-icon {
-    color: #a855f7;
-    cursor: pointer;
-    font-size: 1.1rem;
-  }
-
-  .chat-blue-icon {
-    color: #0084ff;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-
-  .chat-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    animation: fadeInUp 0.25s ease-out forwards;
-  }
-
-  .chat-bubble {
-    max-width: 75%;
-    padding: 8px 12px;
-    border-radius: 18px;
-    font-size: 0.875rem;
-    line-height: 1.35;
-    word-wrap: break-word;
-    background-color: #3a3b3c;
-    color: #e4e6eb;
-  }
-
-  .chat-img-bubble {
-    max-width: 70%;
-    border-radius: 14px;
-    overflow: hidden;
-    animation: fadeInUp 0.25s ease-out forwards;
-  }
-
-  .chat-input-pill {
-    background-color: #3a3b3c;
-    border-radius: 18px;
-    height: 32px;
-  }
-
-  .typing-bubble {
-    background-color: #3a3b3c;
-    padding: 6px 10px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .dot {
-    width: 5px;
-    height: 5px;
-    background-color: #b0b3b8;
-    border-radius: 50%;
-    animation: bounce 1.3s infinite ease-in-out;
-  }
-
-  .dot:nth-child(2) {
-    animation-delay: 0.15s;
-  }
-
-  .dot:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  @keyframes bounce {
-
-    0%,
-    80%,
-    100% {
-      transform: translateY(0);
-    }
-
-    40% {
-      transform: translateY(-4px);
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* ----------------------------------------- */
-  /* 電腦版樣式微調（螢幕寬度 768px 以上） */
-  /* ----------------------------------------- */
-  @media (min-width: 768px) {
-    .banner-img {
-      height: 480px;
-      /* 還原你原本想要的電腦版橫幅高度 */
-    }
-
-    .avatar-img {
-      width: 250px;
-      /* 電腦版大頭貼大小（與你原截圖比例一致） */
-      height: 250px;
-    }
-
-    .profile-header {
-      margin-top: -40px;
-      /* 電腦版：依照第二張截圖，只微微往上切入 Banner */
-    }
-  }
-</style>
 
 </html>

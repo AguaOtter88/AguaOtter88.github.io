@@ -169,10 +169,83 @@
         </div>
 
       </div>
+
+      <!-- Messenger 右下角浮動對話框（對齊視窗最下緣） -->
+      <!-- 1. 縮小狀態時顯示的右下角圓圈按鈕 -->
+      <div class="messenger-toggle-btn shadow-lg d-none" id="messengerToggleBtn" onclick="toggleMessenger()">
+        <img src="css/title.jpg" class="rounded-circle w-100 h-100" style="object-fit: cover;" alt="獺克">
+        <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
+      </div>
+
+      <!-- 2. Messenger 右下角浮動對話框 -->
+      <div class="messenger-card shadow-lg text-light" id="messengerCard">
+
+        <!-- 頂部標題列 (點擊整條 Header 或減號皆可縮小) -->
+        <div
+          class="chat-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary border-opacity-25"
+          style="cursor: pointer;" onclick="toggleMessenger()">
+          <div class="d-flex align-items-center gap-2">
+            <div class="position-relative">
+              <img src="css/title.jpg" class="rounded-circle" width="36" height="36" style="object-fit: cover;"
+                alt="頭像">
+              <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-dark rounded-circle"></span>
+            </div>
+            <div>
+              <div class="fw-bold lh-1 d-flex align-items-center gap-1" style="font-size: 0.9rem;">
+                🌮 獺克 <i class="bi bi-chevron-down text-secondary" style="font-size: 0.7rem;"></i>
+              </div>
+              <span class="text-secondary opacity-75" style="font-size: 0.7rem;">1小時前在線上</span>
+            </div>
+          </div>
+
+          <!-- 右側功能按鈕 -->
+          <div class="fs-5 d-flex align-items-center gap-3" onclick="event.stopPropagation()">
+            <i class="bi bi-telephone-fill header-purple-icon"></i>
+            <i class="bi bi-camera-video-fill header-purple-icon"></i>
+            <i class="bi bi-dash-lg header-purple-icon" onclick="toggleMessenger()"></i>
+          </div>
+        </div>
+
+        <!-- 對話內容區 -->
+        <div class="chat-body p-3 overflow-y-auto" id="chatBody">
+          <div class="chat-time-divider">週一 下午2:44</div>
+        </div>
+
+        <!-- 正在輸入提示 -->
+        <div class="typing-indicator-container px-3 pb-2 d-none" id="typingIndicator">
+          <div class="d-flex align-items-center gap-2">
+            <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+            <div class="typing-bubble">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部工具與輸入列 -->
+        <div
+          class="chat-footer px-2 py-2 border-top border-secondary border-opacity-10 d-flex align-items-center gap-2">
+          <i class="bi bi-mic-fill chat-blue-icon"></i>
+          <i class="bi bi-image-fill chat-blue-icon"></i>
+          <i class="bi bi-emoji-smile-upside-down-fill chat-blue-icon"></i>
+          <i class="bi bi-filetype-gif chat-blue-icon"></i>
+
+          <div class="chat-input-pill flex-grow-1 d-flex align-items-center justify-content-between px-3 py-1">
+            <span class="small text-secondary">Aa</span>
+            <i class="bi bi-emoji-smile-fill text-primary opacity-75"></i>
+          </div>
+
+          <i class="bi bi-hand-thumbs-up-fill chat-blue-icon fs-5"></i>
+        </div>
+      </div>
     </div>
+  </div>
 
-  </div> <!-- 【修正處 3】：正確閉合 profile-container -->
 
+
+
+  </div>
   <!-- Footer 頁尾 -->
   <footer class="footer-section py-4">
     <div class="container px-4">
@@ -195,7 +268,6 @@
             </a>
           </div>
         </div>
-
       </div>
     </div>
   </footer>
@@ -210,7 +282,98 @@
       },
       speed: 600,
     });
+    const chatScript = [
+      { type: 'text', text: '嗨！我是獺克 🌮', delay: 2000 },
+      { type: 'text', text: '今天天氣超好，等等準備要去烤肉跟喝一杯酒精！🍻', delay: 5000 },
+      { type: 'text', text: '最近剛畫好的新設定集，你看這張如何？👇', delay: 7000 },
+      { type: 'image', url: 'css/img3.jpg', delay: 1000 },
+      { type: 'text', text: '是不是超壯超讚的！👀✨', delay: 3000 }
+    ];
+
+    const chatBody = document.getElementById('chatBody');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const messengerCard = document.getElementById('messengerCard');
+    const messengerToggleBtn = document.getElementById('messengerToggleBtn');
+
+    // 切換展開/縮小狀態
+    function toggleMessenger() {
+      const isCollapsed = messengerCard.classList.toggle('collapsed');
+      if (isCollapsed) {
+        messengerToggleBtn.classList.remove('d-none');
+      } else {
+        messengerToggleBtn.classList.add('d-none');
+        scrollToBottom();
+      }
+    }
+
+    function scrollToBottom() {
+      if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function showTyping() {
+      if (typingIndicator) {
+        typingIndicator.classList.remove('d-none');
+        scrollToBottom();
+      }
+    }
+
+    function hideTyping() {
+      if (typingIndicator) typingIndicator.classList.add('d-none');
+    }
+
+    function appendTextMessage(text) {
+      const row = document.createElement('div');
+      row.className = 'chat-row';
+      row.innerHTML = `
+    <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+    <div class="chat-bubble">${text}</div>
+  `;
+      chatBody.appendChild(row);
+      scrollToBottom();
+    }
+
+    function appendImageMessage(url) {
+      const row = document.createElement('div');
+      row.className = 'chat-row';
+      row.innerHTML = `
+    <img src="css/title.jpg" class="rounded-circle" width="24" height="24" style="object-fit: cover;" alt="獺克">
+    <div class="chat-img-bubble">
+      <img src="${url}" class="w-100 d-block" alt="傳送圖片">
+    </div>
+  `;
+      chatBody.appendChild(row);
+      scrollToBottom();
+    }
+
+    async function startChatAnimation() {
+      for (const item of chatScript) {
+        showTyping();
+        await new Promise(resolve => setTimeout(resolve, 900));
+
+        hideTyping();
+
+        if (item.type === 'text') {
+          appendTextMessage(item.text);
+        } else if (item.type === 'image') {
+          appendImageMessage(item.url);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, item.delay));
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 手機版預設縮小（螢幕寬度小於 768px 時）
+      if (window.innerWidth < 768) {
+        messengerCard.classList.add('collapsed');
+        messengerToggleBtn.classList.remove('d-none');
+      }
+
+      startChatAnimation();
+    });
   </script>
+
+
 </body>
 <style>
   body {
@@ -280,6 +443,182 @@
   .hr-light {
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     opacity: 1;
+  }
+
+  /* 右下角貼邊 Messenger 卡片 */
+  .messenger-card {
+    position: fixed;
+    bottom: 0;
+    right: 20px;
+    z-index: 9999;
+
+    width: 330px;
+    height: 460px;
+    max-width: calc(100vw - 20px);
+    max-height: 80vh;
+
+    background-color: #242526;
+
+    /* 左上角與右上角圓弧收邊 */
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+    overflow: hidden;
+
+    /* 1. 細緻半透明邊框，將卡片從深色背景中切割出來 */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: none;
+    /* 貼平底部的邊不加邊框 */
+
+    /* 2. 雙層陰影：近距離細微陰影 + 廣域擴散陰影，創造自然懸浮質感 */
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45),
+      0 2px 8px rgba(0, 0, 0, 0.3);
+
+    display: flex;
+    flex-direction: column;
+
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease;
+    transform-origin: bottom right;
+  }
+
+  /* 縮小狀態樣式 */
+  .messenger-card.collapsed {
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* 縮小後顯示的右下角浮動大頭貼按鈕 */
+  .messenger-toggle-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    z-index: 9998;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .messenger-toggle-btn:hover {
+    transform: scale(1.08);
+  }
+
+  /* 背景與區域顏色 */
+  .chat-header,
+  .chat-body,
+  .typing-indicator-container,
+  .chat-footer {
+    background-color: #242526;
+  }
+
+  .chat-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chat-time-divider {
+    text-align: center;
+    color: #b0b3b8;
+    font-size: 0.725rem;
+    margin: 6px 0;
+  }
+
+  .header-purple-icon {
+    color: #a855f7;
+    cursor: pointer;
+    font-size: 1.1rem;
+  }
+
+  .chat-blue-icon {
+    color: #0084ff;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .chat-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    animation: fadeInUp 0.25s ease-out forwards;
+  }
+
+  .chat-bubble {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    word-wrap: break-word;
+    background-color: #3a3b3c;
+    color: #e4e6eb;
+  }
+
+  .chat-img-bubble {
+    max-width: 70%;
+    border-radius: 14px;
+    overflow: hidden;
+    animation: fadeInUp 0.25s ease-out forwards;
+  }
+
+  .chat-input-pill {
+    background-color: #3a3b3c;
+    border-radius: 18px;
+    height: 32px;
+  }
+
+  .typing-bubble {
+    background-color: #3a3b3c;
+    padding: 6px 10px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    background-color: #b0b3b8;
+    border-radius: 50%;
+    animation: bounce 1.3s infinite ease-in-out;
+  }
+
+  .dot:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  @keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+      transform: translateY(0);
+    }
+
+    40% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* ----------------------------------------- */

@@ -21,8 +21,6 @@
   <!-- 主頁面外層包覆：確保相對定位正確 -->
   <div class="profile-container">
 
-    <!-- 1. 背景輪播圖 (Banner) -->
-    <!-- 加上 data-bs-touch="true" 確保手機端啟用手勢觸控滑動 -->
     <div class="swiper banner-swiper">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
@@ -36,54 +34,46 @@
         </div>
       </div>
     </div>
-    <!-- 2. 個人資訊區塊 -->
+
     <!-- 個人資訊區塊 -->
     <div class="container pb-4 px-4 position-relative">
-      <!-- 1. 最外層 Profile Header -->
-      <div
-        class="profile-header d-flex flex-column d-md-flex flex-md-row align-items-center align-items-md-end text-center text-md-start">
-
-        <!-- 2. 大頭貼 -->
-        <div class="avatar-box flex-shrink-0">
+      <div class="d-flex flex-column flex-lg-row align-items-center align-items-lg-start">
+        <div class="avatar-box flex-shrink-0" style="margin-top: -80px; z-index: 10;">
           <img src="css/title.jpg" class="rounded-circle img-thumbnail bg-dark border-secondary avatar-img" alt="大頭貼">
         </div>
 
-        <div class="w-100 mt-3 mt-md-0 ps-md-4">
-          <div class="row g-3 align-items-start">
-            <div class="col-12 col-md-6">
-              <h2 class="fw-bold mb-1 fs-3">🌮獺克</h2>
-              <p class="text-secondary small mb-3 mb-md-2">塔克或是隨便拉...</p>
+        <div class="w-100 mt-3 mt-lg-0 ps-lg-4 pt-lg-2">
+          <div class="row g-3">
 
-              <div class="text-center text-md-start">
-                <ul class="list-unstyled mb-0 small text-start d-inline-block profile-list text-nowrap">
-                  <li class="mb-1">💖 水獺｜粉紅色的水獺雪貂</li>
-                  <li class="mb-1">🍖 喜歡｜燒烤、牛排、鍋物</li>
-                  <li class="mb-1">🔮 興趣｜動漫、電影、電玩</li>
-                </ul>
-              </div>
-            </div>
+            <div class="col-12 col-lg-6 text-center text-lg-start">
+              <h2 class="fw-bold mb-1 fs-3">🌮 獺克</h2>
+              <p class="text-secondary small mb-2">塔克或是狐狸隨便拉...</p>
 
-            <!-- 【右欄】：長內文區塊 -->
-            <div class="col-12 col-md-6">
-              <ul class="list-unstyled mb-0 small text-start d-inline-block profile-list">
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
-                <li class="mb-1 text-truncate">很長的內文很長的內文很長的內文</li>
+              <ul class="list-unstyled mb-0 small text-start d-inline-block profile-list text-nowrap">
+                <li class="mb-1">💖 水獺｜粉紅色的水獺雪貂</li>
+                <li class="mb-1">🍖 喜歡｜燒烤、牛排、鍋物、酒精</li>
+                <li class="mb-1">🔮 興趣｜動漫、電影、電玩、音樂</li>
               </ul>
             </div>
+            <div class="col-12 col-lg-6 align-self-lg-end text-center mt-3 mt-lg-0">
+              <ul class="list-unstyled mb-0 small text-start d-inline-block profile-list">
+                <li class="mb-1">很長的內文很長的內文很長的內文很長的內文</li>
+                <li class="mb-1">很長的內文很長的內文很長的內文很長的內文</li>
+                <li class="mb-1">很長的內文很長的內文很長的內文很長的內文</li>
+                <li class="mb-1">很長的內文很長的內文很長的內文很長的內文</li>
+                <li class="mb-0">很長的內文很長的內文很長的內文很長的內文</li>
+              </ul>
+            </div>
+
           </div>
         </div>
+
       </div>
     </div>
   </div>
   <footer class="footer-section py-4">
     <div class="container px-4">
       <div class="row align-items-center gy-3">
-
-        <!-- 左側：版權宣告與 Powered by Bootstrap (補上 col-12 col-lg-6，統一 lg 斷點) -->
         <div class="col-12 col-lg-6 text-center text-lg-start">
           <div
             class="text-secondary small d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start gap-2">
@@ -94,17 +84,16 @@
           </div>
         </div>
 
-        <!-- 右側：Linktree 社群按鈕 -->
         <div class="col-12 col-lg-6 text-center text-lg-end">
           <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-end">
 
             <a href="https://facebook.com/AguaOtter88" target="_blank" rel="noopener noreferrer"
-              class="btn btn-outline-light btn-sm rounded-pill px-3 shadow-sm">
-              📘 Facebook
+              class="text-secondary text-decoration-none small opacity-75 link-light">
+              Facebook
             </a>
             <a href="https://x.com/GuYueH_AD" target="_blank" rel="noopener noreferrer"
               class="text-secondary text-decoration-none small opacity-75 link-light">
-              X
+              .
             </a>
           </div>
         </div>
@@ -132,14 +121,12 @@
     font-family: "Microsoft JhengHei", sans-serif;
   }
 
-  /* 確保父層有正確的相對定位與背景 */
   .profile-container {
     position: relative;
     background-color: #212529;
     /* 貼近原本 bg-dark 的顏色 */
   }
 
-  /* 輪播圖 RWD 高度控制：移除寫死的 1400px 寬度 */
   .banner-img {
     width: 100%;
     height: 250px;

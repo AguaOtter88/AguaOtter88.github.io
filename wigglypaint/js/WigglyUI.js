@@ -100,21 +100,18 @@
                         }
                     }
 
-                    WigglyConfig.markerKeys.forEach(mKey => {
-                        const mData = WigglyEngine.markerFrameCtxs[mKey][f].getImageData(0, 0, WigglyEngine.width, WigglyEngine.height).data;
-                        for (let y = 0; y < WigglyEngine.height; y++) {
-                            for (let x = 0; x < WigglyEngine.width; x++) {
-                                const alpha = mData[(y * WigglyEngine.width + x) * 4 + 3];
-                                if (alpha > 0) {
-                                    hasPixels = true;
-                                    if (x < minX) minX = x;
-                                    if (x > maxX) maxX = x;
-                                    if (y < minY) minY = y;
-                                    if (y > maxY) maxY = y;
-                                }
+                    const map = WigglyEngine.markerPaletteMaps[f];
+                    for (let y = 0; y < WigglyEngine.height; y++) {
+                        for (let x = 0; x < WigglyEngine.width; x++) {
+                            if (map[y * WigglyEngine.width + x] > 0) {
+                                hasPixels = true;
+                                if (x < minX) minX = x;
+                                if (x > maxX) maxX = x;
+                                if (y < minY) minY = y;
+                                if (y > maxY) maxY = y;
                             }
                         }
-                    });
+                    }
                 }
 
                 if (!hasPixels) return;
@@ -165,14 +162,23 @@
             }
 
             promptClearCanvas() {
+                this.clearCanvasNow();
+            }
+
+            clearCanvasNow() {
                 WigglyHistory.saveState();
                 WigglyAudio.play('obliterate');
 
                 for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
-                    WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                    WigglyConfig.markerKeys.forEach(mKey => {
-                        WigglyEngine.markerFrameCtxs[mKey][f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                    });
+                    if (WigglyEngine.baseFrameCtxs[f]) {
+                        WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    }
+                    if (WigglyEngine.markerPaletteMaps[f]) {
+                        WigglyEngine.markerPaletteMaps[f].fill(0);
+                    }
+                }
+                if (WigglyEngine.stampCache) {
+                    WigglyEngine.stampCache.clear();
                 }
                 WigglyEngine.renderMainCanvas();
             }
@@ -194,6 +200,12 @@
                         for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
                             WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, img.width, img.height);
                             WigglyEngine.baseFrameCtxs[f].drawImage(img, 0, 0);
+                            if (WigglyEngine.markerPaletteMaps[f]) {
+                                WigglyEngine.markerPaletteMaps[f].fill(0);
+                            }
+                        }
+                        if (WigglyEngine.stampCache) {
+                            WigglyEngine.stampCache.clear();
                         }
                         WigglyEngine.renderMainCanvas();
                         WigglyAudio.play('pop');
@@ -214,29 +226,27 @@
                     const fCtx = fCanvas.getContext('2d');
                     fCtx.imageSmoothingEnabled = false;
 
-                    // Fill Background
+                    // 1. Fill Background
                     fCtx.fillStyle = WigglyEngine.canvasBgColor;
                     fCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
 
-                    // Draw 6 Marker Layers in sequence
-                    WigglyConfig.markerKeys.forEach(mKey => {
-                        const maskCanvas = WigglyEngine.markerFrameCanvases[mKey][f];
-                        const markerColor = WigglyTools.markerColors[mKey];
+                    // 2. Render and Draw Marker Layer
+                    WigglyEngine.renderMarkerLayerToCanvas(f);
+                    fCtx.drawImage(WigglyEngine.markerRenderCanvas, 0, 0);
 
-                        WigglyEngine.tintCtx.save();
-                        WigglyEngine.tintCtx.globalCompositeOperation = 'source-over';
-                        WigglyEngine.tintCtx.clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                        WigglyEngine.tintCtx.fillStyle = markerColor;
-                        WigglyEngine.tintCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                        WigglyEngine.tintCtx.globalCompositeOperation = 'destination-in';
-                        WigglyEngine.tintCtx.drawImage(maskCanvas, 0, 0);
-                        WigglyEngine.tintCtx.restore();
+                    // 3. Draw Foreground/Line Layer
+                    const lineMaskCanvas = WigglyEngine.baseFrameCanvases[f];
+                    WigglyEngine.tintCtx.save();
+                    WigglyEngine.tintCtx.globalCompositeOperation = 'source-over';
+                    WigglyEngine.tintCtx.clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    WigglyEngine.tintCtx.fillStyle = WigglyEngine.foregroundColor;
+                    WigglyEngine.tintCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    WigglyEngine.tintCtx.globalCompositeOperation = 'destination-in';
+                    WigglyEngine.tintCtx.drawImage(lineMaskCanvas, 0, 0);
+                    WigglyEngine.tintCtx.restore();
 
-                        fCtx.drawImage(WigglyEngine.tintCanvas, 0, 0);
-                    });
+                    fCtx.drawImage(WigglyEngine.tintCanvas, 0, 0);
 
-                    // Draw Line Layer
-                    fCtx.drawImage(WigglyEngine.baseFrameCanvases[f], 0, 0);
                     tempCanvases.push(fCanvas.toDataURL('image/png'));
                 }
 

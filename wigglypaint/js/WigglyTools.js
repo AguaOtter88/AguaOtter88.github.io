@@ -1,5 +1,5 @@
-// =========================================================================
-        // MODULE 5: WigglyTools.js (Brushes using Shared Foreground Color)
+        // =========================================================================
+        // MODULE 5: WigglyTools.js (Brushes, Markers, Tremor Stabilizer, Mirror)
         // =========================================================================
         class WigglyToolsModule {
             constructor() {
@@ -92,9 +92,7 @@
 
             getToolProps(tool) {
                 const baseSize = this.brushPt;
-                const fg = WigglyEngine.foregroundColor; // Shared Foreground Color!
                 
-                // Mask color is black
                 if (WigglyConfig.markerKeys.includes(tool)) {
                     return {
                         color: '#000000',
@@ -108,20 +106,20 @@
 
                 switch (tool) {
                     case 'pen':
-                        return { color: fg, size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
                     case 'pencil':
-                        return { color: fg, size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
+                        return { color: '#000000', size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
                     case 'ballpoint':
-                        return { color: fg, size: 1, alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
+                        return { color: '#000000', size: 1, alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
                     case 'spray':
-                        return { color: fg, size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
                     case 'pattern':
-                        return { color: fg, size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
                     case 'eraser':
                     case 'marker_eraser':
                         return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'destination-out', jitter: 0.5, type: 'pixel' };
                     default:
-                        return { color: fg, size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
                 }
             }
 
@@ -267,11 +265,12 @@
                     points.forEach(pt => {
                         if (this.currentTool === 'eraser') {
                             WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
-                            WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], pt.x, pt.y, props, jx, jy, f));
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
                         } else if (this.currentTool === 'marker_eraser') {
-                            WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], pt.x, pt.y, props, jx, jy, f));
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
                         } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
-                            WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[this.currentTool][f], pt.x, pt.y, props, jx, jy, f);
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, markerId);
                         } else {
                             WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
                         }
@@ -336,11 +335,12 @@
                     for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
                         if (this.currentTool === 'eraser') {
                             WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
-                            WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], cx, cy, props, jitters[f].jx, jitters[f].jy, f));
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
                         } else if (this.currentTool === 'marker_eraser') {
-                            WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], cx, cy, props, jitters[f].jx, jitters[f].jy, f));
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
                         } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
-                            WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[this.currentTool][f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, markerId);
                         } else {
                             WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
                         }

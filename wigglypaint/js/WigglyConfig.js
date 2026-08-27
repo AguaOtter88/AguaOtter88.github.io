@@ -1,4 +1,4 @@
-		// =========================================================================
+// =========================================================================
         // MODULE 1: WigglyConfig.js (Constants, 18 Patterns & Defaults)
         // =========================================================================
         const WigglyConfig = {
@@ -9,6 +9,15 @@
             
             markerKeys: ['marker1', 'marker2', 'marker3', 'custom1', 'custom2', 'custom3'],
             
+            markerIdMap: {
+                'marker1': 1,
+                'marker2': 2,
+                'marker3': 3,
+                'custom1': 4,
+                'custom2': 5,
+                'custom3': 6
+            },
+
             defaultMarkerColors: {
                 'marker1': '#FF5588',
                 'marker2': '#00CCFF',

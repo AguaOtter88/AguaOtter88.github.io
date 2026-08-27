@@ -1,5 +1,5 @@
         // =========================================================================
-        // MODULE 3: WigglyHistory.js (Undo/Redo Engine)
+        // MODULE 3: WigglyHistory.js (Undo/Redo Engine with Unified Marker Maps)
         // =========================================================================
         class WigglyHistoryModule {
             constructor() {
@@ -22,11 +22,8 @@
                     width: WigglyEngine.width,
                     height: WigglyEngine.height,
                     baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
-                    markerFrameCanvases: {}
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
                 };
-                WigglyConfig.markerKeys.forEach(mKey => {
-                    state.markerFrameCanvases[mKey] = WigglyEngine.markerFrameCanvases[mKey].map(c => this.cloneCanvasBuffer(c));
-                });
 
                 this.undoStack.push(state);
                 if (this.undoStack.length > WigglyConfig.MAX_UNDO) this.undoStack.shift();
@@ -40,11 +37,8 @@
                     width: WigglyEngine.width,
                     height: WigglyEngine.height,
                     baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
-                    markerFrameCanvases: {}
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
                 };
-                WigglyConfig.markerKeys.forEach(mKey => {
-                    currentState.markerFrameCanvases[mKey] = WigglyEngine.markerFrameCanvases[mKey].map(c => this.cloneCanvasBuffer(c));
-                });
                 this.redoStack.push(currentState);
                 if (this.redoStack.length > WigglyConfig.MAX_UNDO) this.redoStack.shift();
 
@@ -60,11 +54,8 @@
                     width: WigglyEngine.width,
                     height: WigglyEngine.height,
                     baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
-                    markerFrameCanvases: {}
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
                 };
-                WigglyConfig.markerKeys.forEach(mKey => {
-                    currentState.markerFrameCanvases[mKey] = WigglyEngine.markerFrameCanvases[mKey].map(c => this.cloneCanvasBuffer(c));
-                });
                 this.undoStack.push(currentState);
                 if (this.undoStack.length > WigglyConfig.MAX_UNDO) this.undoStack.shift();
 
@@ -82,10 +73,7 @@
                     WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
                     WigglyEngine.baseFrameCtxs[f].drawImage(state.baseFrameCanvases[f], 0, 0);
 
-                    WigglyConfig.markerKeys.forEach(mKey => {
-                        WigglyEngine.markerFrameCtxs[mKey][f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                        WigglyEngine.markerFrameCtxs[mKey][f].drawImage(state.markerFrameCanvases[mKey][f], 0, 0);
-                    });
+                    WigglyEngine.markerPaletteMaps[f].set(state.markerPaletteMaps[f]);
                 }
                 WigglyEngine.renderMainCanvas();
             }

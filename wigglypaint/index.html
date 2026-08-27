@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎨 .:WigglyPaint :. - v2.5.4</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>.: WigglyPaint :. - v2.5.8</title>
+    <!-- CSS -->
+    <script src=".\js\browser@4.js"></script>
     <!-- Gifshot CDN for exporting animated GIFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
     <!-- FontAwesome Icons -->
@@ -165,10 +165,9 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs sm:text-sm"></i>
-                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5.4</span>
+                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5.8</span>
             </div>
             <div class="flex items-center gap-1">
-                <span class="text-[11px] text-blue-200 font-sans hidden sm:inline">~ 順暢像素風格 3幀動態繪圖玩具 ~</span>
             </div>
         </div>
 
@@ -376,7 +375,7 @@
                 <!-- 3. Markers Group -->
                 <div class="text-[11px] font-bold bg-amber-200 px-1.5 py-0.5 border border-amber-400 text-center uppercase tracking-wider text-amber-900 flex justify-between items-center shadow-sm mt-0.5">
                     <span><i class="fa-solid fa-highlighter mr-1"></i>麥克筆專區</span>
-                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">實色底圖</span>
+                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">統一圖層</span>
                 </div>
 
                 <div class="flex flex-col gap-1" id="markers-group">
@@ -515,6 +514,17 @@
                     <button class="retro-btn h-7 px-1 text-indigo-900 text-xs" onclick="WigglyHistory.redo()" title="重做 (Ctrl+Y)">
                         <i class="fa-solid fa-rotate-right"></i> 重做 (Redo)
                     </button>
+                </div>
+
+                <!-- 2. Live Thumbnail Preview -->
+                <div class="flex flex-col gap-1">
+                    <div class="text-[11px] font-bold bg-gray-300 px-1 py-0.5 border border-gray-400 text-center uppercase tracking-wider flex items-center justify-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-eye text-gray-800"></i>
+                        <span>縮圖預覽</span>
+                    </div>
+                    <div class="retro-box-inset p-0.5 checkerboard flex items-center justify-center h-20 overflow-hidden relative">
+                        <canvas id="previewCanvas" class="max-w-full max-h-full object-contain block border border-gray-400 shadow-sm"></canvas>
+                    </div>
                 </div>
 
                 <!-- 3. Screentone Patterns (18 Patterns, 3-Column Grid) -->
@@ -659,7 +669,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. Foreground Color (New) -->
+                    <!-- 2. Foreground Color -->
                     <div class="flex items-center justify-between border-b border-gray-300 pb-2">
                         <label class="font-bold text-gray-800">畫布前景顏色 (線稿筆刷):</label>
                         <div class="flex items-center gap-2">
@@ -765,7 +775,7 @@
                         <li><strong>鋼筆 / 鉛筆 / 圓珠筆 / 噴漆槍</strong>：共用「畫布前景顏色」，並結合 18 款網點圖案（含純黑實心與 5 種動態網點）描繪。</li>
                         <li><strong>全域橡皮擦 (全擦)</strong>：同時擦除線稿與麥克筆底色。</li>
                         <li><strong>麥克筆橡皮擦 (麥克筆擦)</strong>：<span class="text-amber-800 font-bold">只擦除底層麥克筆顏色</span>，絕不破壞黑白線稿與網點！</li>
-                        <li><strong>6 色純粹麥克筆</strong>：位於獨立底層圖層，以不透明實色直接繪製，塗抹後劃直接覆蓋前色！</li>
+                        <li><strong>6 色統一圖層麥克筆</strong>：下筆順序決定覆蓋層級，自訂顏色後畫布上對應顏色即時同步更新！</li>
                     </ul>
                 </div>
 
@@ -798,35 +808,33 @@
             </div>
 
             <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto text-xs leading-relaxed">
-                <!-- v2.5.4 -->
+                <!-- v2.5.8 -->
                 <div class="border-b border-gray-300 pb-2">
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-blue-900 text-sm">v2.5.4 (新增前景色彩與畫布設定)</span>
+                        <span class="text-blue-900 text-sm">v2.5.8 (清空畫布流程優化)</span>
                         <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
                     </div>
                     <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
-                        <li><strong>新增畫布前景顏色設定</strong>：鋼筆、鉛筆、圓珠筆、噴漆槍與網點繪圖共用「前景顏色」，可在設定視窗中調整。</li>
-                        <li><strong>移除透明背景模式</strong>：簡化畫面選項與渲染效能。</li>
-                        <li><strong>主題色彩配對升級</strong>：預設主題面板同步更換畫布背景與前景色彩。</li>
+                        <li><strong>直覺一鍵清空畫布</strong>：移除二次確認視窗，按一下「清空畫布」或 <kbd>Ctrl+N</kbd> 即可直接清空，依然支援 <kbd>Ctrl+Z</kbd> 復原。</li>
                     </ul>
                 </div>
 
-                <!-- v2.5.3 -->
+                <!-- v2.5.6 -->
                 <div class="border-b border-gray-300 pb-2">
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-gray-800 text-sm">v2.5.3 (6色獨立Mask即時變色)</span>
+                        <span class="text-gray-800 text-sm">v2.5.6 (統一麥克筆圖層 & 調色盤位元對映)</span>
                     </div>
                     <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
-                        <li>6 色獨立 Mask 圖層 + Tint 即時著色器，塗抹覆蓋無殘影。</li>
+                        <li>6 色麥克筆統一為單一順序圖層，位元色盤對映實現畫布即時同步變色。</li>
                     </ul>
                 </div>
 
-                <!-- v2.5.2 & Older -->
+                <!-- Older -->
                 <div>
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-gray-700 text-sm">v2.5.2 ~ v1.0</span>
+                        <span class="text-gray-700 text-sm">v2.5.5 ~ v1.0</span>
                     </div>
-                    <p class="text-gray-600 mt-0.5">統一麥克筆圖層、麥克筆橡皮擦、7 大 ES Class 模組化架構、18 款精選網點、3 幀動態 GIF 匯出。</p>
+                    <p class="text-gray-600 mt-0.5">動態線稿著色、麥克筆橡皮擦、7 大 ES Class 模組化架構、18 款精選網點、3 幀動態 GIF 匯出。</p>
                 </div>
 
                 <div class="flex justify-end pt-1 border-t border-gray-300">
@@ -837,16 +845,17 @@
     </div>
 
     <!-- JavaScript Application Modules (7 Clean Independent ES Classes) -->
-
 	<script src=".\js\WigglyConfig.js"></script>
 	<script src=".\js\WigglyAudio.js"></script>
 	<script src=".\js\WigglyHistory.js"></script>
 	<script src=".\js\WigglyEngine.js"></script>
 	<script src=".\js\WigglyTools.js"></script>
 	<script src=".\js\WigglyUI.js"></script>
-	
     <script>
-	
+
+        // =========================================================================
+        // MODULE 7: WigglyApp.js (Bootstrap & Orchestrator)
+        // =========================================================================
         class WigglyAppModule {
             init() {
                 WigglyEngine.init();

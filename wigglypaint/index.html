@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title> .: WigglyPaint :. - v2.5.1</title>
+    <title>WigglyPaint v2.5.4 - 復古像素抖動塗鴉板 (前景色彩與畫布設定)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Gifshot CDN for exporting animated GIFs -->
@@ -141,7 +141,7 @@
             border-bottom-color: #404040;
         }
 
-        /* Modal backdrop isolation - 徹底防範手機端跑版 */
+        /* Modal backdrop isolation */
         .modal-backdrop {
             display: none !important;
             position: fixed;
@@ -165,7 +165,7 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs sm:text-sm"></i>
-                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5.1</span>
+                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5.4</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-[11px] text-blue-200 font-sans hidden sm:inline">~ 順暢像素風格 3幀動態繪圖玩具 ~</span>
@@ -282,9 +282,6 @@
             <div class="relative inline-block menu-dropdown-container">
                 <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)">檢視(<span class="underline">V</span>)</button>
                 <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-52 z-40 text-black text-xs">
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyEngine.toggleTransparentBgMenu(); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-transparent" class="fa-solid fa-check text-xs w-4 opacity-0"></i>透明背景模式</span>
-                    </button>
                     <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
                         <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i>音效回饋 (SFX)</span>
                     </button>
@@ -320,10 +317,10 @@
 
         <div class="p-1.5 sm:p-2 flex flex-col gap-2">
 
-        <!-- Main Workspace Area (v2.5 Refactored 3-Column Layout) -->
+        <!-- Main Workspace Area -->
         <div class="flex flex-col lg:flex-row gap-2 items-start justify-center w-full">
             
-            <!-- LEFT COLUMN: Stabilizer -> Basic Tools (with Marker Eraser) -> Markers -->
+            <!-- LEFT COLUMN: Stabilizer -> Basic Tools -> Markers -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
                 
                 <!-- 1. Hand Tremor Stabilizer -->
@@ -337,7 +334,7 @@
                     <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
                 </div>
 
-                <!-- 2. Basic Pixel Tools (2x3 Uniform Grid) -->
+                <!-- 2. Basic Pixel Tools -->
                 <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
                     基礎像素工具
                 </div>
@@ -379,7 +376,7 @@
                 <!-- 3. Markers Group -->
                 <div class="text-[11px] font-bold bg-amber-200 px-1.5 py-0.5 border border-amber-400 text-center uppercase tracking-wider text-amber-900 flex justify-between items-center shadow-sm mt-0.5">
                     <span><i class="fa-solid fa-highlighter mr-1"></i>麥克筆專區</span>
-                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">6色</span>
+                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">實色底圖</span>
                 </div>
 
                 <div class="flex flex-col gap-1" id="markers-group">
@@ -390,10 +387,6 @@
                             <span id="label-marker1" class="text-[11px] font-bold truncate">粉紅麥克筆</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker1', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-marker1" value="#FF5588" title="顏色" oninput="WigglyTools.updateMarkerColor('marker1', this.value)">
                         </div>
                     </div>
@@ -405,10 +398,6 @@
                             <span id="label-marker2" class="text-[11px] font-bold truncate">青藍麥克筆</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker2', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-marker2" value="#00CCFF" title="顏色" oninput="WigglyTools.updateMarkerColor('marker2', this.value)">
                         </div>
                     </div>
@@ -420,10 +409,6 @@
                             <span id="label-marker3" class="text-[11px] font-bold truncate">亮黃麥克筆</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker3', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-marker3" value="#FFE000" title="顏色" oninput="WigglyTools.updateMarkerColor('marker3', this.value)">
                         </div>
                     </div>
@@ -435,10 +420,6 @@
                             <span id="label-custom1" class="text-[11px] font-bold truncate">自訂麥克筆 A</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom1', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-custom1" value="#00FF66" title="顏色" oninput="WigglyTools.updateMarkerColor('custom1', this.value)">
                         </div>
                     </div>
@@ -450,10 +431,6 @@
                             <span id="label-custom2" class="text-[11px] font-bold truncate">自訂麥克筆 B</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom2', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-custom2" value="#A020F0" title="顏色" oninput="WigglyTools.updateMarkerColor('custom2', this.value)">
                         </div>
                     </div>
@@ -465,10 +442,6 @@
                             <span id="label-custom3" class="text-[11px] font-bold truncate">自訂麥克筆 C</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom3', this.checked)">
-                                <span>透明</span>
-                            </label>
                             <input type="color" id="picker-custom3" value="#FF6600" title="顏色" oninput="WigglyTools.updateMarkerColor('custom3', this.value)">
                         </div>
                     </div>
@@ -688,26 +661,33 @@
 
             <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto">
                 <div class="flex flex-col gap-3 text-xs">
+                    <!-- 1. Background Color -->
                     <div class="flex items-center justify-between border-b border-gray-300 pb-2">
-                        <label class="font-bold text-gray-800">畫布背景顏色:</label>
+                        <label class="font-bold text-gray-800">畫布背景顏色 (底色):</label>
                         <div class="flex items-center gap-2">
-                            <input type="color" id="bg-color-picker" value="#ffffff" onchange="WigglyEngine.setCanvasBackground(this.value, false)">
+                            <input type="color" id="bg-color-picker" value="#ffffff" onchange="WigglyEngine.setCanvasBackground(this.value)">
                             <span id="bg-hex-text" class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 border border-gray-300 rounded">#ffffff</span>
                         </div>
                     </div>
 
+                    <!-- 2. Foreground Color (New) -->
                     <div class="flex items-center justify-between border-b border-gray-300 pb-2">
-                        <label class="font-bold text-gray-800">透明背景模式:</label>
-                        <input type="checkbox" id="transparent-bg-toggle" class="w-4 h-4 accent-blue-700 cursor-pointer" onchange="WigglyEngine.toggleTransparentBg(this.checked)">
+                        <label class="font-bold text-gray-800">畫布前景顏色 (線稿筆刷):</label>
+                        <div class="flex items-center gap-2">
+                            <input type="color" id="fg-color-picker" value="#000000" onchange="WigglyEngine.setCanvasForeground(this.value)">
+                            <span id="fg-hex-text" class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 border border-gray-300 rounded">#000000</span>
+                        </div>
                     </div>
 
+                    <!-- 3. SFX Toggle -->
                     <div class="flex items-center justify-between border-b border-gray-300 pb-2">
                         <label class="font-bold text-gray-800">音效回饋 (SFX):</label>
                         <input type="checkbox" id="sound-toggle" class="w-4 h-4 accent-blue-700 cursor-pointer" checked>
                     </div>
 
+                    <!-- 4. Preset Palettes -->
                     <div>
-                        <label class="font-bold text-gray-800 block mb-2">預設主題色彩 (畫布與 6 色麥克筆):</label>
+                        <label class="font-bold text-gray-800 block mb-2">預設主題色彩 (背景/前景與 6 色麥克筆):</label>
                         <div class="grid grid-cols-2 gap-1.5">
                             <button class="retro-btn h-8 p-1.5 text-xs flex items-center justify-start gap-1.5" onclick="WigglyUI.applyPresetPalette('classic')">
                                 <span class="w-3.5 h-3.5 rounded-sm bg-[#FF5588] inline-block border border-black shrink-0"></span>
@@ -793,11 +773,10 @@
                 <div class="flex flex-col gap-1.5">
                     <span class="font-bold text-gray-900 text-xs"><i class="fa-solid fa-toolbox mr-1 text-indigo-700"></i> 工具與筆刷功能指南：</span>
                     <ul class="list-disc list-inside space-y-1 text-gray-700 bg-gray-100 p-2 border border-gray-300 rounded-sm">
-                        <li><strong>鋼筆 / 鉛筆 / 圓珠筆</strong>：結合 18 款網點圖案（含純黑實心與 5 種動態網點）直接描繪。</li>
-                        <li><strong>全域橡皮擦 (全擦)</strong>：同時擦除線稿與所有麥克筆底色。</li>
-                        <li><strong>麥克筆橡皮擦 (麥克筆擦)</strong>：<span class="text-amber-800 font-bold">只擦除 6 色麥克筆圖層</span>，絕不破壞黑白線稿與網點！</li>
-                        <li><strong>筆尖尺寸與形狀</strong>：支援 1pt ~ 32pt 尺寸，以及圓形 (圓)、方形 (方) 和斜角 (斜) 三種筆尖。</li>
-                        <li><strong>噴漆槍 (Spray)</strong>：噴灑復古像素顆粒，適合繪製陰影與質感背景。</li>
+                        <li><strong>鋼筆 / 鉛筆 / 圓珠筆 / 噴漆槍</strong>：共用「畫布前景顏色」，並結合 18 款網點圖案（含純黑實心與 5 種動態網點）描繪。</li>
+                        <li><strong>全域橡皮擦 (全擦)</strong>：同時擦除線稿與麥克筆底色。</li>
+                        <li><strong>麥克筆橡皮擦 (麥克筆擦)</strong>：<span class="text-amber-800 font-bold">只擦除底層麥克筆顏色</span>，絕不破壞黑白線稿與網點！</li>
+                        <li><strong>6 色純粹麥克筆</strong>：位於獨立底層圖層，以不透明實色直接繪製，塗抹後劃直接覆蓋前色！</li>
                     </ul>
                 </div>
 
@@ -830,35 +809,35 @@
             </div>
 
             <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto text-xs leading-relaxed">
-                <!-- v2.5.1 -->
+                <!-- v2.5.4 -->
                 <div class="border-b border-gray-300 pb-2">
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-blue-900 text-sm">v2.5.1 (新增麥克筆橡皮擦)</span>
+                        <span class="text-blue-900 text-sm">v2.5.4 (新增前景色彩與畫布設定)</span>
                         <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
                     </div>
                     <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
-                        <li><strong>新增麥克筆橡皮擦</strong>：支援只擦除 6 色麥克筆圖層，保留線稿完整無損（快捷鍵 6 / Shift+E）。</li>
-                        <li><strong>基礎工具列 2x3 完美佈局</strong>：鋼筆、鉛筆、圓珠筆、噴漆槍、全擦與麥克筆擦對稱排列。</li>
+                        <li><strong>新增畫布前景顏色設定</strong>：鋼筆、鉛筆、圓珠筆、噴漆槍與網點繪圖共用「前景顏色」，可在設定視窗中調整。</li>
+                        <li><strong>移除透明背景模式</strong>：簡化畫面選項與渲染效能。</li>
+                        <li><strong>主題色彩配對升級</strong>：預設主題面板同步更換畫布背景與前景色彩。</li>
                     </ul>
                 </div>
 
-                <!-- v2.5 -->
+                <!-- v2.5.3 -->
                 <div class="border-b border-gray-300 pb-2">
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-gray-800 text-sm">v2.5 (版面與操作流程重構)</span>
+                        <span class="text-gray-800 text-sm">v2.5.3 (6色獨立Mask即時變色)</span>
                     </div>
                     <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
-                        <li>左側欄整合手震修正與畫筆，右側欄頂部設為復原/重做與縮圖。</li>
-                        <li>修復彈出視窗排版洩漏與網點全域對齊。</li>
+                        <li>6 色獨立 Mask 圖層 + Tint 即時著色器，塗抹覆蓋無殘影。</li>
                     </ul>
                 </div>
 
-                <!-- v2.4 & Older -->
+                <!-- v2.5.2 & Older -->
                 <div>
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-gray-700 text-sm">v2.4 ~ v1.0</span>
+                        <span class="text-gray-700 text-sm">v2.5.2 ~ v1.0</span>
                     </div>
-                    <p class="text-gray-600 mt-0.5">全專案 7 大 ES Class 模組化架構、15 檔 Undo 防護、3 幀動態 GIF 匯出。</p>
+                    <p class="text-gray-600 mt-0.5">統一麥克筆圖層、麥克筆橡皮擦、7 大 ES Class 模組化架構、18 款精選網點、3 幀動態 GIF 匯出。</p>
                 </div>
 
                 <div class="flex justify-end pt-1 border-t border-gray-300">
@@ -868,11 +847,11 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Modules -->
+    <!-- JavaScript Application Modules (7 Clean Independent ES Classes) -->
     <script>
 
         // =========================================================================
-        // MODULE 1: WigglyConfig (Constants, 18 Patterns & Defaults)
+        // MODULE 1: WigglyConfig.js (Constants, 18 Patterns & Defaults)
         // =========================================================================
         const WigglyConfig = {
             NUM_FRAMES: 3,
@@ -976,7 +955,7 @@
         };
 
         // =========================================================================
-        // MODULE 2: WigglyAudio (Sound Synthesizer)
+        // MODULE 2: WigglyAudio.js (Sound Synthesizer)
         // =========================================================================
         class WigglyAudioModule {
             constructor() {
@@ -1057,7 +1036,7 @@
         const WigglyAudio = new WigglyAudioModule();
 
         // =========================================================================
-        // MODULE 3: WigglyHistory (Undo / Redo Management)
+        // MODULE 3: WigglyHistory.js (High Performance Undo/Redo Engine)
         // =========================================================================
         class WigglyHistoryModule {
             constructor() {
@@ -1070,6 +1049,7 @@
                 copy.width = srcCanvas.width;
                 copy.height = srcCanvas.height;
                 const ctx = copy.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
                 ctx.drawImage(srcCanvas, 0, 0);
                 return copy;
             }
@@ -1150,7 +1130,7 @@
         const WigglyHistory = new WigglyHistoryModule();
 
         // =========================================================================
-        // MODULE 4: WigglyEngine (Canvas Rendering, Buffers & Animation)
+        // MODULE 4: WigglyEngine.js (Canvas Rendering, Buffers & Foreground/Background Color)
         // =========================================================================
         class WigglyEngineModule {
             constructor() {
@@ -1160,10 +1140,13 @@
                 this.lastFrameTime = performance.now();
 
                 this.canvasBgColor = '#ffffff';
-                this.isTransparentBg = false;
+                this.foregroundColor = '#000000';
 
+                // 3 Line Frames
                 this.baseFrameCanvases = [];
                 this.baseFrameCtxs = [];
+                
+                // 6 Distinct Marker Layer Mask Buffers
                 this.markerFrameCanvases = {};
                 this.markerFrameCtxs = {};
 
@@ -1182,6 +1165,8 @@
             init() {
                 this.visibleCanvas = document.getElementById('visibleCanvas');
                 this.visibleCtx = this.visibleCanvas.getContext('2d');
+                this.visibleCtx.imageSmoothingEnabled = false;
+
                 this.previewCanvas = document.getElementById('previewCanvas');
                 this.previewCtx = this.previewCanvas ? this.previewCanvas.getContext('2d') : null;
 
@@ -1195,6 +1180,7 @@
                 this.markerFrameCtxs = {};
 
                 for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    // Line Canvas
                     const bCanvas = document.createElement('canvas');
                     bCanvas.width = this.width;
                     bCanvas.height = this.height;
@@ -1204,6 +1190,7 @@
                     this.baseFrameCtxs.push(bCtx);
                 }
 
+                // Initialize 6 separate marker layers
                 WigglyConfig.markerKeys.forEach(mKey => {
                     this.markerFrameCanvases[mKey] = [];
                     this.markerFrameCtxs[mKey] = [];
@@ -1261,55 +1248,52 @@
                 this.renderMainCanvas();
             }
 
-            setCanvasBackground(colorHex, isTransparent) {
+            setCanvasBackground(colorHex) {
                 this.canvasBgColor = colorHex;
-                this.isTransparentBg = isTransparent;
-                document.getElementById('bg-color-picker').value = colorHex;
-                document.getElementById('bg-hex-text').innerText = colorHex;
-                document.getElementById('transparent-bg-toggle').checked = isTransparent;
-                
-                const menuCheck = document.getElementById('menu-check-transparent');
-                if (menuCheck) menuCheck.classList.toggle('opacity-0', !isTransparent);
+                const picker = document.getElementById('bg-color-picker');
+                if (picker) picker.value = colorHex;
+                const hexText = document.getElementById('bg-hex-text');
+                if (hexText) hexText.innerText = colorHex;
 
                 this.renderMainCanvas();
             }
 
-            toggleTransparentBg(isTransparent) {
-                this.setCanvasBackground(this.canvasBgColor, isTransparent);
-            }
-
-            toggleTransparentBgMenu() {
-                this.toggleTransparentBg(!this.isTransparentBg);
+            setCanvasForeground(colorHex) {
+                this.foregroundColor = colorHex;
+                const picker = document.getElementById('fg-color-picker');
+                if (picker) picker.value = colorHex;
+                const hexText = document.getElementById('fg-hex-text');
+                if (hexText) hexText.innerText = colorHex;
             }
 
             renderMainCanvas() {
                 this.visibleCtx.clearRect(0, 0, this.width, this.height);
 
-                if (!this.isTransparentBg) {
-                    this.visibleCtx.fillStyle = this.canvasBgColor;
-                    this.visibleCtx.fillRect(0, 0, this.width, this.height);
-                }
+                // 1. Draw Background
+                this.visibleCtx.fillStyle = this.canvasBgColor;
+                this.visibleCtx.fillRect(0, 0, this.width, this.height);
 
+                // 2. Draw 6 Independent Marker Layers with Dynamic Recoloring
                 WigglyConfig.markerKeys.forEach(mKey => {
                     const maskCanvas = this.markerFrameCanvases[mKey][this.currentFrameIndex];
-                    
+                    const markerColor = WigglyTools.markerColors[mKey];
+
                     this.tintCtx.save();
                     this.tintCtx.globalCompositeOperation = 'source-over';
                     this.tintCtx.clearRect(0, 0, this.width, this.height);
-                    this.tintCtx.fillStyle = WigglyTools.markerColors[mKey];
+                    this.tintCtx.fillStyle = markerColor;
                     this.tintCtx.fillRect(0, 0, this.width, this.height);
                     this.tintCtx.globalCompositeOperation = 'destination-in';
                     this.tintCtx.drawImage(maskCanvas, 0, 0);
                     this.tintCtx.restore();
 
-                    this.visibleCtx.save();
-                    this.visibleCtx.globalAlpha = WigglyTools.markerTransparencies[mKey] ? 0.65 : 1.0;
                     this.visibleCtx.drawImage(this.tintCanvas, 0, 0);
-                    this.visibleCtx.restore();
                 });
 
+                // 3. Draw Line & Screentone Layer
                 this.visibleCtx.drawImage(this.baseFrameCanvases[this.currentFrameIndex], 0, 0);
 
+                // 4. Update Thumbnail
                 if (this.previewCanvas && this.previewCtx) {
                     if (this.previewCanvas.width !== this.width || this.previewCanvas.height !== this.height) {
                         this.previewCanvas.width = this.width;
@@ -1334,7 +1318,7 @@
 
             drawPatternThumbnail(pCtx, patObj, frameIdx) {
                 pCtx.clearRect(0, 0, 16, 16);
-                pCtx.fillStyle = '#000000';
+                pCtx.fillStyle = this.foregroundColor;
                 const pat = patObj.frames[frameIdx % patObj.frames.length];
 
                 for (let y = 0; y < 16; y++) {
@@ -1430,6 +1414,7 @@
             drawPixelStamp(ctx, x, y, props, jx = 0, jy = 0, frameIndex = 0) {
                 ctx.save();
                 ctx.globalCompositeOperation = props.composite;
+                ctx.globalAlpha = 1.0;
 
                 const px = Math.floor(x + jx);
                 const py = Math.floor(y + jy);
@@ -1459,7 +1444,7 @@
         const WigglyEngine = new WigglyEngineModule();
 
         // =========================================================================
-        // MODULE 5: WigglyTools (Brushes, Markers, Marker Eraser, Stabilizer)
+        // MODULE 5: WigglyTools.js (Brushes using Shared Foreground Color)
         // =========================================================================
         class WigglyToolsModule {
             constructor() {
@@ -1482,10 +1467,6 @@
                 this.lastMidY = 0;
 
                 this.markerColors = { ...WigglyConfig.defaultMarkerColors };
-                this.markerTransparencies = {
-                    'marker1': false, 'marker2': false, 'marker3': false,
-                    'custom1': false, 'custom2': false, 'custom3': false
-                };
             }
 
             init() {
@@ -1556,22 +1537,36 @@
 
             getToolProps(tool) {
                 const baseSize = this.brushPt;
+                const fg = WigglyEngine.foregroundColor; // Shared Foreground Color!
+                
+                // Mask color is black
+                if (WigglyConfig.markerKeys.includes(tool)) {
+                    return {
+                        color: '#000000',
+                        size: Math.max(2, baseSize * 2),
+                        alpha: 1.0,
+                        composite: 'source-over',
+                        jitter: 1.0,
+                        type: 'pixel'
+                    };
+                }
+
                 switch (tool) {
                     case 'pen':
-                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                        return { color: fg, size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
                     case 'pencil':
-                        return { color: '#222222', size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
+                        return { color: fg, size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
                     case 'ballpoint':
-                        return { color: '#001166', size: 1, alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
+                        return { color: fg, size: 1, alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
                     case 'spray':
-                        return { color: '#222222', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
+                        return { color: fg, size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
                     case 'pattern':
-                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                        return { color: fg, size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
                     case 'eraser':
                     case 'marker_eraser':
                         return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'destination-out', jitter: 0.5, type: 'pixel' };
                     default:
-                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                        return { color: fg, size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
                 }
             }
 
@@ -1615,12 +1610,6 @@
                 const swatch = document.getElementById(`swatch-${markerKey}`);
                 if (swatch) swatch.style.backgroundColor = hexColor;
 
-                this.selectTool(markerKey);
-                WigglyEngine.renderMainCanvas();
-            }
-
-            toggleMarkerAlpha(markerKey, isTransparent) {
-                this.markerTransparencies[markerKey] = isTransparent;
                 this.selectTool(markerKey);
                 WigglyEngine.renderMainCanvas();
             }
@@ -1713,7 +1702,7 @@
                 
                 const points = [{x, y}];
                 if (this.isHorizontalMirror) points.push({x: WigglyEngine.width - x, y});
-                if (this.isVerticalMirror) points.push({x: WigglyEngine.height - y});
+                if (this.isVerticalMirror) points.push({x, y: WigglyEngine.height - y});
                 if (this.isHorizontalMirror && this.isVerticalMirror) points.push({x: WigglyEngine.width - x, y: WigglyEngine.height - y});
 
                 for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
@@ -1722,11 +1711,9 @@
 
                     points.forEach(pt => {
                         if (this.currentTool === 'eraser') {
-                            // 全域橡皮擦：擦除線稿 + 所有麥克筆
                             WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
                             WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], pt.x, pt.y, props, jx, jy, f));
                         } else if (this.currentTool === 'marker_eraser') {
-                            // 麥克筆橡皮擦：只擦除所有麥克筆圖層，保留線稿
                             WigglyConfig.markerKeys.forEach(mKey => WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[mKey][f], pt.x, pt.y, props, jx, jy, f));
                         } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
                             WigglyEngine.drawPixelStamp(WigglyEngine.markerFrameCtxs[this.currentTool][f], pt.x, pt.y, props, jx, jy, f);
@@ -1827,7 +1814,7 @@
         const WigglyTools = new WigglyToolsModule();
 
         // =========================================================================
-        // MODULE 6: WigglyUI (Modals, Menus, Palette Presets, GIF Export)
+        // MODULE 6: WigglyUI.js (Modals, Menus, Palette Presets, GIF Export)
         // =========================================================================
         class WigglyUIModule {
             init() {
@@ -1963,18 +1950,19 @@
 
             applyPresetPalette(presetKey) {
                 const presets = {
-                    classic: { bg: '#ffffff', m1: '#FF5588', m2: '#00CCFF', m3: '#FFE000', c1: '#00FF66', c2: '#A020F0', c3: '#FF6600' },
-                    retro: { bg: '#FDF6E3', m1: '#E88D8D', m2: '#8DAEE8', m3: '#E8D48D', c1: '#A8E88D', c2: '#C48DE8', c3: '#E8B28D' },
-                    cyber: { bg: '#121218', m1: '#FF007F', m2: '#00F0FF', m3: '#FFE600', c1: '#39FF14', c2: '#B026FF', c3: '#FF5F1F' },
-                    morandi: { bg: '#EAE8E3', m1: '#C08282', m2: '#829CB0', m3: '#D4C49A', c1: '#9AB09C', c2: '#A282B0', c3: '#C89B82' },
-                    gameboy: { bg: '#9BBC0F', m1: '#8BAC0F', m2: '#306230', m3: '#0F380F', c1: '#8BAC0F', c2: '#306230', c3: '#0F380F' },
-                    macaron: { bg: '#FFF5F5', m1: '#FFB7B2', m2: '#A2E8DD', m3: '#FFF1C5', c1: '#C7CEEA', c2: '#E2F0CB', c3: '#FFDAC1' }
+                    classic: { bg: '#ffffff', fg: '#000000', m1: '#FF5588', m2: '#00CCFF', m3: '#FFE000', c1: '#00FF66', c2: '#A020F0', c3: '#FF6600' },
+                    retro: { bg: '#FDF6E3', fg: '#2B261F', m1: '#E88D8D', m2: '#8DAEE8', m3: '#E8D48D', c1: '#A8E88D', c2: '#C48DE8', c3: '#E8B28D' },
+                    cyber: { bg: '#121218', fg: '#FFFFFF', m1: '#FF007F', m2: '#00F0FF', m3: '#FFE600', c1: '#39FF14', c2: '#B026FF', c3: '#FF5F1F' },
+                    morandi: { bg: '#EAE8E3', fg: '#333333', m1: '#C08282', m2: '#829CB0', m3: '#D4C49A', c1: '#9AB09C', c2: '#A282B0', c3: '#C89B82' },
+                    gameboy: { bg: '#9BBC0F', fg: '#0F380F', m1: '#8BAC0F', m2: '#306230', m3: '#0F380F', c1: '#8BAC0F', c2: '#306230', c3: '#0F380F' },
+                    macaron: { bg: '#FFF5F5', fg: '#4A4A4A', m1: '#FFB7B2', m2: '#A2E8DD', m3: '#FFF1C5', c1: '#C7CEEA', c2: '#E2F0CB', c3: '#FFDAC1' }
                 };
 
                 const p = presets[presetKey];
                 if (!p) return;
 
-                WigglyEngine.setCanvasBackground(p.bg, false);
+                WigglyEngine.setCanvasBackground(p.bg);
+                WigglyEngine.setCanvasForeground(p.fg);
 
                 const mMapping = { 'marker1': p.m1, 'marker2': p.m2, 'marker3': p.m3, 'custom1': p.c1, 'custom2': p.c2, 'custom3': p.c3 };
                 WigglyConfig.markerKeys.forEach(mKey => {
@@ -1986,6 +1974,7 @@
                     if (swatch) swatch.style.backgroundColor = color;
                 });
 
+                WigglyTools.renderPatternButtons();
                 WigglyEngine.renderMainCanvas();
                 WigglyAudio.play('pop');
             }
@@ -2040,29 +2029,28 @@
                     const fCtx = fCanvas.getContext('2d');
                     fCtx.imageSmoothingEnabled = false;
 
-                    if (!WigglyEngine.isTransparentBg) {
-                        fCtx.fillStyle = WigglyEngine.canvasBgColor;
-                        fCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                    }
+                    // Fill Background
+                    fCtx.fillStyle = WigglyEngine.canvasBgColor;
+                    fCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
 
+                    // Draw 6 Marker Layers in sequence
                     WigglyConfig.markerKeys.forEach(mKey => {
                         const maskCanvas = WigglyEngine.markerFrameCanvases[mKey][f];
-                        
+                        const markerColor = WigglyTools.markerColors[mKey];
+
                         WigglyEngine.tintCtx.save();
                         WigglyEngine.tintCtx.globalCompositeOperation = 'source-over';
                         WigglyEngine.tintCtx.clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
-                        WigglyEngine.tintCtx.fillStyle = WigglyTools.markerColors[mKey];
+                        WigglyEngine.tintCtx.fillStyle = markerColor;
                         WigglyEngine.tintCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
                         WigglyEngine.tintCtx.globalCompositeOperation = 'destination-in';
                         WigglyEngine.tintCtx.drawImage(maskCanvas, 0, 0);
                         WigglyEngine.tintCtx.restore();
 
-                        fCtx.save();
-                        fCtx.globalAlpha = WigglyTools.markerTransparencies[mKey] ? 0.65 : 1.0;
                         fCtx.drawImage(WigglyEngine.tintCanvas, 0, 0);
-                        fCtx.restore();
                     });
 
+                    // Draw Line Layer
                     fCtx.drawImage(WigglyEngine.baseFrameCanvases[f], 0, 0);
                     tempCanvases.push(fCanvas.toDataURL('image/png'));
                 }
@@ -2127,7 +2115,7 @@
         const WigglyUI = new WigglyUIModule();
 
         // =========================================================================
-        // MODULE 7: WigglyApp (Bootstrap & Orchestrator)
+        // MODULE 7: WigglyApp.js (Bootstrap & Orchestrator)
         // =========================================================================
         class WigglyAppModule {
             init() {

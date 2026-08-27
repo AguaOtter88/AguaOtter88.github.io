@@ -150,7 +150,7 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs sm:text-sm"></i>
-                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.4 (模組化專區)</span>
+                <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5 (版面優化版)</span>
             </div>
             <div class="flex items-center gap-1">
                 <span class="text-[11px] text-blue-200 font-sans hidden sm:inline">~ 順暢像素風格 3幀動態繪圖玩具 ~</span>
@@ -203,7 +203,7 @@
 
             <!-- Tools Menu -->
             <div class="relative inline-block menu-dropdown-container">
-                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer font-bold text-blue-900" onclick="WigglyUI.toggleMenu('menu-tools', event)">工具(<span class="underline">T</span>)</button>
+                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-tools', event)">工具(<span class="underline">T</span>)</button>
                 <div id="menu-tools" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-52 z-40 text-black text-xs">
                     <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyTools.selectTool('pen'); WigglyUI.closeAllMenus();">
                         <span><i class="fa-solid fa-pen text-gray-800 w-4"></i>鋼筆 (Pen)</span>
@@ -302,20 +302,12 @@
         <div class="p-1.5 sm:p-2 flex flex-col gap-2">
 
         <!-- Main Workspace Area -->
-        <div class="flex flex-col lg:flex-row gap-2 items-start">
+        <div class="flex flex-col lg:flex-row gap-2 items-start justify-between w-full">
             
-            <!-- Left Side: Undo/Redo, Tremor Stabilizer & Screentone Palette -->
+            <!-- LEFT COLUMN: Stabilizer -> Basic Pixel Tools -> Markers -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
                 
-                <div class="grid grid-cols-2 gap-1">
-                    <button class="retro-btn h-7 px-1 text-emerald-900 text-xs" onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">
-                        <i class="fa-solid fa-rotate-left"></i> 復原
-                    </button>
-                    <button class="retro-btn h-7 px-1 text-indigo-900 text-xs" onclick="WigglyHistory.redo()" title="重做 (Ctrl+Y)">
-                        <i class="fa-solid fa-rotate-right"></i> 重做
-                    </button>
-                </div>
-
+                <!-- 1. Hand Tremor Stabilizer Box -->
                 <div class="flex flex-col gap-1 bg-gray-200 p-1.5 rounded border border-gray-300 shadow-sm">
                     <div class="flex items-center justify-between text-[11px]">
                         <span class="font-bold text-gray-800 whitespace-nowrap flex items-center gap-1">
@@ -326,20 +318,143 @@
                     <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
                 </div>
 
-                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider flex items-center justify-between gap-1 shadow-sm">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-border-none text-gray-800"></i>網點圖案</span>
-                    <span id="pattern-count-badge" class="text-[9px] bg-indigo-100 text-indigo-800 border border-indigo-300 px-1 rounded font-mono">34種</span>
+                <!-- 2. Basic Pixel Tools -->
+                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
+                    基礎像素工具
                 </div>
 
-                <div class="retro-box-inset p-1 grid grid-cols-3 gap-1 bg-gray-200 overflow-y-auto max-h-[380px] lg:max-h-[410px]" id="pattern-buttons-grid">
-                    <!-- Pattern buttons inserted dynamically -->
+                <div class="grid grid-cols-2 gap-1" id="tool-buttons-grid">
+                    <button class="retro-btn h-7 w-full justify-start px-2 active" data-tool="pen" onclick="WigglyTools.selectTool('pen')" title="鋼筆 (1 / B)">
+                        <i class="fa-solid fa-pen text-gray-800 w-3.5 text-center text-[10px]"></i>
+                        <span class="truncate text-[11px]">鋼筆</span>
+                    </button>
+
+                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="pencil" onclick="WigglyTools.selectTool('pencil')" title="鉛筆 (2)">
+                        <i class="fa-solid fa-pencil text-amber-700 w-3.5 text-center text-[10px]"></i>
+                        <span class="truncate text-[11px]">鉛筆</span>
+                    </button>
+
+                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="ballpoint" onclick="WigglyTools.selectTool('ballpoint')" title="圓珠筆 (3)">
+                        <i class="fa-solid fa-pen-clip text-blue-900 w-3.5 text-center text-[10px]"></i>
+                        <span class="truncate text-[11px]">圓珠筆</span>
+                    </button>
+
+                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="spray" onclick="WigglyTools.selectTool('spray')" title="噴漆槍 (4)">
+                        <i class="fa-solid fa-spray-can text-indigo-600 w-3.5 text-center text-[10px]"></i>
+                        <span class="truncate text-[11px]">噴漆槍</span>
+                    </button>
+
+                    <button class="retro-btn h-7 w-full justify-start px-2 col-span-2" data-tool="eraser" onclick="WigglyTools.selectTool('eraser')" title="橡皮擦 (5 / E)">
+                        <i class="fa-solid fa-eraser text-red-600 w-3.5 text-center text-[10px]"></i>
+                        <span class="truncate text-[11px]">橡皮擦</span>
+                    </button>
                 </div>
+
+                <!-- 3. Markers Group -->
+                <div class="text-[11px] font-bold bg-amber-200 px-1.5 py-0.5 border border-amber-400 text-center uppercase tracking-wider text-amber-900 flex justify-between items-center shadow-sm mt-0.5">
+                    <span><i class="fa-solid fa-highlighter mr-1"></i>麥克筆專區</span>
+                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">6色</span>
+                </div>
+
+                <div class="flex flex-col gap-1" id="markers-group">
+                    <!-- Marker 1: Pink -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-marker1" onclick="WigglyTools.selectTool('marker1')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-marker1" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#FF5588] shrink-0"></span>
+                            <span id="label-marker1" class="text-[11px] font-bold truncate">粉紅麥克筆</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-marker1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker1', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-marker1" value="#FF5588" title="顏色" oninput="WigglyTools.updateMarkerColor('marker1', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Marker 2: Cyan -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-marker2" onclick="WigglyTools.selectTool('marker2')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-marker2" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#00CCFF] shrink-0"></span>
+                            <span id="label-marker2" class="text-[11px] font-bold truncate">青藍麥克筆</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-marker2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker2', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-marker2" value="#00CCFF" title="顏色" oninput="WigglyTools.updateMarkerColor('marker2', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Marker 3: Yellow -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-marker3" onclick="WigglyTools.selectTool('marker3')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-marker3" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#FFE000] shrink-0"></span>
+                            <span id="label-marker3" class="text-[11px] font-bold truncate">亮黃麥克筆</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-marker3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker3', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-marker3" value="#FFE000" title="顏色" oninput="WigglyTools.updateMarkerColor('marker3', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Custom Marker A -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-custom1" onclick="WigglyTools.selectTool('custom1')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-custom1" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#00FF66] shrink-0"></span>
+                            <span id="label-custom1" class="text-[11px] font-bold truncate">自訂麥克筆 A</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-custom1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom1', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-custom1" value="#00FF66" title="顏色" oninput="WigglyTools.updateMarkerColor('custom1', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Custom Marker B -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-custom2" onclick="WigglyTools.selectTool('custom2')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-custom2" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#A020F0] shrink-0"></span>
+                            <span id="label-custom2" class="text-[11px] font-bold truncate">自訂麥克筆 B</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-custom2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom2', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-custom2" value="#A020F0" title="顏色" oninput="WigglyTools.updateMarkerColor('custom2', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Custom Marker C -->
+                    <div class="retro-btn h-8 px-2 justify-between w-full" id="btn-custom3" onclick="WigglyTools.selectTool('custom3')">
+                        <div class="flex items-center gap-1.5 overflow-hidden">
+                            <span id="swatch-custom3" class="w-3.5 h-3.5 rounded-sm border border-black inline-block bg-[#FF6600] shrink-0"></span>
+                            <span id="label-custom3" class="text-[11px] font-bold truncate">自訂麥克筆 C</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
+                                <input type="checkbox" id="alpha-custom3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom3', this.checked)">
+                                <span>透明</span>
+                            </label>
+                            <input type="color" id="picker-custom3" value="#FF6600" title="顏色" oninput="WigglyTools.updateMarkerColor('custom3', this.value)">
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Center: Canvas Viewport -->
-            <div class="flex-1 flex flex-col items-center justify-start shrink-0 min-w-0">
+            <!-- CENTER COLUMN: Canvas & Top Controls -->
+            <div class="w-full lg:flex-1 flex flex-col items-center justify-start min-w-0">
                 
-                <div class="retro-box w-full p-1 mb-1.5 flex flex-wrap items-center justify-between gap-1 text-xs select-none shadow-sm">
+                <!-- Top Canvas Toolbar -->
+                <div class="retro-box w-full max-w-[568px] p-1 mb-1.5 flex flex-wrap items-center justify-between gap-1 text-xs select-none shadow-sm">
                     <div class="flex items-center gap-1 bg-gray-200 px-1.5 py-0.5 rounded border border-gray-300 flex-1 min-w-[130px]">
                         <span class="font-bold text-gray-800 whitespace-nowrap text-[11px] flex items-center gap-1">
                             <i class="fa-solid fa-circle-dot text-indigo-700"></i>尺寸
@@ -380,6 +495,7 @@
                     </div>
                 </div>
 
+                <!-- Canvas Main Frame -->
                 <div id="canvas-container" class="retro-box-inset p-1 relative checkerboard inline-flex items-center justify-center overflow-hidden transition-all shadow-md">
                     <canvas id="visibleCanvas" width="560" height="420" class="block cursor-crosshair max-w-full h-auto bg-white shadow-inner"></canvas>
                 </div>
@@ -391,8 +507,20 @@
                 </div>
             </div>
 
-            <!-- Right Side: Live Thumbnail & Tools Section -->
+            <!-- RIGHT COLUMN: Undo/Redo -> Live Thumbnail -> Screentone Grid -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
+                
+                <!-- 1. Undo / Redo Group -->
+                <div class="grid grid-cols-2 gap-1">
+                    <button class="retro-btn h-8 px-1 text-emerald-900 text-xs font-bold w-full" onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">
+                        <i class="fa-solid fa-rotate-left"></i> 復原 (Undo)
+                    </button>
+                    <button class="retro-btn h-8 px-1 text-indigo-900 text-xs font-bold w-full" onclick="WigglyHistory.redo()" title="重做 (Ctrl+Y)">
+                        <i class="fa-solid fa-rotate-right"></i> 重做 (Redo)
+                    </button>
+                </div>
+
+                <!-- 2. Live Thumbnail Preview -->
                 <div class="flex flex-col gap-1">
                     <div class="text-[11px] font-bold bg-gray-300 px-1 py-0.5 border border-gray-400 text-center uppercase tracking-wider flex items-center justify-center gap-1 shadow-sm">
                         <i class="fa-solid fa-eye text-gray-800"></i>
@@ -403,132 +531,14 @@
                     </div>
                 </div>
 
-                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
-                    基礎像素工具
+                <!-- 3. Screentone Pattern Tools Grid -->
+                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider flex items-center justify-between gap-1 shadow-sm">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-border-none text-gray-800"></i>網點圖案</span>
+                    <span id="pattern-count-badge" class="text-[9px] bg-indigo-100 text-indigo-800 border border-indigo-300 px-1 rounded font-mono">18種</span>
                 </div>
 
-                <div class="grid grid-cols-2 gap-1" id="tool-buttons-grid">
-                    <button class="retro-btn h-7 w-full justify-start px-2 active" data-tool="pen" onclick="WigglyTools.selectTool('pen')" title="鋼筆 (1 / B)">
-                        <i class="fa-solid fa-pen text-gray-800 w-3.5 text-center text-[10px]"></i>
-                        <span class="truncate text-[11px]">鋼筆</span>
-                    </button>
-
-                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="pencil" onclick="WigglyTools.selectTool('pencil')" title="鉛筆 (2)">
-                        <i class="fa-solid fa-pencil text-amber-700 w-3.5 text-center text-[10px]"></i>
-                        <span class="truncate text-[11px]">鉛筆</span>
-                    </button>
-
-                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="ballpoint" onclick="WigglyTools.selectTool('ballpoint')" title="圓珠筆 (3)">
-                        <i class="fa-solid fa-pen-clip text-blue-900 w-3.5 text-center text-[10px]"></i>
-                        <span class="truncate text-[11px]">圓珠筆</span>
-                    </button>
-
-                    <button class="retro-btn h-7 w-full justify-start px-2" data-tool="spray" onclick="WigglyTools.selectTool('spray')" title="噴漆槍 (4)">
-                        <i class="fa-solid fa-spray-can text-indigo-600 w-3.5 text-center text-[10px]"></i>
-                        <span class="truncate text-[11px]">噴漆槍</span>
-                    </button>
-
-                    <button class="retro-btn h-7 w-full justify-start px-2 col-span-2" data-tool="eraser" onclick="WigglyTools.selectTool('eraser')" title="橡皮擦 (5 / E)">
-                        <i class="fa-solid fa-eraser text-red-600 w-3.5 text-center text-[10px]"></i>
-                        <span class="truncate text-[11px]">橡皮擦</span>
-                    </button>
-                </div>
-
-                <div class="text-[11px] font-bold bg-amber-200 px-1.5 py-0.5 border border-amber-400 text-center uppercase tracking-wider text-amber-900 flex justify-between items-center shadow-sm mt-0.5">
-                    <span><i class="fa-solid fa-highlighter mr-1"></i>麥克筆專區</span>
-                    <span class="text-[9px] bg-amber-300 px-1 rounded border border-amber-500 font-normal">6色</span>
-                </div>
-
-                <div class="flex flex-col gap-1" id="markers-group">
-                    <!-- Marker 1: Pink -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-marker1" onclick="WigglyTools.selectTool('marker1')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-marker1" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#FF5588] shrink-0"></span>
-                            <span id="label-marker1" class="text-[11px] font-bold truncate">粉紅麥克筆</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker1', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-marker1" value="#FF5588" title="顏色" oninput="WigglyTools.updateMarkerColor('marker1', this.value)">
-                        </div>
-                    </div>
-
-                    <!-- Marker 2: Cyan -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-marker2" onclick="WigglyTools.selectTool('marker2')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-marker2" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#00CCFF] shrink-0"></span>
-                            <span id="label-marker2" class="text-[11px] font-bold truncate">青藍麥克筆</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker2', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-marker2" value="#00CCFF" title="顏色" oninput="WigglyTools.updateMarkerColor('marker2', this.value)">
-                        </div>
-                    </div>
-
-                    <!-- Marker 3: Yellow -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-marker3" onclick="WigglyTools.selectTool('marker3')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-marker3" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#FFE000] shrink-0"></span>
-                            <span id="label-marker3" class="text-[11px] font-bold truncate">亮黃麥克筆</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-marker3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('marker3', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-marker3" value="#FFE000" title="顏色" oninput="WigglyTools.updateMarkerColor('marker3', this.value)">
-                        </div>
-                    </div>
-
-                    <!-- Custom Marker A -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-custom1" onclick="WigglyTools.selectTool('custom1')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-custom1" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#00FF66] shrink-0"></span>
-                            <span id="label-custom1" class="text-[11px] font-bold truncate">自訂麥克筆 A</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom1" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom1', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-custom1" value="#00FF66" title="顏色" oninput="WigglyTools.updateMarkerColor('custom1', this.value)">
-                        </div>
-                    </div>
-
-                    <!-- Custom Marker B -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-custom2" onclick="WigglyTools.selectTool('custom2')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-custom2" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#A020F0] shrink-0"></span>
-                            <span id="label-custom2" class="text-[11px] font-bold truncate">自訂麥克筆 B</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom2" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom2', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-custom2" value="#A020F0" title="顏色" oninput="WigglyTools.updateMarkerColor('custom2', this.value)">
-                        </div>
-                    </div>
-
-                    <!-- Custom Marker C -->
-                    <div class="retro-btn h-9 px-2 justify-between w-full" id="btn-custom3" onclick="WigglyTools.selectTool('custom3')">
-                        <div class="flex items-center gap-1.5 overflow-hidden">
-                            <span id="swatch-custom3" class="w-4 h-4 rounded-sm border border-black inline-block bg-[#FF6600] shrink-0"></span>
-                            <span id="label-custom3" class="text-[11px] font-bold truncate">自訂麥克筆 C</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
-                            <label class="flex items-center gap-0.5 text-[10px] text-gray-700 cursor-pointer" title="切換半透明">
-                                <input type="checkbox" id="alpha-custom3" class="w-3 h-3 accent-amber-600 cursor-pointer" onchange="WigglyTools.toggleMarkerAlpha('custom3', this.checked)">
-                                <span>透明</span>
-                            </label>
-                            <input type="color" id="picker-custom3" value="#FF6600" title="顏色" oninput="WigglyTools.updateMarkerColor('custom3', this.value)">
-                        </div>
-                    </div>
+                <div class="retro-box-inset p-1 grid grid-cols-3 gap-1 bg-gray-200 overflow-y-auto max-h-[320px] lg:max-h-[350px]" id="pattern-buttons-grid">
+                    <!-- Pattern buttons inserted dynamically -->
                 </div>
 
             </div>
@@ -739,30 +749,30 @@
             </div>
         </div>
     </div>
-
-    <!-- HELP MODAL -->
-    <div id="help-modal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-2 sm:p-4 z-50">
-        <div class="retro-box w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-            <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
-                <span class="font-bold"><i class="fa-solid fa-circle-question mr-1"></i>WigglyPaint 使用說明指南</span>
-                <button onclick="WigglyUI.closeModal('help-modal')" class="retro-btn w-5 h-5 text-[10px] font-bold !p-0 leading-none text-white bg-red-800 border-white hover:bg-red-700">✕</button>
-            </div>
-
+            <!-- CHANGELOG MODAL UPDATE -->
             <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto text-xs leading-relaxed">
-                <div class="bg-blue-50 p-2.5 border border-blue-300 rounded-sm">
-                    <span class="font-bold text-blue-900 text-sm block mb-1">✨ 核心特色：3 幀手繪動態抖動</span>
-                    <p class="text-blue-800">
-                        WigglyPaint 會在您作畫時，自動同步繪製 3 個具有有機微位移的動態影格，並以 10 FPS 循環播放，賦予像素塗鴉像早期逐格動畫與漫畫網點般躍動的生命力！
-                    </p>
+                <!-- v2.5 -->
+                <div class="border-b border-gray-300 pb-2">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-blue-900 text-sm">v2.5 (版面與操作流程重構)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>左側欄重構</strong>：手震修正置頂，緊接基礎像素工具與 6 色麥克筆專區。</li>
+                        <li><strong>右側欄重構</strong>：復原/重做大按鈕置頂、縮圖預覽，下方整合網點圖案陣列。</li>
+                        <li><strong>網點全域對齊修正</strong>：修復網點移動錯位，實現無縫靜態圖案曝光。</li>
+                    </ul>
                 </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <span class="font-bold text-gray-900 text-xs"><i class="fa-solid fa-toolbox mr-1 text-indigo-700"></i> 工具與筆刷功能指南：</span>
-                    <ul class="list-disc list-inside space-y-1 text-gray-700 bg-gray-100 p-2 border border-gray-300 rounded-sm">
-                        <li><strong>鋼筆 / 鉛筆 / 圓珠筆</strong>：結合 34 款網點圖案（含純黑實心與 6 種動態網點）直接描繪。</li>
-                        <li><strong>筆尖尺寸與形狀</strong>：支援 1pt ~ 32pt 尺寸，以及圓形 (圓)、方形 (方) 和斜角 (斜) 三種筆尖。</li>
-                        <li><strong>噴漆槍 (Spray)</strong>：噴灑復古像素顆粒，適合繪製陰影與質感背景。</li>
-                        <li><strong>6 色獨立麥克筆</strong>：位於獨立底層圖層，支援色彩自訂與半透明混色，上色絕不蓋掉線稿！</li>
+                <!-- v2.4 -->
+                <div class="border-b border-gray-300 pb-2">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-gray-800 text-sm">v2.4 (模組化架構 & 介面優化)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>全專案模組化重構</strong>：解耦為 7 個獨立 ES Class 模組。</li>
+                        <li><strong>新增「工具(T)」專屬選單</strong>：整合所有繪圖工具與 6 色麥克筆快捷列。</li>
                     </ul>
                 </div>
 
@@ -793,15 +803,65 @@
             </div>
 
             <div class="p-3 sm:p-4 flex flex-col gap-3 overflow-y-auto text-xs leading-relaxed">
+                <!-- v2.4 -->
                 <div class="border-b border-gray-300 pb-2">
                     <div class="flex items-center justify-between font-bold">
-                        <span class="text-blue-900 text-sm">v2.4 (模組化架構)</span>
+                        <span class="text-blue-900 text-sm">v2.4 (模組化架構 & 介面優化)</span>
                         <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
                     </div>
                     <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
                         <li><strong>全專案模組化重構</strong>：解耦為 7 個獨立 ES Class 模組（Config, Audio, History, Engine, Tools, UI, App）。</li>
+                        <li><strong>復原與重做按鈕位置優化</strong>：移至畫布與縮圖預覽之間，手機版繪畫完畢後向下即可直覺觸及。</li>
                         <li><strong>新增「工具(T)」專屬選單</strong>：整合所有繪圖工具與 6 色麥克筆快捷列。</li>
-                        <li><strong>移除多餘的插入圖片功能</strong>：專注於純粹畫布開啟與塗鴉創作。</li>
+                        <li><strong>恢復純粹經典黑墨畫筆</strong>：鋼筆、鉛筆與圓珠筆回歸乾淨純黑墨水與穩定網點對應。</li>
+                    </ul>
+                </div>
+
+                <!-- v2.3 -->
+                <div class="border-b border-gray-300 pb-2">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-gray-800 text-sm">v2.3 (尺寸與網點筆尖整合)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>畫布尺寸預設按鈕與智慧一鍵去邊</strong>：支援常見比例與內容無縫切邊。</li>
+                        <li><strong>網點完美套用筆尖</strong>：34 款網點（含純黑實心）直接映射至圓形、方形與斜角筆尖。</li>
+                    </ul>
+                </div>
+
+                <!-- v2.2 -->
+                <div class="border-b border-gray-300 pb-2">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-gray-800 text-sm">v2.2 (觸控與極速繪圖)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>Pointer Events API 升級</strong>：捕捉高刷新率 Coalesced 子像素觸控事件。</li>
+                        <li><strong>零延遲 EMA 手震平滑演算法</strong>：筆尖緊跟指尖，大幅降低繪圖延遲。</li>
+                    </ul>
+                </div>
+
+                <!-- v2.1 -->
+                <div class="border-b border-gray-300 pb-2">
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-gray-800 text-sm">v2.1 (離屏快取與記憶體防護)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>印章離屏快取 (Stamp Cache)</strong>：徹底解決大筆刷大面積繪圖卡頓。</li>
+                        <li><strong>15 檔 Undo 記憶體防護</strong>：防止長時間作畫記憶體積壓與 GC 掉幀。</li>
+                    </ul>
+                </div>
+
+                <!-- v2.0 / v1.0 -->
+                <div>
+                    <div class="flex items-center justify-between font-bold">
+                        <span class="text-gray-800 text-sm">v2.0 & v1.0 (初版與網點系統)</span>
+                        <span class="text-gray-500 font-mono text-[11px]">2026/08</span>
+                    </div>
+                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-gray-700">
+                        <li><strong>3 幀 10 FPS 手繪動態抖動引擎</strong>：實現網點躍動質感與動態 GIF 匯出。</li>
+                        <li><strong>6 色獨立麥克筆圖層</strong>：色彩與線稿分層，支援半透明混色。</li>
                     </ul>
                 </div>
 
@@ -835,7 +895,7 @@
                 'custom3': '#FF6600'
             },
 
-            // 34 Screentone Pattern Definitions
+            // Streamlined 18 Screentone Pattern Definitions
             patterns: [
                 { name: "純黑實心", isDynamic: false, frames: [
                     [1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
@@ -856,10 +916,6 @@
                 { name: "12.5% 稀疏點", isDynamic: false, frames: [
                     [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0,
                      1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "6.25% 超微點", isDynamic: false, frames: [
-                    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,
-                     0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0]
                 ]},
                 { name: "水平橫線", isDynamic: false, frames: [
                     [1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0,
@@ -893,64 +949,8 @@
                     [1,1,1,1,0,0,0,0, 1,1,1,1,0,0,0,0, 1,1,1,1,0,0,0,0, 1,1,1,1,0,0,0,0,
                      0,0,0,0,1,1,1,1, 0,0,0,0,1,1,1,1, 0,0,0,0,1,1,1,1, 0,0,0,0,1,1,1,1]
                 ]},
-                { name: "波浪鋸齒", isDynamic: false, frames: [
-                    [1,0,0,0,1,0,0,0, 0,1,0,1,0,1,0,1, 0,0,1,0,0,0,1,0, 0,1,0,1,0,1,0,1,
-                     1,0,0,0,1,0,0,0, 0,1,0,1,0,1,0,1, 0,0,1,0,0,0,1,0, 0,1,0,1,0,1,0,1]
-                ]},
-                { name: "籃編織紋", isDynamic: false, frames: [
-                    [1,1,0,0,1,1,0,0, 1,1,0,0,1,1,0,0, 0,0,1,1,0,0,1,1, 0,0,1,1,0,0,1,1,
-                     1,1,0,0,1,1,0,0, 1,1,0,0,1,1,0,0, 0,0,1,1,0,0,1,1, 0,0,1,1,0,0,1,1]
-                ]},
-                { name: "千鳥格紋", isDynamic: false, frames: [
-                    [1,1,1,0,0,0,1,1, 1,1,1,0,0,0,1,1, 1,1,1,1,1,0,0,0, 0,0,1,1,1,1,1,0,
-                     0,0,0,1,1,1,1,1, 1,1,0,0,0,1,1,1, 1,1,0,0,0,1,1,1, 0,0,1,1,1,0,0,0]
-                ]},
-                { name: "散落點陣", isDynamic: false, frames: [
-                    [1,0,0,1,0,1,0,0, 0,1,0,0,0,0,1,0, 0,0,1,0,1,0,0,0, 1,0,0,0,0,1,0,1,
-                     0,0,1,0,1,0,0,0, 0,1,0,0,0,0,1,0, 1,0,0,1,0,1,0,0, 0,0,0,0,1,0,0,1]
-                ]},
-                { name: "圓圈網點", isDynamic: false, frames: [
-                    [0,1,1,0,0,1,1,0, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 0,1,1,0,0,1,1,0,
-                     0,1,1,0,0,1,1,0, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 0,1,1,0,0,1,1,0]
-                ]},
-                { name: "菱形格紋", isDynamic: false, frames: [
-                    [0,0,0,1,1,0,0,0, 0,0,1,0,0,1,0,0, 0,1,0,0,0,0,1,0, 1,0,0,0,0,0,0,1,
-                     0,1,0,0,0,0,1,0, 0,0,1,0,0,1,0,0, 0,0,0,1,1,0,0,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "魚鱗波浪", isDynamic: false, frames: [
-                    [0,1,1,1,1,1,1,0, 1,0,0,0,0,0,0,1, 1,0,0,0,0,0,0,1, 0,1,1,0,0,1,1,0,
-                     1,0,0,1,1,0,0,1, 1,0,0,1,1,0,0,1, 0,1,1,0,0,1,1,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "雙粗斜線", isDynamic: false, frames: [
-                    [1,1,0,0,0,0,1,1, 1,1,1,0,0,0,0,1, 0,1,1,1,0,0,0,0, 0,0,1,1,1,0,0,0,
-                     0,0,0,1,1,1,0,0, 0,0,0,0,1,1,1,0, 1,0,0,0,0,1,1,1, 1,1,0,0,0,0,1,1]
-                ]},
-                { name: "蜂巢六角", isDynamic: false, frames: [
-                    [0,1,1,1,1,1,1,0, 1,0,0,0,0,0,0,1, 1,0,0,0,0,0,0,1, 0,1,1,1,1,1,1,0,
-                     0,0,0,1,1,0,0,0, 0,0,0,1,1,0,0,0, 0,0,0,1,1,0,0,0, 0,0,0,1,1,0,0,0]
-                ]},
-                { name: "虛線直線", isDynamic: false, frames: [
-                    [1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0,
-                     0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "星芒閃光", isDynamic: false, frames: [
-                    [0,0,0,1,0,0,0,0, 0,0,1,1,1,0,0,0, 0,1,1,1,1,1,0,0, 1,1,1,1,1,1,1,0,
-                     0,1,1,1,1,1,0,0, 0,0,1,1,1,0,0,0, 0,0,0,1,0,0,0,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "派對碎紙", isDynamic: false, frames: [
-                    [1,1,0,0,0,1,0,0, 1,1,0,0,0,0,0,0, 0,0,0,1,1,0,1,0, 0,0,0,1,1,0,0,0,
-                     0,1,0,0,0,0,0,0, 0,0,0,0,1,1,0,0, 0,0,1,0,1,1,0,0, 0,0,0,0,0,0,0,0]
-                ]},
-                { name: "條碼線條", isDynamic: false, frames: [
-                    [1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1,
-                     1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1, 1,1,0,1,0,0,1,1]
-                ]},
-                { name: "同心方塊", isDynamic: false, frames: [
-                    [1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,1, 1,0,1,1,1,1,0,1, 1,0,1,0,0,1,0,1,
-                     1,0,1,0,0,1,0,1, 1,0,1,1,1,1,0,1, 1,0,0,0,0,0,0,1, 1,1,1,1,1,1,1,1]
-                ]},
 
-                // --- 6 ANIMATED DYNAMIC SCREENTONES ---
+                // --- 5 DYNAMIC SCREENTONES ---
                 { name: "⚡ TV 噪訊", isDynamic: true, frames: [
                     [1,0,0,1,0,1,0,1, 0,1,1,0,1,0,0,0, 1,0,0,1,0,0,1,1, 0,1,1,0,1,1,0,0, 1,0,0,1,0,1,0,1, 0,1,0,0,1,0,1,0, 1,0,1,1,0,1,0,0, 0,1,0,0,1,0,1,1],
                     [0,1,1,0,1,0,1,0, 1,0,0,1,0,1,0,1, 0,1,1,0,1,1,0,0, 1,0,0,1,0,0,1,1, 0,1,1,0,1,0,1,0, 1,0,1,1,0,1,0,1, 0,1,0,0,1,0,1,1, 1,0,1,1,0,1,0,0],
@@ -970,11 +970,6 @@
                     [1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1],
                     [0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0],
                     [0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0]
-                ]},
-                { name: "💓 脈衝點陣", isDynamic: true, frames: [
-                    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0],
-                    [1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0, 1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0],
-                    [1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1, 1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1, 1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1, 1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1]
                 ]},
                 { name: "🌊 流動波浪", isDynamic: true, frames: [
                     [0,1,1,0,0,1,1,0, 1,0,0,1,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,1,1,0,0,1,1,0, 1,0,0,1,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
@@ -1362,84 +1357,6 @@
                 });
             }
 
-            getStampCanvas(props, frameIndex = 0) {
-                const key = `${props.type}_${props.size}_${WigglyTools.brushTipShape}_${props.color}_${props.composite}_${WigglyTools.selectedPatternIdx}_${frameIndex}`;
-                if (this.stampCache.has(key)) return this.stampCache.get(key);
-
-                const size = props.size;
-                const pad = size + 4;
-                const sCanvas = document.createElement('canvas');
-                sCanvas.width = pad;
-                sCanvas.height = pad;
-                const sCtx = sCanvas.getContext('2d');
-                sCtx.imageSmoothingEnabled = false;
-
-                sCtx.fillStyle = props.color;
-                const cx = Math.floor(pad / 2);
-                const cy = Math.floor(pad / 2);
-
-                if (props.type === 'pixel') {
-                    if (WigglyTools.brushTipShape === 'square') {
-                        const half = Math.floor(size / 2);
-                        sCtx.fillRect(cx - half, cy - half, size, size);
-                    } else if (WigglyTools.brushTipShape === 'chisel') {
-                        const half = Math.max(1, Math.ceil(size / 2));
-                        const thick = Math.max(1, Math.floor(size / 3));
-                        for (let dy = -half; dy <= half; dy++) {
-                            for (let dx = -half; dx <= half; dx++) {
-                                if (Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick) {
-                                    sCtx.fillRect(cx + dx, cy + dy, 1, 1);
-                                }
-                            }
-                        }
-                    } else {
-                        if (size <= 2) {
-                            const half = Math.floor(size / 2);
-                            sCtx.fillRect(cx - half, cy - half, size, size);
-                        } else {
-                            const r = size / 2;
-                            const r2 = r * r + 0.25;
-                            const half = Math.ceil(r);
-                            for (let dy = -half; dy <= half; dy++) {
-                                for (let dx = -half; dx <= half; dx++) {
-                                    if (dx * dx + dy * dy <= r2) {
-                                        sCtx.fillRect(cx + dx, cy + dy, 1, 1);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (props.type === 'dither') {
-                    const half = Math.floor(size / 2);
-                    for (let dy = -half; dy <= half; dy++) {
-                        for (let dx = -half; dx <= half; dx++) {
-                            if ((cx + dx + cy + dy) % 2 === 0) {
-                                sCtx.fillRect(cx + dx, cy + dy, 1, 1);
-                            }
-                        }
-                    }
-                } else if (props.type === 'pattern') {
-                    const radius = Math.floor(size / 2);
-                    const patObj = WigglyConfig.patterns[WigglyTools.selectedPatternIdx] || WigglyConfig.patterns[0];
-                    const activePat = patObj ? patObj.frames[frameIndex % patObj.frames.length] : null;
-
-                    for (let dy = -radius; dy <= radius; dy++) {
-                        for (let dx = -radius; dx <= radius; dx++) {
-                            const curX = cx + dx;
-                            const curY = cy + dy;
-                            const patX = ((curX % 8) + 8) % 8;
-                            const patY = ((curY % 8) + 8) % 8;
-                            if (activePat && activePat[patY * 8 + patX] === 1) {
-                                sCtx.fillRect(curX, curY, 1, 1);
-                            }
-                        }
-                    }
-                }
-
-                this.stampCache.set(key, sCanvas);
-                return sCanvas;
-            }
-
             drawPixelStamp(ctx, x, y, props, jx = 0, jy = 0, frameIndex = 0) {
                 ctx.save();
                 ctx.globalCompositeOperation = props.composite;
@@ -1459,9 +1376,49 @@
                         ctx.fillRect(sx, sy, 1, 1);
                     }
                 } else {
-                    const stamp = this.getStampCanvas(props, frameIndex);
-                    const half = Math.floor(stamp.width / 2);
-                    ctx.drawImage(stamp, px - half, py - half);
+                    const size = props.size;
+                    const radius = Math.floor(size / 2);
+                    const isEraser = (props.composite === 'destination-out');
+                    const patObj = WigglyConfig.patterns[WigglyTools.selectedPatternIdx] || WigglyConfig.patterns[0];
+                    const activePat = (patObj && !isEraser) ? patObj.frames[frameIndex % patObj.frames.length] : null;
+
+                    ctx.fillStyle = props.color;
+
+                    const isInsideTipShape = (dx, dy) => {
+                        if (WigglyTools.brushTipShape === 'square') {
+                            return Math.abs(dx) <= radius && Math.abs(dy) <= radius;
+                        } else if (WigglyTools.brushTipShape === 'chisel') {
+                            const thick = Math.max(1, Math.floor(size / 3));
+                            return Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick;
+                        } else { // round
+                            if (size <= 2) {
+                                return Math.abs(dx) <= radius && Math.abs(dy) <= radius;
+                            }
+                            const r = size / 2;
+                            return (dx * dx + dy * dy) <= (r * r + 0.25);
+                        }
+                    };
+
+                    for (let dy = -radius; dy <= radius; dy++) {
+                        for (let dx = -radius; dx <= radius; dx++) {
+                            if (isInsideTipShape(dx, dy)) {
+                                const canvasX = px + dx;
+                                const canvasY = py + dy;
+
+                                if (isEraser) {
+                                    ctx.fillRect(canvasX, canvasY, 1, 1);
+                                } else if (activePat) {
+                                    const patX = ((canvasX % 8) + 8) % 8;
+                                    const patY = ((canvasY % 8) + 8) % 8;
+                                    if (activePat[patY * 8 + patX] === 1) {
+                                        ctx.fillRect(canvasX, canvasY, 1, 1);
+                                    }
+                                } else {
+                                    ctx.fillRect(canvasX, canvasY, 1, 1);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 ctx.restore();
@@ -1515,12 +1472,13 @@
 
                 WigglyConfig.patterns.forEach((patObj, idx) => {
                     const btn = document.createElement('button');
-                    const isActive = (idx === this.selectedPatternIdx && this.currentTool === 'pattern');
+                    const isActive = (idx === this.selectedPatternIdx);
                     btn.className = `retro-btn h-8 w-full p-0 flex items-center justify-center relative ${isActive ? 'active' : ''}`;
                     btn.title = `${patObj.isDynamic ? '[動態] ' : ''}${patObj.name} (#${idx + 1})`;
                     btn.onclick = () => {
                         this.selectedPatternIdx = idx;
-                        this.selectTool('pattern');
+                        this.updateActivePatternButtonUI();
+                        WigglyAudio.play('pop');
                     };
 
                     const pCanvas = document.createElement('canvas');
@@ -1545,16 +1503,18 @@
                 });
             }
 
+            updateActivePatternButtonUI() {
+                document.querySelectorAll('#pattern-buttons-grid .retro-btn').forEach((btn, idx) => {
+                    btn.classList.toggle('active', idx === this.selectedPatternIdx);
+                });
+            }
+
             selectTool(toolName) {
                 this.currentTool = toolName;
                 WigglyAudio.play('pop');
 
                 document.querySelectorAll('#tool-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('#markers-group .retro-btn').forEach(btn => btn.classList.remove('active'));
-
-                if (toolName !== 'pattern') {
-                    document.querySelectorAll('#pattern-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
-                }
 
                 const activeStdBtn = document.querySelector(`[data-tool="${toolName}"]`);
                 if (activeStdBtn) {
@@ -1565,19 +1525,18 @@
                 }
             }
 
+            // Standard pure black ink properties for classic Pen, Pencil & Ballpoint
             getToolProps(tool) {
                 const baseSize = this.brushPt;
                 switch (tool) {
                     case 'pen':
-                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 0.2, type: 'pixel' };
                     case 'pencil':
-                        return { color: '#222222', size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
+                        return { color: '#000000', size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.9, composite: 'source-over', jitter: 1.2, type: 'pixel' };
                     case 'ballpoint':
-                        return { color: '#001166', size: 1, alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
+                        return { color: '#000000', size: Math.min(2, Math.max(1, Math.floor(baseSize * 0.5))), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pixel' };
                     case 'spray':
-                        return { color: '#222222', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
-                    case 'pattern':
-                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
                     case 'eraser':
                         return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'destination-out', jitter: 0.5, type: 'pixel' };
                     default:
@@ -1637,6 +1596,8 @@
 
             getCanvasCoordinates(e) {
                 const rect = WigglyEngine.visibleCanvas.getBoundingClientRect();
+                if (!rect.width || !rect.height) return { x: 0, y: 0 };
+
                 const scaleX = WigglyEngine.width / rect.width;
                 const scaleY = WigglyEngine.height / rect.height;
 
@@ -1646,6 +1607,9 @@
                 if (e.touches && e.touches.length > 0) {
                     clientX = e.touches[0].clientX;
                     clientY = e.touches[0].clientY;
+                } else if (e.changedTouches && e.changedTouches.length > 0) {
+                    clientX = e.changedTouches[0].clientX;
+                    clientY = e.changedTouches[0].clientY;
                 }
 
                 return {
@@ -1655,7 +1619,7 @@
             }
 
             startDrawing(e) {
-                e.preventDefault();
+                if (e.cancelable) e.preventDefault();
                 WigglyHistory.saveState();
                 this.isDrawing = true;
                 
@@ -1677,9 +1641,15 @@
 
             draw(e) {
                 if (!this.isDrawing) return;
-                e.preventDefault();
+                if (e.cancelable) e.preventDefault();
 
-                const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
+                let events = [e];
+                if (e.getCoalescedEvents && typeof e.getCoalescedEvents === 'function') {
+                    try {
+                        const coalesced = e.getCoalescedEvents();
+                        if (coalesced && coalesced.length > 0) events = coalesced;
+                    } catch(err) {}
+                }
 
                 for (let i = 0; i < events.length; i++) {
                     const coords = this.getCanvasCoordinates(events[i]);
@@ -1712,7 +1682,7 @@
             stopDrawing(e) {
                 if (this.isDrawing) {
                     this.isDrawing = false;
-                    if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
+                    if (e && e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
                         try { e.target.releasePointerCapture(e.pointerId); } catch(err) {}
                     }
                 }
@@ -1812,6 +1782,8 @@
 
             bindCanvasInputEvents() {
                 const canvas = WigglyEngine.visibleCanvas;
+                if (!canvas) return;
+
                 if (window.PointerEvent) {
                     canvas.addEventListener('pointerdown', e => this.startDrawing(e));
                     canvas.addEventListener('pointermove', e => this.draw(e));
@@ -2138,7 +2110,7 @@
         }
         const WigglyApp = new WigglyAppModule();
 
-        // Launch app on load
+        // Launch app on window load
         window.onload = function () {
             WigglyApp.init();
         };

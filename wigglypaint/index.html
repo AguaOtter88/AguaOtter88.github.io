@@ -33,10 +33,10 @@
         /* Retro Decker 3D Bevel Borders */
         .retro-box {
             background-color: #c3c3c3;
-            border-top: 3px solid #ffffff;
-            border-left: 3px solid #ffffff;
-            border-bottom: 3px solid #404040;
-            border-right: 3px solid #404040;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-bottom: 2px solid #404040;
+            border-right: 2px solid #404040;
             box-shadow: inset 1px 1px 0px #e0e0e0, inset -1px -1px 0px #808080;
         }
 
@@ -165,6 +165,7 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs sm:text-sm"></i>
+				
                 <span class="font-bold tracking-wide text-xs sm:text-sm">WIGGLYPAINT v2.5.8</span>
             </div>
             <div class="flex items-center gap-1">
@@ -321,9 +322,11 @@
             
             <!-- LEFT COLUMN: Stabilizer -> Basic Tools -> Markers -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
-                <!-- 1. Basic Pixel Tools -->
+
+                <!-- 2. Basic Pixel Tools -->
                 <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
-                    前景基礎像素工具
+				<i class="fa-solid fa-pencil text-gray-800 w-3.5 text-center text-[10px]"></i>
+                    筆刷工具
                 </div>
 
                 <div class="grid grid-cols-2 gap-1" id="tool-buttons-grid">
@@ -361,9 +364,11 @@
                 </div>
 
                 <!-- 3. Markers Group -->
-                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
-                    上色工具
+				
+				<div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
+				<span><i class="fa-solid fa-highlighter mr-1"></i>麥克筆專區</span>
                 </div>
+
 
                 <div class="flex flex-col gap-1" id="markers-group">
                     <!-- Marker 1: Pink -->
@@ -373,7 +378,9 @@
                             <span id="label-marker1" class="text-[11px] font-bold truncate">粉紅麥克筆</span>
                         </div>
                         <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation();">
+						
                             <input type="color" id="picker-marker1" value="#FF5588" title="顏色" oninput="WigglyTools.updateMarkerColor('marker1', this.value)">
+							
                         </div>
                     </div>
 
@@ -492,18 +499,7 @@
 
             <!-- RIGHT COLUMN: Undo/Redo -> Live Thumbnail -> Screentones (18 Patterns) -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
-
-                <!-- 1. Hand Tremor Stabilizer -->
-                <div class="flex flex-col gap-1 bg-gray-200 p-1.5 rounded border border-gray-300 shadow-sm">
-                    <div class="flex items-center justify-between text-[11px]">
-                        <span class="font-bold text-gray-800 whitespace-nowrap flex items-center gap-1">
-                            <i class="fa-solid fa-hand-sparkles text-indigo-700"></i>手震修正
-                        </span>
-                        <span id="stabilizer-value-badge" class="text-[10px] font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 px-1 rounded whitespace-nowrap">Lv. 3</span>
-                    </div>
-                    <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
-                </div>
-				
+                
                 <!-- 1. Undo / Redo -->
                 <div class="grid grid-cols-2 gap-1">
                     <button class="retro-btn h-7 px-1 text-emerald-900 text-xs" onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">
@@ -514,16 +510,27 @@
                     </button>
                 </div>
 
-                <!--  Screentone Patterns (18 Patterns, 3-Column Grid) -->
-                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider flex items-center justify-between gap-1 shadow-sm mt-0.5">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-border-none text-gray-800"></i>網點圖案</span>
-                    <span id="pattern-count-badge" class="text-[9px] bg-indigo-100 text-indigo-800 border border-indigo-300 px-1 rounded font-mono">18種</span>
+                <!-- 3. Screentone Patterns (18 Patterns, 3-Column Grid) -->
+
+                <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
+				<span class="flex items-center gap-1"><i class="fa-solid fa-border-none text-gray-800"></i>網點圖案</span>
                 </div>
+
 
                 <div class="retro-box-inset p-1 grid grid-cols-3 gap-1 bg-gray-200 overflow-y-auto max-h-[220px] lg:max-h-[250px]" id="pattern-buttons-grid">
                     <!-- Dynamic 18 Pattern Buttons inserted here -->
                 </div>
-
+				
+                <div class="flex flex-col gap-1 bg-gray-200 p-1.5 rounded border border-gray-300 shadow-sm">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-gray-800 whitespace-nowrap flex items-center gap-1">
+                            <i class="fa-solid fa-hand-sparkles text-indigo-700"></i>手震修正
+                        </span>
+                        <span id="stabilizer-value-badge" class="text-[10px] font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 px-1 rounded whitespace-nowrap">Lv. 3</span>
+                    </div>
+                    <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
+                </div>
+				
             </div>
         </div>
 

@@ -321,19 +321,7 @@
             
             <!-- LEFT COLUMN: Stabilizer -> Basic Tools -> Markers -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
-                
-                <!-- 1. Hand Tremor Stabilizer -->
-                <div class="flex flex-col gap-1 bg-gray-200 p-1.5 rounded border border-gray-300 shadow-sm">
-                    <div class="flex items-center justify-between text-[11px]">
-                        <span class="font-bold text-gray-800 whitespace-nowrap flex items-center gap-1">
-                            <i class="fa-solid fa-hand-sparkles text-indigo-700"></i>手震修正
-                        </span>
-                        <span id="stabilizer-value-badge" class="text-[10px] font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 px-1 rounded whitespace-nowrap">Lv. 3</span>
-                    </div>
-                    <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
-                </div>
-
-                <!-- 2. Basic Pixel Tools -->
+                <!-- 1. Basic Pixel Tools -->
                 <div class="text-[11px] font-bold bg-gray-300 px-1.5 py-0.5 border border-gray-400 text-center uppercase tracking-wider shadow-sm">
                     基礎像素工具
                 </div>
@@ -505,7 +493,18 @@
 
             <!-- RIGHT COLUMN: Undo/Redo -> Live Thumbnail -> Screentones (18 Patterns) -->
             <div class="w-full lg:w-52 flex flex-col gap-1.5 shrink-0">
-                
+
+                <!-- 1. Hand Tremor Stabilizer -->
+                <div class="flex flex-col gap-1 bg-gray-200 p-1.5 rounded border border-gray-300 shadow-sm">
+                    <div class="flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-gray-800 whitespace-nowrap flex items-center gap-1">
+                            <i class="fa-solid fa-hand-sparkles text-indigo-700"></i>手震修正
+                        </span>
+                        <span id="stabilizer-value-badge" class="text-[10px] font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 px-1 rounded whitespace-nowrap">Lv. 3</span>
+                    </div>
+                    <input type="range" id="stabilizer-range" min="0" max="10" value="3" step="1" class="w-full h-2 accent-indigo-700 cursor-pointer" oninput="WigglyTools.setStabilizer(this.value)" title="調整手震平滑化程度 (0 = 關閉, 10 = 防手抖)">
+                </div>
+				
                 <!-- 1. Undo / Redo -->
                 <div class="grid grid-cols-2 gap-1">
                     <button class="retro-btn h-7 px-1 text-emerald-900 text-xs" onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">

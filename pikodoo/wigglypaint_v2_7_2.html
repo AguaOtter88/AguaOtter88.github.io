@@ -1,0 +1,1312 @@
+<!-- ... existing code ... -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WigglyPaint v2.7.2 - 復古像素抖動塗鴉板</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+<!-- ... existing code ... -->
+        /* Crisp Pixel Rendering */
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
+            touch-action: none;
+        }
+
+        #canvas-container {
+            width: 100%;
+            max-width: 568px;
+            height: 428px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Win98 Range Sliders */
+        input[type=range] {
+<!-- ... existing code ... -->
+        <!-- Windows Style Title Bar -->
+        <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-pen-nib text-yellow-300 text-xs"></i>
+                <span class="font-bold tracking-wide text-xs">WIGGLYPAINT v2.7.2</span>
+            </div>
+            <div class="flex items-center gap-1">
+                <span id="titlebar-tagline" class="text-[11px] text-blue-200 font-sans hidden sm:inline" data-i18n="app_tagline">~ 順暢像素風格 3幀動態繪圖板 ~</span>
+            </div>
+        </div>
+<!-- ... existing code ... -->
+                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyTools.selectTool('marker_eraser'); WigglyUI.closeAllMenus();">
+                        <span><i class="fa-solid fa-eraser text-amber-600 w-4"></i><span data-i18n="tool_marker_eraser_full">麥克筆橡皮擦 (Marker)</span></span>
+                        <span class="text-[10px] opacity-75">6 / Shift+E</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyTools.selectTool('hand'); WigglyUI.closeAllMenus();">
+                        <span><i class="fa-solid fa-hand text-indigo-700 w-4"></i><span data-i18n="tool_hand_full">手掌拖移 (Hand)</span></span>
+                        <span class="text-[10px] opacity-75">H / Space</span>
+                    </button>
+
+                    <div class="border-t border-gray-400 my-1"></div>
+<!-- ... existing code ... -->
+            <!-- View Menu -->
+            <div class="relative inline-block menu-dropdown-container">
+                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
+                <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
+                    
+                    <!-- Zoom View Options -->
+                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();">
+                        <span><i class="fa-solid fa-magnifying-glass-plus w-4"></i><span data-i18n="menu_zoom_in">放大畫布 (Zoom In)</span></span>
+                        <span class="text-[10px] opacity-75">+</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();">
+                        <span><i class="fa-solid fa-magnifying-glass-minus w-4"></i><span data-i18n="menu_zoom_out">縮小畫布 (Zoom Out)</span></span>
+                        <span class="text-[10px] opacity-75">-</span>
+                    </button>
+                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();">
+                        <span><i class="fa-solid fa-arrows-to-dot w-4"></i><span data-i18n="menu_zoom_reset">重設縮放 (100%)</span></span>
+                        <span class="text-[10px] opacity-75">Ctrl+0</span>
+                    </button>
+
+                    <div class="border-t border-gray-400 my-1"></div>
+
+                    <!-- Language Selection Submenu Section -->
+                    <div class="px-3 py-0.5 text-[10px] font-bold text-gray-700 bg-gray-300 flex items-center justify-between">
+<!-- ... existing code ... -->
+                            <!-- Dedicated Marker Eraser -->
+                            <button class="retro-btn h-7 w-full justify-start px-1.5" data-tool="marker_eraser" onclick="WigglyTools.selectTool('marker_eraser')" title="麥克筆橡皮擦 (6 / Shift+E)">
+                                <i class="fa-solid fa-eraser text-amber-600 w-3.5 text-center text-[10px]"></i>
+                                <span class="truncate text-[11px]" data-i18n="tool_marker_eraser">麥克筆擦</span>
+                            </button>
+
+                            <!-- Hand / Pan Tool -->
+                            <button class="retro-btn h-7 w-full justify-start px-1.5 col-span-2" data-tool="hand" onclick="WigglyTools.selectTool('hand')" title="手掌拖移畫布 (H / 按住空白鍵拖曳)">
+                                <i class="fa-solid fa-hand text-indigo-700 w-3.5 text-center text-[10px]"></i>
+                                <span class="truncate text-[11px]" data-i18n="tool_hand">手掌拖移 (Pan)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Markers Group -->
+<!-- ... existing code ... -->
+                        <!-- Pressure Toggle -->
+                        <div class="flex items-center gap-1 win98-inset px-1.5 py-0.5 shrink-0 h-7">
+                            <button id="btn-pressure-mode" class="retro-btn h-5 text-[10px] px-1.5 active" onclick="WigglyTools.togglePressureSensitivity()" title="繪圖板/觸控筆 筆壓感應模式 (快捷鍵: P)">
+                                <i class="fa-solid fa-feather-pointed text-[9px]"></i>
+                                <span id="pressure-btn-text" data-i18n="btn_pressure">筆壓</span>
+                            </button>
+                            <button class="retro-btn h-5 text-[10px] px-1" onclick="WigglyViewport.resetZoom()" title="重設畫布倍率與位置 (Ctrl+0)">
+                                <i class="fa-solid fa-arrows-to-dot text-[9px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Viewport Box -->
+                    <div id="canvas-container" class="retro-box-inset p-1 relative checkerboard inline-flex items-center justify-center overflow-hidden transition-none shadow-md">
+                        <canvas id="visibleCanvas" width="560" height="420" class="block cursor-crosshair max-w-none bg-white will-change-transform"></canvas>
+                    </div>
+                    
+                    <!-- Status Bar Panels (Win98 Style - 4 Columns) -->
+                    <div class="mt-1.5 w-full max-w-[568px] grid grid-cols-4 gap-1 text-[11px] font-sans">
+                        <div id="canvas-dim-indicator" class="win98-inset px-1.5 py-0.5 text-center font-bold text-gray-800 truncate" title="畫布解析度">
+                            560 x 420 像素
+                        </div>
+                        <div id="canvas-zoom-indicator" class="win98-inset px-1.5 py-0.5 text-center font-bold text-blue-900 truncate cursor-pointer hover:bg-[#d8d8d8]" title="點擊重置為 100% (快捷鍵: Ctrl+0)" onclick="WigglyViewport.resetZoom()">
+                            100% 縮放
+                        </div>
+                        <div id="canvas-coords-indicator" class="win98-inset px-1.5 py-0.5 text-center font-mono font-bold text-gray-800 truncate" title="游標座標">
+                            X: --, Y: --
+                        </div>
+                        <div id="autosave-indicator" class="win98-inset px-1.5 py-0.5 text-center font-bold text-emerald-800 truncate flex items-center justify-center gap-1" title="自動存檔狀態">
+                            <i class="fa-solid fa-cloud text-[10px]"></i>
+                            <span id="autosave-text" data-i18n="status_saved">已自動保存</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Undo/Redo -> Screentones -> Tremor Stabilizer (Width Fixed 208px) -->
+<!-- ... existing code ... -->
+                <fieldset class="win98-fieldset">
+                    <legend class="win98-legend" data-i18n="help_tools_title">🛠️ 繪圖工具指南</legend>
+                    <ul class="list-disc list-inside space-y-1 text-gray-800 text-[11px]">
+                        <li data-i18n="help_tools_1"><strong>鋼筆 / 鉛筆 / 圓珠筆 / 噴槍</strong>：共用「前景顏色」，並可搭配 18 款網點。</li>
+                        <li data-i18n="help_tools_2"><strong>筆壓感應 (Pressure)</strong>：支援繪圖板與感壓觸控筆，依下筆力道自動調節粗細。</li>
+                        <li data-i18n="help_tools_3"><strong>全擦 / 麥克筆擦</strong>：全擦抹除所有內容；麥克筆擦則只清除底層麥克筆，保留線稿。</li>
+                        <li data-i18n="help_tools_4"><strong>滾輪縮放 & 手掌拖移</strong>：滾動滑鼠滾輪縮放畫布（25%~800%）；按住空白鍵 Space 或滑鼠中鍵可自由拖動畫布。</li>
+                    </ul>
+                </fieldset>
+
+                <fieldset class="win98-fieldset">
+                    <legend class="win98-legend" data-i18n="help_shortcuts_title">⌨️ 鍵盤快捷鍵</legend>
+                    <div class="grid grid-cols-2 gap-1 font-mono text-[10px] text-gray-900">
+                        <div><kbd class="retro-box-inset px-1 py-0.2">1 ~ 4</kbd> : <span data-i18n="sc_1_4">基礎繪圖工具</span></div>
+                        <div><kbd class="retro-box-inset px-1 py-0.2">5 / 6 / H</kbd> : <span data-i18n="sc_5_6_h">全擦 / 麥克筆擦 / 手掌</span></div>
+                        <div><kbd class="retro-box-inset px-1 py-0.2">滾輪 / Space</kbd> : <span data-i18n="sc_zoom_pan">縮放 / 拖移動畫布</span></div>
+                        <div><kbd class="retro-box-inset px-1 py-0.2">Ctrl+0</kbd> : <span data-i18n="sc_zoom_reset">重設 100% 縮放</span></div>
+                    </div>
+                </fieldset>
+
+                <div class="flex justify-end pt-1 border-t border-gray-400">
+<!-- ... existing code ... -->
+            <div class="p-3 sm:p-4 flex flex-col gap-2.5 overflow-y-auto text-xs leading-relaxed bg-[#c3c3c3]">
+                <!-- v2.7.2 -->
+                <fieldset class="win98-fieldset">
+                    <legend class="win98-legend">v2.7.2 (滾輪縮放畫布與手掌拖移視角 / Canvas Zoom & Pan)</legend>
+                    <ul class="list-disc list-inside space-y-0.5 text-gray-800 text-[11px]">
+                        <li><strong>滑鼠滾輪自由縮放</strong>：支援 25% 至 800% 縮放倍率，精細描繪像素細節。</li>
+                        <li><strong>手掌拖移動畫布 (Pan Tool)</strong>：支援按住 <kbd>Space</kbd> 或滑鼠中鍵平移畫布視角。</li>
+                        <li><strong>倍率即時顯示與一鍵重設</strong>：狀態列第二格顯示當前縮放倍率，點擊或按 <kbd>Ctrl+0</kbd> 即重置。</li>
+                    </ul>
+                </fieldset>
+
+                <!-- v2.7.0 -->
+                <fieldset class="win98-fieldset">
+                    <legend class="win98-legend">v2.7.0 (版面結構與視覺樣式平衡重構 / Layout & Alignment)</legend>
+<!-- ... existing code ... -->
+            // Multi-language Translation Dictionaries
+            i18n: {
+                'zh-TW': {
+                    app_tagline: "~ 順暢像素風格 3幀動態繪圖板 ~",
+                    menu_file: "檔案(<u>F</u>)",
+                    menu_new_canvas: "開新畫布",
+                    menu_open_file: "開啟圖檔...",
+                    menu_export_gif: "匯出 GIF 動畫...",
+                    menu_clear_canvas: "清空畫布",
+                    menu_edit: "編輯(<u>E</u>)",
+                    menu_undo: "復原 (Undo)",
+                    menu_redo: "重做 (Redo)",
+                    menu_pressure: "筆壓感應 (Pressure)",
+                    menu_tip_shape_switch: "筆尖形狀切換",
+                    menu_shape_round: "圓形筆尖 (Round)",
+                    menu_shape_square: "方形筆尖 (Square)",
+                    menu_shape_chisel: "斜角筆尖 (Chisel)",
+                    menu_mirror_switch: "鏡像仿筆功能",
+                    menu_mirror_h: "水平鏡像仿筆 (↔)",
+                    menu_mirror_v: "垂直鏡像仿筆 (↕)",
+                    menu_canvas_size: "畫布尺寸與裁切...",
+                    menu_tools: "工具(<u>T</u>)",
+                    tool_pen_full: "鋼筆 (Pen)",
+                    tool_pencil_full: "鉛筆 (Pencil)",
+                    tool_ballpoint_full: "圓珠筆 (Ballpoint)",
+                    tool_spray_full: "噴漆槍 (Spray)",
+                    tool_eraser_full: "全域橡皮擦 (All)",
+                    tool_marker_eraser_full: "麥克筆橡皮擦 (Marker)",
+                    tool_hand_full: "手掌拖移 (Hand)",
+                    menu_marker_switch: "麥克筆切換",
+                    marker_6colors: "6色",
+                    marker_1: "粉紅麥克筆",
+                    marker_2: "青藍麥克筆",
+                    marker_3: "亮黃麥克筆",
+                    marker_c1: "自訂麥克筆 A",
+                    marker_c2: "自訂麥克筆 B",
+                    marker_c3: "自訂麥克筆 C",
+                    menu_view: "檢視(<u>V</u>)",
+                    menu_zoom_in: "放大畫布 (Zoom In)",
+                    menu_zoom_out: "縮小畫布 (Zoom Out)",
+                    menu_zoom_reset: "重設縮放 (100%)",
+                    menu_language: "切換語言 (Language)",
+                    menu_sound: "音效回饋 (SFX)",
+                    menu_options: "畫布與主題設定...",
+                    menu_help: "說明(<u>H</u>)",
+                    menu_help_guide: "使用說明指南...",
+                    menu_changelog: "版本更新紀錄...",
+                    group_brushes: "筆刷工具",
+                    tool_pen: "鋼筆",
+                    tool_pencil: "鉛筆",
+                    tool_ballpoint: "圓珠筆",
+                    tool_spray: "噴漆槍",
+                    tool_eraser: "全擦",
+                    tool_marker_eraser: "麥克筆擦",
+                    tool_hand: "手掌拖移",
+                    group_markers: "麥克筆專區",
+                    lbl_size: "尺寸:",
+                    lbl_shape: "形狀:",
+                    btn_round: "圓",
+                    btn_square: "方",
+                    btn_chisel: "斜",
+                    lbl_mirror: "鏡像:",
+                    btn_mirror_h: "↔ 水平",
+                    btn_mirror_v: "↕ 垂直",
+                    btn_pressure: "筆壓",
+                    status_pixels: "像素",
+                    status_zoom: "倍率",
+                    status_saved: "已自動保存",
+                    status_saving: "正在保存...",
+                    btn_undo: "復原 (<u>U</u>)",
+                    btn_redo: "重做 (<u>R</u>)",
+                    group_screentones: "網點圖案",
+                    group_stabilizer: "手震修正",
+                    lbl_level: "修正等級:",
+                    stabilizer_off: "關閉",
+                    action_export_gif: "匯出 GIF...",
+                    action_canvas_size: "畫布尺寸...",
+                    action_options: "設定選項...",
+                    action_clear_canvas: "清空畫布",
+                    crop_title: "設定畫布尺寸與裁切",
+                    crop_group_resolution: "畫布解析度設定 (像素)",
+                    crop_lbl_width: "寬度 (Width):",
+                    crop_lbl_height: "高度 (Height):",
+                    crop_lbl_presets: "常用尺寸:",
+                    crop_btn_apply_resolution: "套用指定寬高",
+                    crop_group_tight: "智慧一鍵去邊",
+                    crop_desc_tight: "自動偵測目前作畫筆跡，切除畫布四周多餘的空白範圍。",
+                    crop_btn_tight: "自動緊密裁切畫布",
+                    crop_group_manual: "手動修剪四邊邊界 (px)",
+                    crop_top: "上方裁切:",
+                    crop_bottom: "下方裁切:",
+                    crop_left: "左側裁切:",
+                    crop_right: "右側裁切:",
+                    crop_btn_apply_manual: "套用邊緣裁切",
+                    btn_close: "關閉",
+                    btn_confirm: "確定",
+                    options_title: "畫布與色彩主題設定",
+                    options_group_colors: "畫布色彩與音效",
+                    options_lbl_bg: "畫布背景顏色 (底色):",
+                    options_lbl_fg: "畫布前景顏色 (線稿筆刷):",
+                    options_lbl_sound: "音效回饋 (Sound FX):",
+                    options_group_presets: "預設調色盤主題 (背景/前景與 6 色麥克筆)",
+                    preset_classic: "經典 Y2K",
+                    preset_retro: "復古奶油",
+                    preset_cyber: "賽博霓虹",
+                    preset_morandi: "日系莫蘭迪",
+                    preset_gameboy: "復古掌機",
+                    preset_macaron: "夢幻馬卡龍",
+                    export_title: "匯出動態 GIF 動畫",
+                    export_encoding: "正在編碼 3 幀抖動 GIF 動畫中...",
+                    export_download: "下載 GIF 圖檔",
+                    help_title: "WigglyPaint 使用說明指南",
+                    help_feature_title: "✨ 繪圖特色與原理",
+                    help_feature_desc: "WigglyPaint 在您作畫時，會自動同步生成 3 個具備有機微震幅的動態影格，並以 10 FPS 循環播放，賦予像素塗鴉如同早期手繪逐格動畫般的生動跳躍感！",
+                    help_tools_title: "🛠️ 繪圖工具指南",
+                    help_tools_1: "<strong>鋼筆 / 鉛筆 / 圓珠筆 / 噴槍</strong>：共用「前景顏色」，並可搭配 18 款網點。",
+                    help_tools_2: "<strong>筆壓感應 (Pressure)</strong>：支援繪圖板與感壓觸控筆，依下筆力道自動調節粗細。",
+                    help_tools_3: "<strong>全擦 / 麥克筆擦</strong>：全擦抹除所有內容；麥克筆擦則只清除底層麥克筆，保留線稿。",
+                    help_tools_4: "<strong>滾輪縮放 & 手掌拖移</strong>：滾動滑鼠滾輪縮放畫布（25%~800%）；按住空白鍵 Space 或滑鼠中鍵可自由拖動畫布。",
+                    help_shortcuts_title: "⌨️ 鍵盤快捷鍵",
+                    sc_1_4: "基礎繪圖工具",
+                    sc_5_6_h: "全擦 / 麥克筆擦 / 手掌",
+                    sc_zoom_pan: "縮放 / 拖移動畫布",
+                    sc_zoom_reset: "重設 100% 縮放",
+                    changelog_title: "版本更新紀錄 (Changelog)",
+                    pat_solid: "純黑實心",
+                    pat_checker50: "50% 棋盤點陣",
+                    pat_dot25: "25% 細網點",
+                    pat_dot75: "75% 濃密網點",
+                    pat_dot12: "12.5% 稀疏點",
+                    pat_dot6: "6.25% 超微點",
+                    pat_hline: "水平橫線",
+                    pat_vline: "垂直直線",
+                    pat_diag_r: "正斜線 /",
+                    pat_diag_l: "反斜線 \\",
+                    pat_grid_square: "正方網格 #",
+                    pat_grid_cross: "斜向網格 X",
+                    pat_brick: "磚牆紋理",
+                    pat_tv_noise: "⚡ TV 噪訊",
+                    pat_rain: "🌧️ 下雨動態",
+                    pat_stars: "💫 閃爍星空",
+                    pat_stripes: "🌀 滾動斜條",
+                    pat_waves: "🌊 流動波浪"
+                },
+                'en': {
+                    app_tagline: "~ Smooth Pixel 3-Frame Animated Doodler ~",
+                    menu_file: "File(<u>F</u>)",
+                    menu_new_canvas: "New Canvas",
+                    menu_open_file: "Open Image...",
+                    menu_export_gif: "Export Animated GIF...",
+                    menu_clear_canvas: "Clear Canvas",
+                    menu_edit: "Edit(<u>E</u>)",
+                    menu_undo: "Undo",
+                    menu_redo: "Redo",
+                    menu_pressure: "Pressure Sensitivity",
+                    menu_tip_shape_switch: "Tip Shape Switch",
+                    menu_shape_round: "Round Tip",
+                    menu_shape_square: "Square Tip",
+                    menu_shape_chisel: "Chisel Tip",
+                    menu_mirror_switch: "Mirror Drawing Mode",
+                    menu_mirror_h: "Horizontal Mirror (↔)",
+                    menu_mirror_v: "Vertical Mirror (↕)",
+                    menu_canvas_size: "Canvas Size & Crop...",
+                    menu_tools: "Tools(<u>T</u>)",
+                    tool_pen_full: "Pen Tool",
+                    tool_pencil_full: "Pencil Tool",
+                    tool_ballpoint_full: "Ballpoint Tool",
+                    tool_spray_full: "Spray Can Tool",
+                    tool_eraser_full: "Global Eraser (All)",
+                    tool_marker_eraser_full: "Marker Eraser (Marker)",
+                    tool_hand_full: "Hand Pan Tool (Hand)",
+                    menu_marker_switch: "Markers",
+                    marker_6colors: "6 Colors",
+                    marker_1: "Pink Marker",
+                    marker_2: "Cyan Marker",
+                    marker_3: "Yellow Marker",
+                    marker_c1: "Custom Marker A",
+                    marker_c2: "Custom Marker B",
+                    marker_c3: "Custom Marker C",
+                    menu_view: "View(<u>V</u>)",
+                    menu_zoom_in: "Zoom In Canvas",
+                    menu_zoom_out: "Zoom Out Canvas",
+                    menu_zoom_reset: "Reset Zoom (100%)",
+                    menu_language: "Language",
+                    menu_sound: "Sound FX",
+                    menu_options: "Canvas & Theme Settings...",
+                    menu_help: "Help(<u>H</u>)",
+                    menu_help_guide: "User Guide...",
+                    menu_changelog: "Version Changelog...",
+                    group_brushes: "Brushes",
+                    tool_pen: "Pen",
+                    tool_pencil: "Pencil",
+                    tool_ballpoint: "Ballpoint",
+                    tool_spray: "Spray",
+                    tool_eraser: "Eraser",
+                    tool_marker_eraser: "Marker Eraser",
+                    tool_hand: "Hand Pan",
+                    group_markers: "Markers Panel",
+                    lbl_size: "Size:",
+                    lbl_shape: "Shape:",
+                    btn_round: "Round",
+                    btn_square: "Square",
+                    btn_chisel: "Chisel",
+                    lbl_mirror: "Mirror:",
+                    btn_mirror_h: "↔ Horiz",
+                    btn_mirror_v: "↕ Vert",
+                    btn_pressure: "Pressure",
+                    status_pixels: "px",
+                    status_zoom: "Zoom",
+                    status_saved: "Auto-saved",
+                    status_saving: "Saving...",
+                    btn_undo: "Undo (<u>U</u>)",
+                    btn_redo: "Redo (<u>R</u>)",
+                    group_screentones: "Screentones",
+                    group_stabilizer: "Stabilizer",
+                    lbl_level: "Level:",
+                    stabilizer_off: "Off",
+                    action_export_gif: "Export GIF...",
+                    action_canvas_size: "Canvas Size...",
+                    action_options: "Options...",
+                    action_clear_canvas: "Clear Canvas",
+                    crop_title: "Canvas Resolution & Crop",
+                    crop_group_resolution: "Canvas Resolution (px)",
+                    crop_lbl_width: "Width:",
+                    crop_lbl_height: "Height:",
+                    crop_lbl_presets: "Presets:",
+                    crop_btn_apply_resolution: "Apply Resolution",
+                    crop_group_tight: "Smart Tight Crop",
+                    crop_desc_tight: "Automatically detect drawing bounds and trim outer empty whitespace.",
+                    crop_btn_tight: "Auto Tight Fit Canvas",
+                    crop_group_manual: "Manual 4-Way Crop (px)",
+                    crop_top: "Top Crop:",
+                    crop_bottom: "Bottom Crop:",
+                    crop_left: "Left Crop:",
+                    crop_right: "Right Crop:",
+                    crop_btn_apply_manual: "Apply Border Crop",
+                    btn_close: "Close",
+                    btn_confirm: "OK",
+                    options_title: "Canvas & Theme Settings",
+                    options_group_colors: "Canvas Colors & Audio",
+                    options_lbl_bg: "Canvas Background Color:",
+                    options_lbl_fg: "Canvas Foreground Color:",
+                    options_lbl_sound: "Sound Feedback (SFX):",
+                    options_group_presets: "Preset Themes (Background / Foreground & 6 Markers)",
+                    preset_classic: "Classic Y2K",
+                    preset_retro: "Retro Cream",
+                    preset_cyber: "Cyber Neon",
+                    preset_morandi: "Morandi Muted",
+                    preset_gameboy: "GameBoy Green",
+                    preset_macaron: "Sweet Macaron",
+                    export_title: "Export Animated GIF",
+                    export_encoding: "Encoding 3-frame wiggly GIF animation...",
+                    export_download: "Download GIF Image",
+                    help_title: "WigglyPaint User Guide",
+                    help_feature_title: "✨ Concept & Feature",
+                    help_feature_desc: "WigglyPaint automatically generates 3 organic sub-frame wiggles while you draw, looping at 10 FPS to give your pixel art hand-drawn flipbook life!",
+                    help_tools_title: "🛠️ Tool Guide",
+                    help_tools_1: "<strong>Pen / Pencil / Ballpoint / Spray</strong>: Shares foreground color with 18 screentone patterns.",
+                    help_tools_2: "<strong>Pressure Sensitivity</strong>: Supports pen tablets & stylus pens with dynamic stroke thickness.",
+                    help_tools_3: "<strong>Eraser vs Marker Eraser</strong>: Global Eraser clears all; Marker Eraser only removes underlying marker ink.",
+                    help_tools_4: "<strong>Zoom & Pan Canvas</strong>: Scroll mouse wheel to zoom (25%~800%); hold Space or Middle-click to pan around.",
+                    help_shortcuts_title: "⌨️ Keyboard Shortcuts",
+                    sc_1_4: "Basic Tools",
+                    sc_5_6_h: "Eraser / Marker Eraser / Hand",
+                    sc_zoom_pan: "Zoom / Pan Canvas",
+                    sc_zoom_reset: "Reset 100% Zoom",
+                    changelog_title: "Version Changelog",
+                    pat_solid: "Solid Black",
+                    pat_checker50: "50% Checkerboard",
+                    pat_dot25: "25% Fine Halftone",
+                    pat_dot75: "75% Dense Halftone",
+                    pat_dot12: "12.5% Sparse Dots",
+                    pat_dot6: "6.25% Micro Dots",
+                    pat_hline: "Horizontal Lines",
+                    pat_vline: "Vertical Lines",
+                    pat_diag_r: "Forward Slash /",
+                    pat_diag_l: "Backslash \\",
+                    pat_grid_square: "Square Grid #",
+                    pat_grid_cross: "Cross Grid X",
+                    pat_brick: "Brick Texture",
+                    pat_tv_noise: "⚡ TV Noise",
+                    pat_rain: "🌧️ Rain Dynamic",
+                    pat_stars: "💫 Twinkle Stars",
+                    pat_stripes: "🌀 Rolling Stripes",
+                    pat_waves: "🌊 Flowing Waves"
+                },
+                'ja': {
+                    app_tagline: "~ なめらかピクセル風 3コマ動的落書き板 ~",
+                    menu_file: "ファイル(<u>F</u>)",
+                    menu_new_canvas: "新規キャンバス",
+                    menu_open_file: "画像を開く...",
+                    menu_export_gif: "GIFアニメ出力...",
+                    menu_clear_canvas: "キャンバス消去",
+                    menu_edit: "編集(<u>E</u>)",
+                    menu_undo: "元に戻す (Undo)",
+                    menu_redo: "やり直す (Redo)",
+                    menu_pressure: "筆壓感知 (Pressure)",
+                    menu_tip_shape_switch: "ペン先形状切替",
+                    menu_shape_round: "丸ペン先 (Round)",
+                    menu_shape_square: "角ペン先 (Square)",
+                    menu_shape_chisel: "斜めペン先 (Chisel)",
+                    menu_mirror_switch: "ミラー描画機能",
+                    menu_mirror_h: "水平ミラー (↔)",
+                    menu_mirror_v: "垂直ミラー (↕)",
+                    menu_canvas_size: "キャンバスサイズ・トリミング...",
+                    menu_tools: "ツール(<u>T</u>)",
+                    tool_pen_full: "ペン (Pen)",
+                    tool_pencil_full: "鉛筆 (Pencil)",
+                    tool_ballpoint_full: "ボールペン (Ballpoint)",
+                    tool_spray_full: "スプレー (Spray)",
+                    tool_eraser_full: "全体消しゴム (All)",
+                    tool_marker_eraser_full: "マーカー専用消しゴム (Marker)",
+                    tool_hand_full: "手のひらツール (Hand)",
+                    menu_marker_switch: "マーカー切替",
+                    marker_6colors: "6色",
+                    marker_1: "ピンクマーカー",
+                    marker_2: "シアンマーカー",
+                    marker_3: "イエローマーカー",
+                    marker_c1: "カスタムマーカー A",
+                    marker_c2: "カスタムマーカー B",
+                    marker_c3: "カスタムマーカー C",
+                    menu_view: "表示(<u>V</u>)",
+                    menu_zoom_in: "キャンバス拡大 (Zoom In)",
+                    menu_zoom_out: "キャンバス縮小 (Zoom Out)",
+                    menu_zoom_reset: "倍率リセット (100%)",
+                    menu_language: "言語切替 (Language)",
+                    menu_sound: "効果音 (SFX)",
+                    menu_options: "キャンバス・テーマ設定...",
+                    menu_help: "ヘルプ(<u>H</u>)",
+                    menu_help_guide: "使い方ガイド...",
+                    menu_changelog: "更新履歴...",
+                    group_brushes: "ブラシツール",
+                    tool_pen: "ペン",
+                    tool_pencil: "鉛筆",
+                    tool_ballpoint: "ボールペン",
+                    tool_spray: "スプレー",
+                    tool_eraser: "全消し",
+                    tool_marker_eraser: "マーカー消し",
+                    tool_hand: "手のひら",
+                    group_markers: "マーカー専用",
+                    lbl_size: "サイズ:",
+                    lbl_shape: "形状:",
+                    btn_round: "丸",
+                    btn_square: "角",
+                    btn_chisel: "斜",
+                    lbl_mirror: "ミラー:",
+                    btn_mirror_h: "↔ 水平",
+                    btn_mirror_v: "↕ 垂直",
+                    btn_pressure: "筆壓",
+                    status_pixels: "ピクセル",
+                    status_zoom: "倍率",
+                    status_saved: "自動保存完了",
+                    status_saving: "保存中...",
+                    btn_undo: "元に戻す (<u>U</u>)",
+                    btn_redo: "やり直す (<u>R</u>)",
+                    group_screentones: "トーンパターン",
+                    group_stabilizer: "手ブレ補正",
+                    lbl_level: "補正レベル:",
+                    stabilizer_off: "オフ",
+                    action_export_gif: "GIF出力...",
+                    action_canvas_size: "サイズ...",
+                    action_options: "設定...",
+                    action_clear_canvas: "キャンバス消去",
+                    crop_title: "キャンバスサイズとトリミング設定",
+                    crop_group_resolution: "解像度設定 (ピクセル)",
+                    crop_lbl_width: "幅 (Width):",
+                    crop_lbl_height: "高さ (Height):",
+                    crop_lbl_presets: "プリセット:",
+                    crop_btn_apply_resolution: "サイズ適用",
+                    crop_group_tight: "スマート余白カット",
+                    crop_desc_tight: "描画範囲を自動検出し、周囲の不要な余白をトリミングします。",
+                    crop_btn_tight: "自動ぴったりトリミング",
+                    crop_group_manual: "手動4方向トリミング (px)",
+                    crop_top: "上部カット:",
+                    crop_bottom: "下部カット:",
+                    crop_left: "左側カット:",
+                    crop_right: "右側カット:",
+                    crop_btn_apply_manual: "境界トリミング適用",
+                    btn_close: "閉じる",
+                    btn_confirm: "OK",
+                    options_title: "キャンバスとカラーテーマ設定",
+                    options_group_colors: "キャンバスカラー・音声",
+                    options_lbl_bg: "背景カラー (下地):",
+                    options_lbl_fg: "前景カラー (線画ブラシ):",
+                    options_lbl_sound: "効果音フィードバック (SFX):",
+                    options_group_presets: "プリセットカラーパレット (背景/前景と6色マーカー)",
+                    preset_classic: "クラシック Y2K",
+                    preset_retro: "レトロクリーム",
+                    preset_cyber: "サイバーネオン",
+                    preset_morandi: "モランディ",
+                    preset_gameboy: "レトロ携帯機",
+                    preset_macaron: "スイートマカロン",
+                    export_title: "アニメーションGIF出力",
+                    export_encoding: "3コマ揺動GIFアニメーションを生成中...",
+                    export_download: "GIF画像をダウンロード",
+                    help_title: "WigglyPaint 操作説明ガイド",
+                    help_feature_title: "✨ 特徴と仕組み",
+                    help_feature_desc: "描画時に微小な有機的振動を持つ3コマを自動生成し、10 FPSでループ再生。昔の手描きパラパラマンガのような生きた躍動感を与えます！",
+                    help_tools_title: "🛠️ ツール解説",
+                    help_tools_1: "<strong>ペン / 鉛筆 / ボールペン / スプレー</strong>: 前景カラーを共有し、18種のトーンに対応。",
+                    help_tools_2: "<strong>筆壓感知 (Pressure)</strong>: ペンタブやスタイラスペンの筆壓に応じた動的な太さ変化をサポート。",
+                    help_tools_3: "<strong>全消し / マーカー消し</strong>: 全消しはすべて消去。マーカー消しは線画を残して下地マーカーのみ消去。",
+                    help_tools_4: "<strong>キャンバス拡大縮小・手のひら移動</strong>: マウスホイールで拡大縮小（25%~800%）。Spaceキー長押しまたは中クリックで自由に画面移動。",
+                    help_shortcuts_title: "⌨️ キーボードショートカット",
+                    sc_1_4: "基本描画ツール",
+                    sc_5_6_h: "全消し / マーカー消し / 手のひら",
+                    sc_zoom_pan: "拡大縮小 / 画面移動",
+                    sc_zoom_reset: "100%倍率リセット",
+                    changelog_title: "更新履歴 (Changelog)",
+                    pat_solid: "ベタ塗り黒",
+                    pat_checker50: "50% 市松ドット",
+                    pat_dot25: "25% 細トーン",
+                    pat_dot75: "75% 濃トーン",
+                    pat_dot12: "12.5% まばら点",
+                    pat_dot6: "6.25% 極微点",
+                    pat_hline: "横ストライプ",
+                    pat_vline: "縦ストライプ",
+                    pat_diag_r: "斜線 /",
+                    pat_diag_l: "逆斜線 \\",
+                    pat_grid_square: "正方グリッド #",
+                    pat_grid_cross: "斜めグリッド X",
+                    pat_brick: "レンガテクスチャ",
+                    pat_tv_noise: "⚡ TVノイズ",
+                    pat_rain: "🌧️ 雨アニメ",
+                    pat_stars: "💫 きらめく星空",
+                    pat_stripes: "🌀 回転斜縞",
+                    pat_waves: "🌊 流動ウェーブ"
+                }
+            }
+        };
+
+        // =========================================================================
+        // MODULE 2: WigglyAudio.js (Sound Synthesizer)
+<!-- ... existing code ... -->
+        }
+        const WigglyEngine = new WigglyEngineModule();
+
+        // =========================================================================
+        // MODULE 4.5: WigglyViewport.js (Zoom & Pan Navigation Engine)
+        // =========================================================================
+        class WigglyViewportModule {
+            constructor() {
+                this.zoom = 1.0;
+                this.panX = 0;
+                this.panY = 0;
+                this.isPanning = false;
+                this.isSpaceDown = false;
+                this.startX = 0;
+                this.startY = 0;
+                this.startPanX = 0;
+                this.startPanY = 0;
+            }
+
+            init() {
+                this.bindViewportEvents();
+                this.updateTransform();
+            }
+
+            setZoom(newZoom, originClientX, originClientY) {
+                const oldZoom = this.zoom;
+                newZoom = Math.max(0.25, Math.min(8.0, newZoom));
+                if (Math.abs(newZoom - oldZoom) < 0.001) return;
+
+                const container = document.getElementById('canvas-container');
+                if (container && originClientX !== undefined && originClientY !== undefined) {
+                    const rect = container.getBoundingClientRect();
+                    const cx = originClientX - (rect.left + rect.width / 2);
+                    const cy = originClientY - (rect.top + rect.height / 2);
+                    const scaleRatio = newZoom / oldZoom;
+                    this.panX = cx - (cx - this.panX) * scaleRatio;
+                    this.panY = cy - (cy - this.panY) * scaleRatio;
+                }
+
+                this.zoom = newZoom;
+                this.updateTransform();
+            }
+
+            zoomIn() {
+                this.setZoom(this.zoom * 1.25);
+                WigglyAudio.play('pop');
+            }
+
+            zoomOut() {
+                this.setZoom(this.zoom / 1.25);
+                WigglyAudio.play('pop');
+            }
+
+            resetZoom() {
+                this.zoom = 1.0;
+                this.panX = 0;
+                this.panY = 0;
+                this.updateTransform();
+                WigglyAudio.play('pop');
+            }
+
+            updateTransform() {
+                const canvas = document.getElementById('visibleCanvas');
+                if (canvas) {
+                    canvas.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+                    canvas.style.transformOrigin = 'center center';
+                }
+                this.updateIndicator();
+            }
+
+            updateIndicator() {
+                const indicator = document.getElementById('canvas-zoom-indicator');
+                if (indicator) {
+                    const pct = Math.round(this.zoom * 100);
+                    const lbl = WigglyUI.t('status_zoom');
+                    indicator.innerText = `${pct}% ${lbl}`;
+                }
+            }
+
+            bindViewportEvents() {
+                const container = document.getElementById('canvas-container');
+                if (!container) return;
+
+                // 滑鼠滾輪縮放 (Mouse Wheel Zoom)
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY < 0 ? 1.15 : 0.87;
+                    this.setZoom(this.zoom * delta, e.clientX, e.clientY);
+                }, { passive: false });
+
+                // 雙擊縮放重設 (Double Click Reset)
+                container.addEventListener('dblclick', (e) => {
+                    if (WigglyTools.currentTool === 'hand' || this.isSpaceDown) {
+                        this.resetZoom();
+                    }
+                });
+            }
+        }
+        const WigglyViewport = new WigglyViewportModule();
+
+        // =========================================================================
+        // MODULE 5: WigglyTools.js (Brushes, Markers, Tremor Stabilizer, Mirror, Pressure, Coordinates)
+        // =========================================================================
+        class WigglyToolsModule {
+            constructor() {
+                this.currentTool = 'pen';
+                this.previousTool = 'pen';
+                this.selectedPatternIdx = 0;
+                this.brushPt = 3;
+                this.brushTipShape = 'round';
+
+                this.isHorizontalMirror = false;
+                this.isVerticalMirror = false;
+                this.isPressureEnabled = true;
+
+                this.stabilizerLevel = 3;
+                this.isDrawing = false;
+
+                this.lastX = 0;
+                this.lastY = 0;
+                this.smoothedX = 0;
+                this.smoothedY = 0;
+                this.lastMidX = 0;
+                this.lastMidY = 0;
+
+                this.markerColors = { ...WigglyConfig.defaultMarkerColors };
+            }
+
+            init() {
+                this.renderPatternButtons();
+                this.bindCanvasInputEvents();
+                this.updatePressureUI();
+                this.updateShapeUI();
+                this.updateMirrorUI();
+            }
+
+            renderPatternButtons() {
+                const grid = document.getElementById('pattern-buttons-grid');
+                if (!grid) return;
+                grid.innerHTML = '';
+                WigglyEngine.dynamicPatternCanvases = [];
+
+                WigglyConfig.patterns.forEach((patObj, idx) => {
+                    const btn = document.createElement('button');
+                    const isActive = (idx === this.selectedPatternIdx && this.currentTool === 'pattern');
+                    btn.className = `retro-btn h-8 w-full p-0 flex items-center justify-center relative ${isActive ? 'active' : ''}`;
+                    const patName = WigglyUI.getPatternName(patObj);
+                    btn.title = `${patObj.isDynamic ? '[' + (WigglyUI.currentLang === 'en' ? 'Dynamic' : WigglyUI.currentLang === 'ja' ? '動的' : '動態') + '] ' : ''}${patName} (#${idx + 1})`;
+                    btn.onclick = () => {
+                        this.selectedPatternIdx = idx;
+                        this.selectTool('pattern');
+                    };
+
+                    const pCanvas = document.createElement('canvas');
+                    pCanvas.width = 16;
+                    pCanvas.height = 16;
+                    pCanvas.className = 'shrink-0';
+                    const pCtx = pCanvas.getContext('2d');
+
+                    WigglyEngine.drawPatternThumbnail(pCtx, patObj, 0);
+
+                    if (patObj.isDynamic) {
+                        WigglyEngine.dynamicPatternCanvases.push({ canvas: pCanvas, ctx: pCtx, patObj: patObj });
+                        
+                        const badge = document.createElement('span');
+                        badge.className = "text-[7px] font-bold text-black bg-yellow-300 border border-black px-0.5 leading-none absolute top-0.5 right-0.5 pointer-events-none";
+                        badge.innerText = WigglyUI.currentLang === 'en' ? 'ANI' : WigglyUI.currentLang === 'ja' ? '動' : '動';
+                        btn.appendChild(badge);
+                    }
+
+                    btn.appendChild(pCanvas);
+                    grid.appendChild(btn);
+                });
+            }
+
+            togglePressureSensitivity() {
+                this.isPressureEnabled = !this.isPressureEnabled;
+                this.updatePressureUI();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            updatePressureUI() {
+                const btn = document.getElementById('btn-pressure-mode');
+                if (btn) btn.classList.toggle('active', this.isPressureEnabled);
+                const menuCheck = document.getElementById('menu-check-pressure');
+                if (menuCheck) menuCheck.classList.toggle('opacity-0', !this.isPressureEnabled);
+            }
+
+            updateShapeUI() {
+                document.querySelectorAll('#tip-shape-buttons .retro-btn').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById(`btn-shape-${this.brushTipShape}`);
+                if (activeBtn) activeBtn.classList.add('active');
+
+                ['round', 'square', 'chisel'].forEach(shape => {
+                    const check = document.getElementById(`menu-check-shape-${shape}`);
+                    if (check) check.classList.toggle('opacity-0', this.brushTipShape !== shape);
+                });
+            }
+
+            updateMirrorUI() {
+                const btnH = document.getElementById('btn-mirror-h');
+                if (btnH) btnH.classList.toggle('active', this.isHorizontalMirror);
+                const menuH = document.getElementById('menu-check-mirror-h');
+                if (menuH) menuH.classList.toggle('opacity-0', !this.isHorizontalMirror);
+
+                const btnV = document.getElementById('btn-mirror-v');
+                if (btnV) btnV.classList.toggle('active', this.isVerticalMirror);
+                const menuV = document.getElementById('menu-check-mirror-v');
+                if (menuV) menuV.classList.toggle('opacity-0', !this.isVerticalMirror);
+            }
+
+            getEffectivePressure(e) {
+                if (!this.isPressureEnabled || !e) return 1.0;
+                if (e.pointerType === 'pen' || (typeof e.pressure === 'number' && e.pressure > 0 && e.pressure !== 0.5)) {
+                    const p = Math.max(0.05, Math.min(1.0, e.pressure));
+                    return 0.3 + 1.1 * p;
+                }
+                return 1.0;
+            }
+
+            selectTool(toolName) {
+                if (this.currentTool !== 'hand') {
+                    this.previousTool = this.currentTool;
+                }
+                this.currentTool = toolName;
+                WigglyAudio.play('pop');
+
+                document.querySelectorAll('#tool-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('#markers-group .retro-btn').forEach(btn => btn.classList.remove('active'));
+
+                if (toolName !== 'pattern') {
+                    document.querySelectorAll('#pattern-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
+                }
+
+                const activeStdBtn = document.querySelector(`[data-tool="${toolName}"]`);
+                if (activeStdBtn) {
+                    activeStdBtn.classList.add('active');
+                } else {
+                    const markerBtn = document.getElementById(`btn-${toolName}`);
+                    if (markerBtn) markerBtn.classList.add('active');
+                }
+
+                const canvas = document.getElementById('visibleCanvas');
+                if (canvas) {
+                    canvas.style.cursor = (toolName === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
+                }
+            }
+
+            getToolProps(tool, pressureRatio = 1.0) {
+                const baseSize = Math.max(1, Math.round(this.brushPt * pressureRatio));
+                
+                if (WigglyConfig.markerKeys.includes(tool)) {
+                    return {
+                        color: '#000000',
+                        size: Math.max(2, baseSize * 2),
+                        alpha: 1.0,
+                        composite: 'source-over',
+                        jitter: 1.0,
+                        type: 'pixel'
+                    };
+                }
+
+                switch (tool) {
+                    case 'pen':
+                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                    case 'pencil':
+                        return { color: '#000000', size: Math.max(1, Math.floor(baseSize * 0.8)), alpha: 0.8, composite: 'source-over', jitter: 1.5, type: 'dither' };
+                    case 'ballpoint':
+                        return { color: '#000000', size: Math.max(1, Math.round(pressureRatio)), alpha: 0.95, composite: 'source-over', jitter: 0.8, type: 'pixel' };
+                    case 'spray':
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
+                    case 'pattern':
+                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                    case 'eraser':
+                    case 'marker_eraser':
+                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'destination-out', jitter: 0.5, type: 'pixel' };
+                    default:
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                }
+            }
+
+            setStabilizer(val) {
+                this.stabilizerLevel = parseInt(val, 10);
+                const badge = document.getElementById('stabilizer-value-badge');
+                if (badge) {
+                    if (this.stabilizerLevel === 0) badge.innerText = WigglyUI.t('stabilizer_off');
+                    else badge.innerText = `Lv. ${this.stabilizerLevel}`;
+                }
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setBrushSize(val) {
+                this.brushPt = parseInt(val, 10);
+                const badge = document.getElementById('brush-pt-badge');
+                if (badge) badge.innerText = `${this.brushPt} pt`;
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setBrushTipShape(shape) {
+                this.brushTipShape = shape;
+                this.updateShapeUI();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            toggleMirror(axis) {
+                if (axis === 'h') {
+                    this.isHorizontalMirror = !this.isHorizontalMirror;
+                } else if (axis === 'v') {
+                    this.isVerticalMirror = !this.isVerticalMirror;
+                }
+                this.updateMirrorUI();
+                WigglyAudio.play('pop');
+            }
+
+            updateMarkerColor(markerKey, hexColor) {
+                this.markerColors[markerKey] = hexColor;
+                const swatch = document.getElementById(`swatch-${markerKey}`);
+                if (swatch) swatch.style.backgroundColor = hexColor;
+
+                this.selectTool(markerKey);
+                WigglyEngine.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            getCanvasCoordinates(e) {
+                const rect = WigglyEngine.visibleCanvas.getBoundingClientRect();
+                const scaleX = WigglyEngine.width / rect.width;
+                const scaleY = WigglyEngine.height / rect.height;
+
+                let clientX = e.clientX;
+                let clientY = e.clientY;
+
+                if (e.touches && e.touches.length > 0) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY
+                };
+            }
+
+            updateCoordinates(e) {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (!coordsEl) return;
+                const coords = this.getCanvasCoordinates(e);
+                const x = Math.max(0, Math.min(WigglyEngine.width, Math.floor(coords.x)));
+                const y = Math.max(0, Math.min(WigglyEngine.height, Math.floor(coords.y)));
+                coordsEl.innerText = `X: ${x}, Y: ${y}`;
+            }
+
+            resetCoordinates() {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (coordsEl) {
+                    coordsEl.innerText = 'X: --, Y: --';
+                }
+            }
+
+            startDrawing(e) {
+                // Check if panning mode is active (Middle click, Hand Tool, or Spacebar held)
+                if (e.button === 1 || this.currentTool === 'hand' || WigglyViewport.isSpaceDown) {
+                    e.preventDefault();
+                    WigglyViewport.isPanning = true;
+                    WigglyViewport.startX = e.clientX;
+                    WigglyViewport.startY = e.clientY;
+                    WigglyViewport.startPanX = WigglyViewport.panX;
+                    WigglyViewport.startPanY = WigglyViewport.panY;
+                    const canvas = document.getElementById('visibleCanvas');
+                    if (canvas) canvas.style.cursor = 'grabbing';
+                    return;
+                }
+
+                if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+                e.preventDefault();
+                WigglyHistory.saveState();
+                this.isDrawing = true;
+                
+                if (e.target && e.target.setPointerCapture && e.pointerId !== undefined) {
+                    try { e.target.setPointerCapture(e.pointerId); } catch(err) {}
+                }
+
+                const coords = this.getCanvasCoordinates(e);
+                const pressureRatio = this.getEffectivePressure(e);
+                this.lastX = coords.x;
+                this.lastY = coords.y;
+                this.smoothedX = coords.x;
+                this.smoothedY = coords.y;
+                this.lastMidX = coords.x;
+                this.lastMidY = coords.y;
+
+                this.drawPoint(coords.x, coords.y, pressureRatio);
+                WigglyAudio.play('squeak');
+            }
+
+            draw(e) {
+                if (WigglyViewport.isPanning) {
+                    e.preventDefault();
+                    WigglyViewport.panX = WigglyViewport.startPanX + (e.clientX - WigglyViewport.startX);
+                    WigglyViewport.panY = WigglyViewport.startPanY + (e.clientY - WigglyViewport.startY);
+                    WigglyViewport.updateTransform();
+                    return;
+                }
+
+                if (!this.isDrawing) return;
+                e.preventDefault();
+
+                const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
+
+                for (let i = 0; i < events.length; i++) {
+                    const curEvent = events[i];
+                    const coords = this.getCanvasCoordinates(curEvent);
+                    const pressureRatio = this.getEffectivePressure(curEvent);
+                    
+                    let targetX = coords.x;
+                    let targetY = coords.y;
+
+                    if (this.stabilizerLevel > 0) {
+                        const alpha = Math.max(0.015, Math.pow(0.65, this.stabilizerLevel));
+                        this.smoothedX += (coords.x - this.smoothedX) * alpha;
+                        this.smoothedY += (coords.y - this.smoothedY) * alpha;
+                        targetX = this.smoothedX;
+                        targetY = this.smoothedY;
+                    }
+                    
+                    const midX = (this.lastX + targetX) / 2;
+                    const midY = (this.lastY + targetY) / 2;
+
+                    this.drawSmoothPixelSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, pressureRatio);
+
+                    this.lastX = targetX;
+                    this.lastY = targetY;
+                    this.lastMidX = midX;
+                    this.lastMidY = midY;
+                }
+
+                WigglyAudio.play('squeak');
+            }
+
+            stopDrawing(e) {
+                if (WigglyViewport.isPanning) {
+                    WigglyViewport.isPanning = false;
+                    const canvas = document.getElementById('visibleCanvas');
+                    if (canvas) {
+                        canvas.style.cursor = (this.currentTool === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
+                    }
+                }
+
+                if (this.isDrawing) {
+                    this.isDrawing = false;
+                    if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
+                        try { e.target.releasePointerCapture(e.pointerId); } catch(err) {}
+                    }
+                    WigglyStorage.triggerAutoSave();
+                }
+            }
+
+            drawPoint(x, y, pressureRatio = 1.0) {
+                const props = this.getToolProps(this.currentTool, pressureRatio);
+                
+                const points = [{x, y}];
+                if (this.isHorizontalMirror) points.push({x: WigglyEngine.width - x, y});
+                if (this.isVerticalMirror) points.push({x, y: WigglyEngine.height - y});
+                if (this.isHorizontalMirror && this.isVerticalMirror) points.push({x: WigglyEngine.width - x, y: WigglyEngine.height - y});
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const jx = (Math.random() - 0.5) * props.jitter * 1.5;
+                    const jy = (Math.random() - 0.5) * props.jitter * 1.5;
+
+                    points.forEach(pt => {
+                        if (this.currentTool === 'eraser') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
+                        } else if (this.currentTool === 'marker_eraser') {
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
+                        } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, markerId);
+                        } else {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
+                        }
+                    });
+                }
+            }
+
+            drawSmoothPixelSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
+                const curves = [{ p0x, p0y, p1x, p1y, p2x, p2y }];
+
+                if (this.isHorizontalMirror) {
+                    curves.push({
+                        p0x: WigglyEngine.width - p0x, p0y,
+                        p1x: WigglyEngine.width - p1x, p1y,
+                        p2x: WigglyEngine.width - p2x, p2y
+                    });
+                }
+
+                if (this.isVerticalMirror) {
+                    curves.push({
+                        p0x, p0y: WigglyEngine.height - p0y,
+                        p1x, p1y: WigglyEngine.height - p1y,
+                        p2x, p2y: WigglyEngine.height - p2y
+                    });
+                }
+
+                if (this.isHorizontalMirror && this.isVerticalMirror) {
+                    curves.push({
+                        p0x: WigglyEngine.width - p0x, p0y: WigglyEngine.height - p0y,
+                        p1x: WigglyEngine.width - p1x, p1y: WigglyEngine.height - p1y,
+                        p2x: WigglyEngine.width - p2x, p2y: WigglyEngine.height - p2y
+                    });
+                }
+
+                curves.forEach(c => {
+                    this.drawSingleBezierSegment(c.p0x, c.p0y, c.p1x, c.p1y, c.p2x, c.p2y, pressureRatio);
+                });
+            }
+
+            drawSingleBezierSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
+                const props = this.getToolProps(this.currentTool, pressureRatio);
+
+                const dist = Math.hypot(p1x - p0x, p1y - p0y) + Math.hypot(p2x - p1x, p2y - p1y);
+                const minStep = Math.max(1, Math.floor(props.size / 4));
+                const steps = Math.max(1, Math.ceil(dist / minStep));
+
+                const jitters = [];
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    jitters.push({
+                        jx: (Math.random() - 0.5) * props.jitter * 1.5,
+                        jy: (Math.random() - 0.5) * props.jitter * 1.5
+                    });
+                }
+
+                for (let s = 0; s <= steps; s++) {
+                    const t = s / steps;
+                    const invT = 1 - t;
+
+                    const cx = invT * invT * p0x + 2 * invT * t * p1x + t * t * p2x;
+                    const cy = invT * invT * p0y + 2 * invT * t * p1y + t * t * p2y;
+
+                    for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                        if (this.currentTool === 'eraser') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
+                        } else if (this.currentTool === 'marker_eraser') {
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
+                        } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, markerId);
+                        } else {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
+                        }
+                    }
+                }
+            }
+
+            bindCanvasInputEvents() {
+                const canvas = WigglyEngine.visibleCanvas;
+
+                // 即時座標追蹤
+                canvas.addEventListener('pointermove', e => {
+                    this.updateCoordinates(e);
+                    if (this.isDrawing || WigglyViewport.isPanning) this.draw(e);
+                });
+                canvas.addEventListener('pointerleave', () => this.resetCoordinates());
+
+                if (window.PointerEvent) {
+                    canvas.addEventListener('pointerdown', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    });
+                    window.addEventListener('pointerup', e => this.stopDrawing(e));
+                    window.addEventListener('pointercancel', e => this.stopDrawing(e));
+                } else {
+                    canvas.addEventListener('mousedown', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    });
+                    canvas.addEventListener('mousemove', e => {
+                        this.updateCoordinates(e);
+                        this.draw(e);
+                    });
+                    canvas.addEventListener('mouseleave', () => this.resetCoordinates());
+                    window.addEventListener('mouseup', e => this.stopDrawing(e));
+
+                    canvas.addEventListener('touchstart', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    }, { passive: false });
+                    canvas.addEventListener('touchmove', e => {
+                        this.updateCoordinates(e);
+                        this.draw(e);
+                    }, { passive: false });
+                    window.addEventListener('touchend', e => {
+                        this.resetCoordinates();
+                        this.stopDrawing(e);
+                    });
+                }
+            }
+        }
+        const WigglyTools = new WigglyToolsModule();
+
+        // =========================================================================
+        // MODULE 6: WigglyStorage.js (LocalStorage Auto-Save & Restore Engine)
+<!-- ... existing code ... -->
+            bindGlobalEvents() {
+                document.addEventListener('click', () => this.closeAllMenus());
+
+                window.addEventListener('keydown', (e) => {
+                    const tag = e.target.tagName.toLowerCase();
+                    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+                    const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+
+                    // Spacebar 觸發手掌拖移 (Hold Space to Pan)
+                    if (e.code === 'Space' && !e.repeat) {
+                        e.preventDefault();
+                        WigglyViewport.isSpaceDown = true;
+                        const canvas = document.getElementById('visibleCanvas');
+                        if (canvas) canvas.style.cursor = 'grab';
+                        return;
+                    }
+
+                    if (isCmdOrCtrl) {
+                        const key = e.key.toLowerCase();
+                        if (key === '1') { e.preventDefault(); WigglyTools.selectTool('marker1'); }
+                        else if (key === '2') { e.preventDefault(); WigglyTools.selectTool('marker2'); }
+                        else if (key === '3') { e.preventDefault(); WigglyTools.selectTool('marker3'); }
+                        else if (key === '4') { e.preventDefault(); WigglyTools.selectTool('custom1'); }
+                        else if (key === '5') { e.preventDefault(); WigglyTools.selectTool('custom2'); }
+                        else if (key === '6') { e.preventDefault(); WigglyTools.selectTool('custom3'); }
+                        else if (key === '0') { e.preventDefault(); WigglyViewport.resetZoom(); }
+                        else if (key === '=' || key === '+') { e.preventDefault(); WigglyViewport.zoomIn(); }
+                        else if (key === '-') { e.preventDefault(); WigglyViewport.zoomOut(); }
+                        else if (key === 'o') { e.preventDefault(); this.triggerOpenImage(); }
+                        else if (key === 'z' && !e.shiftKey) { e.preventDefault(); WigglyHistory.undo(); }
+                        else if (key === 'y' || (e.shiftKey && key === 'z')) { e.preventDefault(); WigglyHistory.redo(); }
+                        else if (key === 'e') { e.preventDefault(); this.openModal('export-modal'); }
+                        else if (key === 'n') { e.preventDefault(); this.promptClearCanvas(); }
+                    } else {
+                        if (e.key === '1' || e.key.toLowerCase() === 'b') WigglyTools.selectTool('pen');
+                        else if (e.key === '2') WigglyTools.selectTool('pencil');
+                        else if (e.key === '3') WigglyTools.selectTool('ballpoint');
+                        else if (e.key === '4') WigglyTools.selectTool('spray');
+                        else if (e.key === '5' || (e.key.toLowerCase() === 'e' && !e.shiftKey)) WigglyTools.selectTool('eraser');
+                        else if (e.key === '6' || (e.key.toLowerCase() === 'e' && e.shiftKey)) WigglyTools.selectTool('marker_eraser');
+                        else if (e.key.toLowerCase() === 'h') WigglyTools.selectTool('hand');
+                        else if (e.key === '+' || e.key === '=') WigglyViewport.zoomIn();
+                        else if (e.key === '-') WigglyViewport.zoomOut();
+                        else if (e.key === '0') WigglyViewport.resetZoom();
+                        else if (e.key.toLowerCase() === 'p') { e.preventDefault(); WigglyTools.togglePressureSensitivity(); }
+                        else if (e.key === 'F1') { e.preventDefault(); this.openModal('help-modal'); }
+                        else if (e.key === 'Escape') {
+                            document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('active'));
+                        }
+                    }
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    if (e.code === 'Space') {
+                        WigglyViewport.isSpaceDown = false;
+                        const canvas = document.getElementById('visibleCanvas');
+                        if (canvas) {
+                            canvas.style.cursor = (WigglyTools.currentTool === 'hand') ? 'grab' : 'crosshair';
+                        }
+                    }
+                });
+            }
+        }
+        const WigglyUI = new WigglyUIModule();
+
+        // =========================================================================
+        // MODULE 8: WigglyApp.js (Bootstrap & Orchestrator)
+        // =========================================================================
+        class WigglyAppModule {
+            init() {
+                WigglyEngine.init();
+                WigglyViewport.init();
+                WigglyTools.init();
+                WigglyUI.init();
+                
+                // 優先從 localStorage 載入存檔
+                const hasSavedState = WigglyStorage.init();
+                
+                WigglyTools.selectTool('pen');
+                requestAnimationFrame(t => WigglyEngine.gameLoop(t));
+
+                // 若為全新開啟（無存檔紀錄）才顯示使用說明
+                if (!hasSavedState) {
+                    WigglyUI.openModal('help-modal');
+                }
+            }
+        }
+        const WigglyApp = new WigglyAppModule();
+
+        // 綁定至 window 全域以支援 HTML 上的 onclick 呼叫
+        window.WigglyConfig = WigglyConfig;
+        window.WigglyAudio = WigglyAudio;
+        window.WigglyHistory = WigglyHistory;
+        window.WigglyEngine = WigglyEngine;
+        window.WigglyViewport = WigglyViewport;
+        window.WigglyTools = WigglyTools;
+        window.WigglyStorage = WigglyStorage;
+        window.WigglyUI = WigglyUI;
+        window.WigglyApp = WigglyApp;
+
+        // 網頁載入完成後啟動
+        window.onload = function () {
+            WigglyApp.init();
+        };
+    </script>
+</body>
+</html>

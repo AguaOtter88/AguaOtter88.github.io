@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WigglyPaint v2.7.2 - 復古像素抖動塗鴉板</title>
+    <title>WigglyPaint - v2.7.5</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Gifshot CDN for exporting animated GIFs -->
@@ -265,7 +265,7 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs"></i>
-                <span class="font-bold tracking-wide text-xs">WIGGLYPAINT v2.7.2</span>
+                <span class="font-bold tracking-wide text-xs"> WigglyPaint - v2.7.5</span>
             </div>
             <div class="flex items-center gap-1">
                 <span id="titlebar-tagline" class="text-[11px] text-blue-200 font-sans hidden sm:inline" data-i18n="app_tagline">~ 順暢像素風格 3幀動態繪圖板 ~</span>
@@ -413,67 +413,63 @@
                 </div>
             </div>
 
-            <!-- View Menu -->
-            <div class="relative inline-block menu-dropdown-container">
-                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
-                <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
-                    
-                    <!-- Zoom View Options -->
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-magnifying-glass-plus w-4"></i><span data-i18n="menu_zoom_in">放大畫布 (Zoom In)</span></span>
-                        <span class="text-[10px] opacity-75">+</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-magnifying-glass-minus w-4"></i><span data-i18n="menu_zoom_out">縮小畫布 (Zoom Out)</span></span>
-                        <span class="text-[10px] opacity-75">-</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-arrows-to-dot w-4"></i><span data-i18n="menu_zoom_reset">重設縮放 (100%)</span></span>
-                        <span class="text-[10px] opacity-75">Ctrl+0</span>
-                    </button>
+            <!-- View Menu (已移除語系選單) -->
+<div class="relative inline-block menu-dropdown-container">
+    <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
+    <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-magnifying-glass-plus w-4"></i><span data-i18n="menu_zoom_in">放大畫布 (Zoom In)</span></span>
+            <span class="text-[10px] opacity-75">+</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-magnifying-glass-minus w-4"></i><span data-i18n="menu_zoom_out">縮小畫布 (Zoom Out)</span></span>
+            <span class="text-[10px] opacity-75">-</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-compress w-4"></i><span data-i18n="menu_zoom_reset">重置縮放 (100%)</span></span>
+            <span class="text-[10px] opacity-75">Ctrl+0</span>
+        </button>
+        <div class="border-t border-gray-400 my-1"></div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i><span data-i18n="menu_sound">音效回饋 (SFX)</span></span>
+        </button>
+        <div class="border-t border-gray-400 my-1"></div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.openModal('options-modal'); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-sliders w-4"></i><span data-i18n="menu_options">畫布與主題設定...</span></span>
+        </button>
+    </div>
+</div>
 
-                    <div class="border-t border-gray-400 my-1"></div>
+<!-- Help Menu (加入切換語言選項卡) -->
+<div class="relative inline-block menu-dropdown-container">
+    <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-help', event)"><span data-i18n="menu_help">說明(<u>H</u>)</span></button>
+    <div id="menu-help" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
+        <!-- Language Selection Submenu -->
+        <div class="px-3 py-0.5 text-[10px] font-bold text-gray-700 bg-gray-300 flex items-center justify-between">
+            <span><i class="fa-solid fa-language mr-1"></i><span data-i18n="menu_language">切換語言 (Language)</span></span>
+        </div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('zh-TW'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-zh-TW" class="fa-solid fa-check text-xs w-4"></i>繁體中文 (Traditional Chinese)</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('en'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-en" class="fa-solid fa-check text-xs w-4 opacity-0"></i>English (英文)</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('ja'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-ja" class="fa-solid fa-check text-xs w-4 opacity-0"></i>日本語 (Japanese)</span>
+        </button>
 
-                    <!-- Language Selection Submenu Section -->
-                    <div class="px-3 py-0.5 text-[10px] font-bold text-gray-700 bg-gray-300 flex items-center justify-between">
-                        <span><i class="fa-solid fa-language mr-1"></i><span data-i18n="menu_language">切換語言 (Language)</span></span>
-                    </div>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('zh-TW'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-zh-TW" class="fa-solid fa-check text-xs w-4"></i>繁體中文 (Traditional Chinese)</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('en'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-en" class="fa-solid fa-check text-xs w-4 opacity-0"></i>English (英文)</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('ja'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-ja" class="fa-solid fa-check text-xs w-4 opacity-0"></i>日本語 (Japanese)</span>
-                    </button>
+        <div class="border-t border-gray-400 my-1"></div>
 
-                    <div class="border-t border-gray-400 my-1"></div>
-
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i><span data-i18n="menu_sound">音效回饋 (SFX)</span></span>
-                    </button>
-                    <div class="border-t border-gray-400 my-1"></div>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.openModal('options-modal'); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-sliders w-4"></i><span data-i18n="menu_options">畫布與主題設定...</span></span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Help Menu -->
-            <div class="relative inline-block menu-dropdown-container">
-                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-help', event)"><span data-i18n="menu_help">說明(<u>H</u>)</span></button>
-                <div id="menu-help" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-52 z-40 text-black text-xs">
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();">
-                        <i class="fa-solid fa-circle-question w-4"></i>
-                        <span data-i18n="menu_help_guide">使用說明指南...</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();">
-                        <i class="fa-solid fa-list-check w-4"></i>
-                        <span data-i18n="menu_changelog">版本更新紀錄...</span>
-                    </button>
-                </div>
-            </div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();">
+            <i class="fa-solid fa-circle-question w-4"></i>
+            <span data-i18n="menu_help_guide">使用說明指南...</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();">
+            <i class="fa-solid fa-list-check w-4"></i>
+            <span data-i18n="menu_changelog">版本更新紀錄...</span>
+        </button>
+    </div>
+</div>
 
             <input type="file" id="image-open-loader" accept="image/png, image/jpeg, image/webp" class="hidden" onchange="WigglyUI.handleOpenImage(event)">
         </div>
@@ -754,36 +750,42 @@
             
             <div class="p-2.5 sm:p-3 flex flex-col gap-2.5 overflow-y-auto text-xs bg-[#c3c3c3]">
                 <!-- GroupBox 1: Direct Resolution -->
-                <fieldset class="win98-fieldset flex flex-col gap-2">
-                    <legend class="win98-legend" data-i18n="crop_group_resolution">畫布解析度設定 (像素)</legend>
-                    
-                    <div class="grid grid-cols-2 gap-2 mt-1">
-                        <div>
-                            <label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_width">寬度 (Width):</label>
-                            <input type="number" id="resize-width" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
-                        </div>
-                        <div>
-                            <label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_height">高度 (Height):</label>
-                            <input type="number" id="resize-height" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-1 mt-0.5">
-                        <span class="text-[10px] text-gray-700 font-bold whitespace-nowrap" data-i18n="crop_lbl_presets">常用尺寸:</span>
-                        <div class="flex flex-wrap gap-1">
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(560, 420)">560x420</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(800, 600)">800x600</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(400, 400)">400x400</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(1024, 768)">1024x768</button>
-                        </div>
-                    </div>
+				<fieldset class="win98-fieldset flex flex-col gap-2">
+					<legend class="win98-legend" data-i18n="crop_group_resolution">畫布解析度設定 (像素)</legend>
+					
+					<div class="flex items-center gap-2 mt-1">
+						<div class="flex-1">
+							<label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_width">寬度 (Width):</label>
+							<input type="number" id="resize-width" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
+						</div>
 
-                    <div class="flex justify-end mt-1">
-                        <button class="retro-btn h-7 px-4 text-xs" onclick="WigglyUI.applyDirectResize()">
-                            <i class="fa-solid fa-check text-green-700"></i> <span data-i18n="crop_btn_apply_resolution">套用指定寬高</span>
-                        </button>
-                    </div>
-                </fieldset>
+						<button class="retro-btn h-8 px-2 mt-4 text-xs font-bold shrink-0" onclick="WigglyUI.swapDimensions()" title="交換寬度與高度 (Swap Width & Height)">
+							<i class="fa-solid fa-right-left text-blue-800"></i>
+							<span data-i18n="crop_btn_swap">交換</span>
+						</button>
+
+						<div class="flex-1">
+							<label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_height">高度 (Height):</label>
+							<input type="number" id="resize-height" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
+						</div>
+					</div>
+					
+					<div class="flex items-center gap-1 mt-0.5">
+						<span class="text-[10px] text-gray-700 font-bold whitespace-nowrap" data-i18n="crop_lbl_presets">常用尺寸:</span>
+						<div class="flex flex-wrap gap-1">
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(560, 420)">560x420</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(800, 600)">800x600</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(400, 400)">400x400</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(1024, 768)">1024x768</button>
+						</div>
+					</div>
+
+					<div class="flex justify-end mt-1">
+						<button class="retro-btn h-7 px-4 text-xs" onclick="WigglyUI.applyDirectResize()">
+							<i class="fa-solid fa-check text-green-700"></i> <span data-i18n="crop_btn_apply_resolution">套用指定寬高</span>
+						</button>
+					</div>
+				</fieldset>
 
                 <!-- GroupBox 2: Auto Tight Fit -->
                 <fieldset class="win98-fieldset flex flex-col gap-1.5">
@@ -1021,7 +1023,2300 @@
 
     <!-- JavaScript Application Modules -->
     <script>
-const WigglyConfig={NUM_FRAMES:3,MAX_UNDO:15,DEFAULT_WIDTH:560,DEFAULT_HEIGHT:420,markerKeys:["marker1","marker2","marker3","custom1","custom2","custom3"],markerIdMap:{marker1:1,marker2:2,marker3:3,custom1:4,custom2:5,custom3:6},defaultMarkerColors:{marker1:"#FF5588",marker2:"#00CCFF",marker3:"#FFE000",custom1:"#00FF66",custom2:"#A020F0",custom3:"#FF6600"},patterns:[{key:"solid",name:"純黑實心",isDynamic:!1,frames:[[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]},{key:"checker50",name:"50% 棋盤點陣",isDynamic:!1,frames:[[1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1]]},{key:"dot25",name:"25% 細網點",isDynamic:!1,frames:[[1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0]]},{key:"dot75",name:"75% 濃密網點",isDynamic:!1,frames:[[0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1]]},{key:"dot12",name:"12.5% 稀疏點",isDynamic:!1,frames:[[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0]]},{key:"dot6",name:"6.25% 超微點",isDynamic:!1,frames:[[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]},{key:"hline",name:"水平橫線",isDynamic:!1,frames:[[1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0]]},{key:"vline",name:"垂直直線",isDynamic:!1,frames:[[1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0]]},{key:"diag_r",name:"正斜線 /",isDynamic:!1,frames:[[0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0,0,1,0,0,0]]},{key:"diag_l",name:"反斜線 \\",isDynamic:!1,frames:[[1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,1]]},{key:"grid_square",name:"正方網格 #",isDynamic:!1,frames:[[1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0]]},{key:"grid_cross",name:"斜向網格 X",isDynamic:!1,frames:[[1,0,0,0,1,0,0,1,0,1,0,1,0,1,1,0,0,0,1,0,0,1,0,0,0,1,0,1,1,0,1,0,1,0,0,1,1,0,0,1,0,1,1,0,0,1,1,0,0,1,0,0,0,0,1,0,1,0,0,0,0,0,0,1]]},{key:"brick",name:"磚牆紋理",isDynamic:!1,frames:[[1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0]]},{key:"tv_noise",name:"⚡ TV 噪訊",isDynamic:!0,frames:[[1,0,0,1,0,1,0,1,0,1,1,0,1,0,0,0,1,0,0,1,0,0,1,1,0,1,1,0,1,1,0,0,1,0,0,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,0,0,0,1,0,0,1,0,1,1],[0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,1,0,0,1,0,0,1,0,0,1,1,0,1,1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,0,1,0,1,1,1,0,1,1,0,1,0,0],[1,1,0,0,1,0,0,1,0,0,1,1,0,1,1,0,1,1,0,0,1,0,0,1,0,0,1,1,0,1,1,0,1,0,1,0,1,1,0,0,0,1,0,1,0,0,1,1,1,1,0,0,1,0,1,0,0,0,1,1,0,1,0,1]]},{key:"rain",name:"🌧️ 下雨動態",isDynamic:!0,frames:[[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],[1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0],[0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1]]},{key:"stars",name:"💫 閃爍星空",isDynamic:!0,frames:[[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0],[0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0]]},{key:"stripes",name:"🌀 滾動斜條",isDynamic:!0,frames:[[1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1],[0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,0],[0,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0,1,1,1,0,0,1,1,0,0]]},{key:"waves",name:"🌊 流動波浪",isDynamic:!0,frames:[[0,1,1,0,0,1,1,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,0,0,1,1,0,0,1,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,1,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,1,1,0,0,1,1,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,1,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]}],i18n:{"zh-TW":{app_tagline:"~ 順暢像素風格 3幀動態繪圖板 ~",menu_file:"檔案(<u>F</u>)",menu_new_canvas:"開新畫布",menu_open_file:"開啟圖檔...",menu_export_gif:"匯出 GIF 動畫...",menu_clear_canvas:"清空畫布",menu_edit:"編輯(<u>E</u>)",menu_undo:"復原 (Undo)",menu_redo:"重做 (Redo)",menu_pressure:"筆壓感應 (Pressure)",menu_tip_shape_switch:"筆尖形狀切換",menu_shape_round:"圓形筆尖 (Round)",menu_shape_square:"方形筆尖 (Square)",menu_shape_chisel:"斜角筆尖 (Chisel)",menu_mirror_switch:"鏡像仿筆功能",menu_mirror_h:"水平鏡像仿筆 (↔)",menu_mirror_v:"垂直鏡像仿筆 (↕)",menu_canvas_size:"畫布尺寸與裁切...",menu_tools:"工具(<u>T</u>)",tool_pen_full:"鋼筆 (Pen)",tool_spray_full:"噴漆槍 (Spray)",tool_eraser_full:"全域橡皮擦 (All)",tool_marker_eraser_full:"麥克筆橡皮擦 (Marker)",tool_hand_full:"拖曳畫布 (Pan)",menu_marker_switch:"麥克筆切換",marker_6colors:"6色",marker_1:"粉紅麥克筆",marker_2:"青藍麥克筆",marker_3:"亮黃麥克筆",marker_c1:"自訂麥克筆 A",marker_c2:"自訂麥克筆 B",marker_c3:"自訂麥克筆 C",menu_view:"檢視(<u>V</u>)",menu_zoom_in:"放大畫布 (Zoom In)",menu_zoom_out:"縮小畫布 (Zoom Out)",menu_zoom_reset:"重設縮放 (100%)",menu_language:"切換語言 (Language)",menu_sound:"音效回饋 (SFX)",menu_options:"畫布與主題設定...",menu_help:"說明(<u>H</u>)",menu_help_guide:"使用說明指南...",menu_changelog:"版本更新紀錄...",group_brushes:"筆刷工具",tool_pen:"鋼筆",tool_spray:"噴漆槍",tool_eraser:"全擦",tool_marker_eraser:"麥克筆擦",tool_hand:"拖曳畫布",group_markers:"麥克筆專區",lbl_size:"尺寸:",lbl_shape:"形狀:",btn_round:"圓",btn_square:"方",btn_chisel:"斜",lbl_mirror:"鏡像:",btn_mirror_h:"↔ 水平",btn_mirror_v:"↕ 垂直",btn_pressure:"筆壓",status_pixels:"像素",status_zoom:"縮放",status_saved:"已自動保存",status_saving:"正在保存...",btn_undo:"復原 (<u>U</u>)",btn_redo:"重做 (<u>R</u>)",group_screentones:"網點圖案",group_stabilizer:"手震修正",lbl_level:"修正等級:",stabilizer_off:"關閉",action_export_gif:"匯出 GIF...",action_canvas_size:"畫布尺寸...",action_options:"設定選項...",action_clear_canvas:"清空畫布",crop_title:"設定畫布尺寸與裁切",crop_group_resolution:"畫布解析度設定 (像素)",crop_lbl_width:"寬度 (Width):",crop_lbl_height:"高度 (Height):",crop_lbl_presets:"常用尺寸:",crop_btn_apply_resolution:"套用指定寬高",crop_group_tight:"智慧一鍵去邊",crop_desc_tight:"自動偵測目前作畫筆跡，切除畫布四周多餘的空白範圍。",crop_btn_tight:"自動緊密裁切畫布",crop_group_manual:"手動修剪四邊邊界 (px)",crop_top:"上方裁切:",crop_bottom:"下方裁切:",crop_left:"左側裁切:",crop_right:"右側裁切:",crop_btn_apply_manual:"套用邊緣裁切",btn_close:"關閉",btn_confirm:"確定",options_title:"畫布與色彩主題設定",options_group_colors:"畫布色彩與音效",options_lbl_bg:"畫布背景顏色 (底色):",options_lbl_fg:"畫布前景顏色 (線稿筆刷):",options_lbl_sound:"音效回饋 (Sound FX):",options_group_presets:"預設調色盤主題 (背景/前景與 6 色麥克筆)",preset_classic:"經典 Y2K",preset_retro:"復古奶油",preset_cyber:"賽博霓虹",preset_morandi:"日系莫蘭迪",preset_gameboy:"復古掌機",preset_macaron:"夢幻馬卡龍",export_title:"匯出動態 GIF 動畫",export_encoding:"正在編碼 3 幀抖動 GIF 動畫中...",export_download:"下載 GIF 圖檔",help_title:"WigglyPaint 使用說明指南",help_feature_title:"✨ 繪圖特色與原理",help_feature_desc:"WigglyPaint 在您作畫時，會自動同步生成 3 個具備有機微震幅的動態影格，並以 10 FPS 循環播放，賦予像素塗鴉如同早期手繪逐格動畫般的生動跳躍感！",help_tools_title:"🛠️ 繪圖工具指南",help_tools_1:"<strong>鋼筆 / 噴槍</strong>：共用「前景顏色」，並可搭配 18 款網點。",help_tools_2:"<strong>筆壓感應 (Pressure)</strong>：支援繪圖板與感壓觸控筆，依下筆力道自動調節粗細。",help_tools_3:"<strong>全擦 / 麥克筆擦</strong>：全擦抹除所有內容；麥克筆擦則只清除底層麥克筆，保留線稿。",help_tools_4:"<strong>滾輪縮放 & 拖曳畫布</strong>：滾動滑鼠滾輪縮放畫布（25%~800%）；按住空白鍵 Space 或滑鼠中鍵可自由拖動畫布。",help_shortcuts_title:"⌨️ 鍵盤快捷鍵",sc_1_2:"鋼筆 / 噴漆槍",sc_3_4_5:"全擦 / 麥克筆擦 / 拖曳",sc_zoom_pan:"縮放 / 拖曳畫布",sc_zoom_reset:"重設 100% 縮放",changelog_title:"版本更新紀錄 (Changelog)",pat_solid:"純黑實心",pat_checker50:"50% 棋盤點陣",pat_dot25:"25% 細網點",pat_dot75:"75% 濃密網點",pat_dot12:"12.5% 稀疏點",pat_dot6:"6.25% 超微點",pat_hline:"水平橫線",pat_vline:"垂直直線",pat_diag_r:"正斜線 /",pat_diag_l:"反斜線 \\",pat_grid_square:"正方網格 #",pat_grid_cross:"斜向網格 X",pat_brick:"磚牆紋理",pat_tv_noise:"⚡ TV 噪訊",pat_rain:"🌧️ 下雨動態",pat_stars:"💫 閃爍星空",pat_stripes:"🌀 滾動斜條",pat_waves:"🌊 流動波浪"},en:{app_tagline:"~ Smooth Pixel 3-Frame Animated Doodler ~",menu_file:"File(<u>F</u>)",menu_new_canvas:"New Canvas",menu_open_file:"Open Image...",menu_export_gif:"Export Animated GIF...",menu_clear_canvas:"Clear Canvas",menu_edit:"Edit(<u>E</u>)",menu_undo:"Undo",menu_redo:"Redo",menu_pressure:"Pressure Sensitivity",menu_tip_shape_switch:"Tip Shape Switch",menu_shape_round:"Round Tip",menu_shape_square:"Square Tip",menu_shape_chisel:"Chisel Tip",menu_mirror_switch:"Mirror Drawing Mode",menu_mirror_h:"Horizontal Mirror (↔)",menu_mirror_v:"Vertical Mirror (↕)",menu_canvas_size:"Canvas Size & Crop...",menu_tools:"Tools(<u>T</u>)",tool_pen_full:"Pen Tool",tool_spray_full:"Spray Can Tool",tool_eraser_full:"Global Eraser (All)",tool_marker_eraser_full:"Marker Eraser (Marker)",tool_hand_full:"Pan Canvas Tool (Pan)",menu_marker_switch:"Markers",marker_6colors:"6 Colors",marker_1:"Pink Marker",marker_2:"Cyan Marker",marker_3:"Yellow Marker",marker_c1:"Custom Marker A",marker_c2:"Custom Marker B",marker_c3:"Custom Marker C",menu_view:"View(<u>V</u>)",menu_zoom_in:"Zoom In Canvas",menu_zoom_out:"Zoom Out Canvas",menu_zoom_reset:"Reset Zoom (100%)",menu_language:"Language",menu_sound:"Sound FX",menu_options:"Canvas & Theme Settings...",menu_help:"Help(<u>H</u>)",menu_help_guide:"User Guide...",menu_changelog:"Version Changelog...",group_brushes:"Brushes",tool_pen:"Pen",tool_spray:"Spray",tool_eraser:"Eraser",tool_marker_eraser:"Marker Eraser",tool_hand:"Pan Canvas",group_markers:"Markers Panel",lbl_size:"Size:",lbl_shape:"Shape:",btn_round:"Round",btn_square:"Square",btn_chisel:"Chisel",lbl_mirror:"Mirror:",btn_mirror_h:"↔ Horiz",btn_mirror_v:"↕ Vert",btn_pressure:"Pressure",status_pixels:"px",status_zoom:"Zoom",status_saved:"Auto-saved",status_saving:"Saving...",btn_undo:"Undo (<u>U</u>)",btn_redo:"Redo (<u>R</u>)",group_screentones:"Screentones",group_stabilizer:"Stabilizer",lbl_level:"Level:",stabilizer_off:"Off",action_export_gif:"Export GIF...",action_canvas_size:"Canvas Size...",action_options:"Options...",action_clear_canvas:"Clear Canvas",crop_title:"Canvas Resolution & Crop",crop_group_resolution:"Canvas Resolution (px)",crop_lbl_width:"Width:",crop_lbl_height:"Height:",crop_lbl_presets:"Presets:",crop_btn_apply_resolution:"Apply Resolution",crop_group_tight:"Smart Tight Crop",crop_desc_tight:"Automatically detect drawing bounds and trim outer empty whitespace.",crop_btn_tight:"Auto Tight Fit Canvas",crop_group_manual:"Manual 4-Way Crop (px)",crop_top:"Top Crop:",crop_bottom:"Bottom Crop:",crop_left:"Left Crop:",crop_right:"Right Crop:",crop_btn_apply_manual:"Apply Border Crop",btn_close:"Close",btn_confirm:"OK",options_title:"Canvas & Theme Settings",options_group_colors:"Canvas Colors & Audio",options_lbl_bg:"Canvas Background Color:",options_lbl_fg:"Canvas Foreground Color:",options_lbl_sound:"Sound Feedback (SFX):",options_group_presets:"Preset Themes (Background / Foreground & 6 Markers)",preset_classic:"Classic Y2K",preset_retro:"Retro Cream",preset_cyber:"Cyber Neon",preset_morandi:"Morandi Muted",preset_gameboy:"GameBoy Green",preset_macaron:"Sweet Macaron",export_title:"Export Animated GIF",export_encoding:"Encoding 3-frame wiggly GIF animation...",export_download:"Download GIF Image",help_title:"WigglyPaint User Guide",help_feature_title:"✨ Concept & Feature",help_feature_desc:"WigglyPaint automatically generates 3 organic sub-frame wiggles while you draw, looping at 10 FPS to give your pixel art hand-drawn flipbook life!",help_tools_title:"🛠️ Tool Guide",help_tools_1:"<strong>Pen / Spray</strong>: Shares foreground color with 18 screentone patterns.",help_tools_2:"<strong>Pressure Sensitivity</strong>: Supports pen tablets & stylus pens with dynamic stroke thickness.",help_tools_3:"<strong>Eraser vs Marker Eraser</strong>: Global Eraser clears all; Marker Eraser only removes underlying marker ink.",help_tools_4:"<strong>Zoom & Pan Canvas</strong>: Scroll mouse wheel to zoom (25%~800%); hold Space or Middle-click to pan around.",help_shortcuts_title:"⌨️ Keyboard Shortcuts",sc_1_2:"Pen / Spray",sc_3_4_5:"Eraser / Marker Eraser / Pan",sc_zoom_pan:"Zoom / Pan Canvas",sc_zoom_reset:"Reset 100% Zoom",changelog_title:"Version Changelog",pat_solid:"Solid Black",pat_checker50:"50% Checkerboard",pat_dot25:"25% Fine Halftone",pat_dot75:"75% Dense Halftone",pat_dot12:"12.5% Sparse Dots",pat_dot6:"6.25% Micro Dots",pat_hline:"Horizontal Lines",pat_vline:"Vertical Lines",pat_diag_r:"Forward Slash /",pat_diag_l:"Backslash \\",pat_grid_square:"Square Grid #",pat_grid_cross:"Cross Grid X",pat_brick:"Brick Texture",pat_tv_noise:"⚡ TV Noise",pat_rain:"🌧️ Rain Dynamic",pat_stars:"💫 Twinkle Stars",pat_stripes:"🌀 Rolling Stripes",pat_waves:"🌊 Flowing Waves"},ja:{app_tagline:"~ なめらかピクセル風 3コマ動的落書き板 ~",menu_file:"ファイル(<u>F</u>)",menu_new_canvas:"新規キャンバス",menu_open_file:"画像を開く...",menu_export_gif:"GIFアニメ出力...",menu_clear_canvas:"キャンバス消去",menu_edit:"編集(<u>E</u>)",menu_undo:"元に戻す (Undo)",menu_redo:"やり直す (Redo)",menu_pressure:"筆壓感知 (Pressure)",menu_tip_shape_switch:"ペン先形状切替",menu_shape_round:"丸ペン先 (Round)",menu_shape_square:"角ペン先 (Square)",menu_shape_chisel:"斜めペン先 (Chisel)",menu_mirror_switch:"ミラー描画機能",menu_mirror_h:"水平ミラー (↔)",menu_mirror_v:"垂直ミラー (↕)",menu_canvas_size:"キャンバスサイズ・トリミング...",menu_tools:"ツール(<u>T</u>)",tool_pen_full:"ペン (Pen)",tool_spray_full:"スプレー (Spray)",tool_eraser_full:"全体消しゴム (All)",tool_marker_eraser_full:"マーカー専用消しゴム (Marker)",tool_hand_full:"画面移動 (Pan)",menu_marker_switch:"マーカー切替",marker_6colors:"6色",marker_1:"ピンクマーカー",marker_2:"シアンマーカー",marker_3:"イエローマーカー",marker_c1:"カスタムマーカー A",marker_c2:"カスタムマーカー B",marker_c3:"カスタムマーカー C",menu_view:"表示(<u>V</u>)",menu_zoom_in:"キャンバス拡大 (Zoom In)",menu_zoom_out:"キャンバス縮小 (Zoom Out)",menu_zoom_reset:"倍率リセット (100%)",menu_language:"言語切替 (Language)",menu_sound:"効果音 (SFX)",menu_options:"キャンバス・テーマ設定...",menu_help:"ヘルプ(<u>H</u>)",menu_help_guide:"使い方ガイド...",menu_changelog:"更新履歴...",group_brushes:"ブラシツール",tool_pen:"ペン",tool_spray:"スプレー",tool_eraser:"全消し",tool_marker_eraser:"マーカー消し",tool_hand:"画面移動",group_markers:"マーカー専用",lbl_size:"サイズ:",lbl_shape:"形状:",btn_round:"丸",btn_square:"角",btn_chisel:"斜",lbl_mirror:"ミラー:",btn_mirror_h:"↔ 水平",btn_mirror_v:"↕ 垂直",btn_pressure:"筆壓",status_pixels:"ピクセル",status_zoom:"倍率",status_saved:"自動保存完了",status_saving:"保存中...",btn_undo:"元に戻す (<u>U</u>)",btn_redo:"やり直す (<u>R</u>)",group_screentones:"トーンパターン",group_stabilizer:"手ブレ補正",lbl_level:"補正レベル:",stabilizer_off:"オフ",action_export_gif:"GIF出力...",action_canvas_size:"サイズ...",action_options:"設定...",action_clear_canvas:"キャンバス消去",crop_title:"キャンバスサイズとトリミング設定",crop_group_resolution:"解像度設定 (ピクセル)",crop_lbl_width:"幅 (Width):",crop_lbl_height:"高さ (Height):",crop_lbl_presets:"プリセット:",crop_btn_apply_resolution:"サイズ適用",crop_group_tight:"スマート余白カット",crop_desc_tight:"描画範囲を自動検出し、周囲の不要な余白をトリミングします。",crop_btn_tight:"自動ぴったりトリミング",crop_group_manual:"手動4方向トリミング (px)",crop_top:"上部カット:",crop_bottom:"下部カット:",crop_left:"左側カット:",crop_right:"右側カット:",crop_btn_apply_manual:"境界トリミング適用",btn_close:"閉じる",btn_confirm:"OK",options_title:"キャンバスとカラーテーマ設定",options_group_colors:"キャンバスカラー・音声",options_lbl_bg:"背景カラー (下地):",options_lbl_fg:"前景カラー (線画ブラシ):",options_lbl_sound:"効果音フィードバック (SFX):",options_group_presets:"プリセットカラーパレット (背景/前景と6色マーカー)",preset_classic:"クラシック Y2K",preset_retro:"レトロクリーム",preset_cyber:"サイバーネオン",preset_morandi:"モランディ",preset_gameboy:"レトロ携帯機",preset_macaron:"スイートマカロン",export_title:"アニメーションGIF出力",export_encoding:"3コマ揺動GIFアニメーションを生成中...",export_download:"GIF画像をダウンロード",help_title:"WigglyPaint 操作説明ガイド",help_feature_title:"✨ 特徴と仕組み",help_feature_desc:"描画時に微小な有機的振動を持つ3コマを自動生成し、10 FPSでループ再生。昔の手描きパラパラマンガのような生きた躍動感を与えます！",help_tools_title:"🛠️ ツール解説",help_tools_1:"<strong>ペン / スプレー</strong>: 前景カラーを共有し、18種のトーンに対応。",help_tools_2:"<strong>筆壓感知 (Pressure)</strong>: ペンタブやスタイラスペンの筆壓に応じた動的な太さ変化をサポート。",help_tools_3:"<strong>全消し / マーカー消し</strong>: 全消しはすべて消去。マーカー消しは線画を残して下地マーカーのみ消去。",help_tools_4:"<strong>キャンバス拡大縮小・画面移動</strong>: マウスホイールで拡大縮小（25%~800%）。Spaceキー長押しまたは中クリックで自由に画面移動。",help_shortcuts_title:"⌨️ キーボードショートカット",sc_1_2:"ペン / スプレー",sc_3_4_5:"全消し / マーカー消し / 画面移動",sc_zoom_pan:"拡大縮小 / 画面移動",sc_zoom_reset:"100%倍率リセット",changelog_title:"更新履歴 (Changelog)",pat_solid:"ベタ塗り黒",pat_checker50:"50% 市松ドット",pat_dot25:"25% 細トーン",pat_dot75:"75% 濃トーン",pat_dot12:"12.5% まばら点",pat_dot6:"6.25% 極微点",pat_hline:"横ストライプ",pat_vline:"縦ストライプ",pat_diag_r:"斜線 /",pat_diag_l:"逆斜線 \\",pat_grid_square:"正方グリッド #",pat_grid_cross:"斜めグリッド X",pat_brick:"レンガテクスチャ",pat_tv_noise:"⚡ TVノイズ",pat_rain:"🌧️ 雨アニメ",pat_stars:"💫 きらめく星空",pat_stripes:"🌀 回転斜縞",pat_waves:"🌊 流動ウェーブ"}}};class WigglyAudioModule{constructor(){this.audioCtx=null,this.lastSqueakTime=0}init(){if(!this.audioCtx){const e=window.AudioContext||window.webkitAudioContext;e&&(this.audioCtx=new e)}}play(e){const t=document.getElementById("sound-toggle");if(!t||t.checked){if("squeak"===e){const e=performance.now();if(e-this.lastSqueakTime<80)return;this.lastSqueakTime=e}if(this.init(),this.audioCtx)try{const t=this.audioCtx.createOscillator(),i=this.audioCtx.createGain();t.connect(i),i.connect(this.audioCtx.destination);const a=this.audioCtx.currentTime;"pop"===e?(t.type="sine",t.frequency.setValueAtTime(400,a),t.frequency.exponentialRampToValueAtTime(800,a+.05),i.gain.setValueAtTime(.15,a),i.gain.linearRampToValueAtTime(.01,a+.05),t.start(a),t.stop(a+.05)):"squeak"===e?(t.type="triangle",t.frequency.setValueAtTime(600+200*Math.random(),a),i.gain.setValueAtTime(.03,a),i.gain.linearRampToValueAtTime(.001,a+.03),t.start(a),t.stop(a+.03)):"obliterate"===e?(t.type="sawtooth",t.frequency.setValueAtTime(300,a),t.frequency.exponentialRampToValueAtTime(40,a+.3),i.gain.setValueAtTime(.3,a),i.gain.linearRampToValueAtTime(.01,a+.3),t.start(a),t.stop(a+.3)):"undo"===e&&(t.type="sine",t.frequency.setValueAtTime(600,a),t.frequency.exponentialRampToValueAtTime(250,a+.08),i.gain.setValueAtTime(.15,a),i.gain.linearRampToValueAtTime(.01,a+.08),t.start(a),t.stop(a+.08))}catch(e){}}}toggleSoundMenu(){const e=document.getElementById("sound-toggle");e&&(e.checked=!e.checked);const t=document.getElementById("menu-check-sound");t&&t.classList.toggle("opacity-0",!e.checked)}}const WigglyAudio=new WigglyAudioModule;class WigglyHistoryModule{constructor(){this.undoStack=[],this.redoStack=[]}cloneCanvasBuffer(e){const t=document.createElement("canvas");t.width=e.width,t.height=e.height;const i=t.getContext("2d");return i.imageSmoothingEnabled=!1,i.drawImage(e,0,0),t}saveState(){const e={width:WigglyEngine.width,height:WigglyEngine.height,baseFrameCanvases:WigglyEngine.baseFrameCanvases.map(e=>this.cloneCanvasBuffer(e)),markerPaletteMaps:WigglyEngine.markerPaletteMaps.map(e=>new Uint8Array(e))};this.undoStack.push(e),this.undoStack.length>WigglyConfig.MAX_UNDO&&this.undoStack.shift(),this.redoStack=[]}undo(){if(0===this.undoStack.length)return;const e={width:WigglyEngine.width,height:WigglyEngine.height,baseFrameCanvases:WigglyEngine.baseFrameCanvases.map(e=>this.cloneCanvasBuffer(e)),markerPaletteMaps:WigglyEngine.markerPaletteMaps.map(e=>new Uint8Array(e))};this.redoStack.push(e),this.redoStack.length>WigglyConfig.MAX_UNDO&&this.redoStack.shift();const t=this.undoStack.pop();this.restoreState(t),WigglyAudio.play("undo")}redo(){if(0===this.redoStack.length)return;const e={width:WigglyEngine.width,height:WigglyEngine.height,baseFrameCanvases:WigglyEngine.baseFrameCanvases.map(e=>this.cloneCanvasBuffer(e)),markerPaletteMaps:WigglyEngine.markerPaletteMaps.map(e=>new Uint8Array(e))};this.undoStack.push(e),this.undoStack.length>WigglyConfig.MAX_UNDO&&this.undoStack.shift();const t=this.redoStack.pop();this.restoreState(t),WigglyAudio.play("pop")}restoreState(e){e.width===WigglyEngine.width&&e.height===WigglyEngine.height||WigglyEngine.resizeDimensions(e.width,e.height,0,0,!0);for(let t=0;t<WigglyConfig.NUM_FRAMES;t++)WigglyEngine.baseFrameCtxs[t].clearRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.baseFrameCtxs[t].drawImage(e.baseFrameCanvases[t],0,0),WigglyEngine.markerPaletteMaps[t].set(e.markerPaletteMaps[t]);WigglyEngine.renderMainCanvas()}}const WigglyHistory=new WigglyHistoryModule;class WigglyEngineModule{constructor(){this.width=WigglyConfig.DEFAULT_WIDTH,this.height=WigglyConfig.DEFAULT_HEIGHT,this.currentFrameIndex=0,this.lastFrameTime=performance.now(),this.canvasBgColor="#ffffff",this.foregroundColor="#000000",this.baseFrameCanvases=[],this.baseFrameCtxs=[],this.markerPaletteMaps=[],this.markerRenderCanvas=document.createElement("canvas"),this.markerRenderCtx=this.markerRenderCanvas.getContext("2d"),this.tintCanvas=document.createElement("canvas"),this.tintCtx=this.tintCanvas.getContext("2d"),this.visibleCanvas=null,this.visibleCtx=null,this.previewCanvas=null,this.previewCtx=null,this.stampCache=new Map,this.dynamicPatternCanvases=[]}init(){this.visibleCanvas=document.getElementById("visibleCanvas"),this.visibleCtx=this.visibleCanvas.getContext("2d"),this.visibleCtx.imageSmoothingEnabled=!1,this.previewCanvas=document.getElementById("previewCanvas"),this.previewCtx=this.previewCanvas?this.previewCanvas.getContext("2d"):null,this.initCanvasBuffers()}initCanvasBuffers(){this.baseFrameCanvases=[],this.baseFrameCtxs=[],this.markerPaletteMaps=[];for(let e=0;e<WigglyConfig.NUM_FRAMES;e++){const e=document.createElement("canvas");e.width=this.width,e.height=this.height;const t=e.getContext("2d");t.imageSmoothingEnabled=!1,this.baseFrameCanvases.push(e),this.baseFrameCtxs.push(t),this.markerPaletteMaps.push(new Uint8Array(this.width*this.height))}this.markerRenderCanvas.width=this.width,this.markerRenderCanvas.height=this.height,this.markerRenderCtx.imageSmoothingEnabled=!1,this.tintCanvas.width=this.width,this.tintCanvas.height=this.height,this.tintCtx.imageSmoothingEnabled=!1}resizeDimensions(e,t,i=0,a=0,s=!1){s||WigglyHistory.saveState();const r=this.baseFrameCanvases.map(e=>WigglyHistory.cloneCanvasBuffer(e)),n=this.markerPaletteMaps.map(e=>new Uint8Array(e)),o=this.width,l=this.height;this.width=e,this.height=t,this.visibleCanvas.width=e,this.visibleCanvas.height=t,this.markerRenderCanvas.width=e,this.markerRenderCanvas.height=t,this.tintCanvas.width=e,this.tintCanvas.height=t;for(let s=0;s<WigglyConfig.NUM_FRAMES;s++){this.baseFrameCanvases[s].width=e,this.baseFrameCanvases[s].height=t,this.baseFrameCtxs[s].imageSmoothingEnabled=!1,this.baseFrameCtxs[s].clearRect(0,0,e,t),this.baseFrameCtxs[s].drawImage(r[s],-i,-a);const g=new Uint8Array(e*t),h=n[s];for(let s=0;s<l;s++){const r=s-a;if(r>=0&&r<t)for(let t=0;t<o;t++){const a=t-i;a>=0&&a<e&&(g[r*e+a]=h[s*o+t])}}this.markerPaletteMaps[s]=g}WigglyUI.updateCanvasDimIndicator(),this.renderMainCanvas(),WigglyStorage.triggerAutoSave()}setCanvasBackground(e){this.canvasBgColor=e;const t=document.getElementById("bg-color-picker");t&&(t.value=e);const i=document.getElementById("bg-hex-text");i&&(i.innerText=e),this.renderMainCanvas(),WigglyStorage.triggerAutoSave()}setCanvasForeground(e){this.foregroundColor=e;const t=document.getElementById("fg-color-picker");t&&(t.value=e);const i=document.getElementById("fg-hex-text");i&&(i.innerText=e),this.renderMainCanvas(),WigglyStorage.triggerAutoSave()}renderMarkerLayerToCanvas(e){const t=this.markerPaletteMaps[e],i=this.width,a=this.height,s=this.markerRenderCtx.createImageData(i,a),r=new Uint32Array(s.data.buffer),n=new Uint32Array(7);n[0]=0,WigglyConfig.markerKeys.forEach(e=>{const t=WigglyConfig.markerIdMap[e],i=WigglyTools.markerColors[e]||WigglyConfig.defaultMarkerColors[e];let a=parseInt(i.slice(1,3),16)||0,s=parseInt(i.slice(3,5),16)||0,r=parseInt(i.slice(5,7),16)||0;n[t]=255<<24|r<<16|s<<8|a});const o=i*a;for(let e=0;e<o;e++){const i=t[e];i>0&&(r[e]=n[i])}this.markerRenderCtx.putImageData(s,0,0)}renderMainCanvas(){this.visibleCtx.clearRect(0,0,this.width,this.height),this.visibleCtx.fillStyle=this.canvasBgColor,this.visibleCtx.fillRect(0,0,this.width,this.height),this.renderMarkerLayerToCanvas(this.currentFrameIndex),this.visibleCtx.drawImage(this.markerRenderCanvas,0,0);const e=this.baseFrameCanvases[this.currentFrameIndex];this.tintCtx.save(),this.tintCtx.globalCompositeOperation="source-over",this.tintCtx.clearRect(0,0,this.width,this.height),this.tintCtx.fillStyle=this.foregroundColor,this.tintCtx.fillRect(0,0,this.width,this.height),this.tintCtx.globalCompositeOperation="destination-in",this.tintCtx.drawImage(e,0,0),this.tintCtx.restore(),this.visibleCtx.drawImage(this.tintCanvas,0,0),this.previewCanvas&&this.previewCtx&&(this.previewCanvas.width===this.width&&this.previewCanvas.height===this.height||(this.previewCanvas.width=this.width,this.previewCanvas.height=this.height,this.previewCtx.imageSmoothingEnabled=!1),this.previewCtx.clearRect(0,0,this.width,this.height),this.previewCtx.drawImage(this.visibleCanvas,0,0))}gameLoop(e){e-this.lastFrameTime>=100&&(this.currentFrameIndex=(this.currentFrameIndex+1)%WigglyConfig.NUM_FRAMES,this.lastFrameTime=e,this.updateDynamicPatternThumbnails()),this.renderMainCanvas(),requestAnimationFrame(e=>this.gameLoop(e))}drawPatternThumbnail(e,t,i){e.clearRect(0,0,16,16),e.fillStyle=this.foregroundColor;const a=t.frames[i%t.frames.length];for(let t=0;t<16;t++)for(let i=0;i<16;i++)1===a[t%8*8+i%8]&&e.fillRect(i,t,1,1)}updateDynamicPatternThumbnails(){this.dynamicPatternCanvases.forEach(e=>{this.drawPatternThumbnail(e.ctx,e.patObj,this.currentFrameIndex)})}getStampCanvas(e,t=0,i=0,a=0){const s=`${e.type}_${e.size}_${WigglyTools.brushTipShape}_${e.color}_${e.composite}_${WigglyTools.selectedPatternIdx}_${t}_${i}_${a}`;if(this.stampCache.has(s))return this.stampCache.get(s);const r=e.size,n=r+4,o=document.createElement("canvas");o.width=n,o.height=n;const l=o.getContext("2d");l.imageSmoothingEnabled=!1,l.fillStyle=e.color;const g=Math.floor(n/2),h=Math.floor(n/2),c=(e,t)=>{if("square"===WigglyTools.brushTipShape){const i=Math.floor(r/2);return Math.abs(e)<=i&&Math.abs(t)<=i}if("chisel"===WigglyTools.brushTipShape){const i=Math.max(1,Math.floor(r/3));return Math.abs(e+t)<=r/1.2&&Math.abs(-e+t)<=i}if(r<=2){const i=Math.floor(r/2);return Math.abs(e)<=i&&Math.abs(t)<=i}{const i=r/2;return e*e+t*t<=i*i+.25}},p=Math.ceil(r/2);if("pixel"===e.type)for(let e=-p;e<=p;e++)for(let t=-p;t<=p;t++)c(t,e)&&l.fillRect(g+t,h+e,1,1);else if("dither"===e.type)for(let e=-p;e<=p;e++)for(let t=-p;t<=p;t++)c(t,e)&&(i+t+a+e)%2==0&&l.fillRect(g+t,h+e,1,1);else if("pattern"===e.type){const e=WigglyConfig.patterns[WigglyTools.selectedPatternIdx]||WigglyConfig.patterns[0],s=e?e.frames[t%e.frames.length]:null;for(let e=-p;e<=p;e++)for(let t=-p;t<=p;t++)c(t,e)&&s&&1===s[((a+e)%8+8)%8*8+((i+t)%8+8)%8]&&l.fillRect(g+t,h+e,1,1)}return this.stampCache.set(s,o),o}drawPixelStamp(e,t,i,a,s=0,r=0,n=0){e.save(),e.globalCompositeOperation=a.composite,e.globalAlpha=1;const o=Math.floor(t+s),l=Math.floor(i+r);if("spray"===a.type){e.fillStyle=a.color;const t=2*a.size,i=Math.max(5,3*a.size);for(let a=0;a<i;a++){const i=Math.random()*Math.PI*2,a=Math.random()*t,s=Math.floor(o+Math.cos(i)*a),r=Math.floor(l+Math.sin(i)*a);e.fillRect(s,r,1,1)}}else{const t=(o%8+8)%8,i=(l%8+8)%8,s=this.getStampCanvas(a,n,t,i),r=Math.floor(s.width/2);e.drawImage(s,o-r,l-r)}e.restore()}drawMarkerStamp(e,t,i,a,s,r){const n=this.width,o=this.height,l=this.markerPaletteMaps[e],g=Math.floor(t),h=Math.floor(i),c=Math.ceil(a/2),p=(e,t)=>{if("square"===s){const i=Math.floor(a/2);return Math.abs(e)<=i&&Math.abs(t)<=i}if("chisel"===s){const i=Math.max(1,Math.floor(a/3));return Math.abs(e+t)<=a/1.2&&Math.abs(-e+t)<=i}if(a<=2){const i=Math.floor(a/2);return Math.abs(e)<=i&&Math.abs(t)<=i}{const i=a/2;return e*e+t*t<=i*i+.25}};for(let e=-c;e<=c;e++){const t=h+e;if(!(t<0||t>=o))for(let i=-c;i<=c;i++){const a=g+i;a<0||a>=n||p(i,e)&&(l[t*n+a]=r)}}}}const WigglyEngine=new WigglyEngineModule;class WigglyViewportModule{constructor(){this.zoom=1,this.panX=0,this.panY=0,this.isPanning=!1,this.isSpaceDown=!1,this.startX=0,this.startY=0,this.startPanX=0,this.startPanY=0}init(){this.bindViewportEvents(),this.updateTransform()}setZoom(e,t,i){const a=this.zoom;if(e=Math.max(.25,Math.min(8,e)),Math.abs(e-a)<.001)return;const s=document.getElementById("canvas-container");if(s&&void 0!==t&&void 0!==i){const r=s.getBoundingClientRect(),n=t-(r.left+r.width/2),o=i-(r.top+r.height/2),l=e/a;this.panX=n-(n-this.panX)*l,this.panY=o-(o-this.panY)*l}this.zoom=e,this.updateTransform()}zoomIn(){this.setZoom(1.25*this.zoom),WigglyAudio.play("pop")}zoomOut(){this.setZoom(this.zoom/1.25),WigglyAudio.play("pop")}resetZoom(){this.zoom=1,this.panX=0,this.panY=0,this.updateTransform(),WigglyAudio.play("pop")}updateTransform(){const e=document.getElementById("visibleCanvas");e&&(e.style.transform=`translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`,e.style.transformOrigin="center center"),this.updateIndicator()}updateIndicator(){const e=document.getElementById("canvas-zoom-indicator");if(e){const t=Math.round(100*this.zoom),i=WigglyUI.t("status_zoom");e.innerText=`${t}% ${i}`}}bindViewportEvents(){const e=document.getElementById("canvas-container");e&&(e.addEventListener("wheel",e=>{e.preventDefault();const t=e.deltaY<0?1.15:.87;this.setZoom(this.zoom*t,e.clientX,e.clientY)},{passive:!1}),e.addEventListener("dblclick",e=>{("hand"===WigglyTools.currentTool||this.isSpaceDown)&&this.resetZoom()}))}}const WigglyViewport=new WigglyViewportModule;class WigglyToolsModule{constructor(){this.currentTool="pen",this.previousTool="pen",this.selectedPatternIdx=0,this.brushPt=3,this.brushTipShape="round",this.isHorizontalMirror=!1,this.isVerticalMirror=!1,this.isPressureEnabled=!0,this.stabilizerLevel=3,this.isDrawing=!1,this.lastX=0,this.lastY=0,this.smoothedX=0,this.smoothedY=0,this.lastMidX=0,this.lastMidY=0,this.markerColors={...WigglyConfig.defaultMarkerColors}}init(){this.renderPatternButtons(),this.bindCanvasInputEvents(),this.updatePressureUI(),this.updateShapeUI(),this.updateMirrorUI()}renderPatternButtons(){const e=document.getElementById("pattern-buttons-grid");e&&(e.innerHTML="",WigglyEngine.dynamicPatternCanvases=[],WigglyConfig.patterns.forEach((t,i)=>{const a=document.createElement("button"),s=i===this.selectedPatternIdx&&"pattern"===this.currentTool;a.className="retro-btn h-8 w-full p-0 flex items-center justify-center relative "+(s?"active":"");const r=WigglyUI.getPatternName(t);a.title=`${t.isDynamic?"["+("en"===WigglyUI.currentLang?"Dynamic":"ja"===WigglyUI.currentLang?"動的":"動態")+"] ":""}${r} (#${i+1})`,a.onclick=()=>{this.selectedPatternIdx=i,this.selectTool("pattern")};const n=document.createElement("canvas");n.width=16,n.height=16,n.className="shrink-0";const o=n.getContext("2d");if(WigglyEngine.drawPatternThumbnail(o,t,0),t.isDynamic){WigglyEngine.dynamicPatternCanvases.push({canvas:n,ctx:o,patObj:t});const e=document.createElement("span");e.className="text-[7px] font-bold text-black bg-yellow-300 border border-black px-0.5 leading-none absolute top-0.5 right-0.5 pointer-events-none",e.innerText="en"===WigglyUI.currentLang?"ANI":(WigglyUI.currentLang,"動"),a.appendChild(e)}a.appendChild(n),e.appendChild(a)}))}togglePressureSensitivity(){this.isPressureEnabled=!this.isPressureEnabled,this.updatePressureUI(),WigglyAudio.play("pop"),WigglyStorage.triggerAutoSave()}updatePressureUI(){const e=document.getElementById("btn-pressure-mode");e&&e.classList.toggle("active",this.isPressureEnabled);const t=document.getElementById("menu-check-pressure");t&&t.classList.toggle("opacity-0",!this.isPressureEnabled)}updateShapeUI(){document.querySelectorAll("#tip-shape-buttons .retro-btn").forEach(e=>e.classList.remove("active"));const e=document.getElementById(`btn-shape-${this.brushTipShape}`);e&&e.classList.add("active"),["round","square","chisel"].forEach(e=>{const t=document.getElementById(`menu-check-shape-${e}`);t&&t.classList.toggle("opacity-0",this.brushTipShape!==e)})}updateMirrorUI(){const e=document.getElementById("btn-mirror-h");e&&e.classList.toggle("active",this.isHorizontalMirror);const t=document.getElementById("menu-check-mirror-h");t&&t.classList.toggle("opacity-0",!this.isHorizontalMirror);const i=document.getElementById("btn-mirror-v");i&&i.classList.toggle("active",this.isVerticalMirror);const a=document.getElementById("menu-check-mirror-v");a&&a.classList.toggle("opacity-0",!this.isVerticalMirror)}getEffectivePressure(e){return this.isPressureEnabled&&e&&("pen"===e.pointerType||"number"==typeof e.pressure&&e.pressure>0&&.5!==e.pressure)?.3+1.1*Math.max(.05,Math.min(1,e.pressure)):1}selectTool(e){"hand"!==this.currentTool&&(this.previousTool=this.currentTool),this.currentTool=e,WigglyAudio.play("pop"),document.querySelectorAll("#tool-buttons-grid .retro-btn").forEach(e=>e.classList.remove("active")),document.querySelectorAll("#markers-group .retro-btn").forEach(e=>e.classList.remove("active")),"pattern"!==e&&document.querySelectorAll("#pattern-buttons-grid .retro-btn").forEach(e=>e.classList.remove("active"));const t=document.querySelector(`[data-tool="${e}"]`);if(t)t.classList.add("active");else{const t=document.getElementById(`btn-${e}`);t&&t.classList.add("active")}const i=document.getElementById("visibleCanvas");i&&(i.style.cursor="hand"===e||WigglyViewport.isSpaceDown?"grab":"crosshair")}getToolProps(e,t=1){const i=Math.max(1,Math.round(this.brushPt*t));if(WigglyConfig.markerKeys.includes(e))return{color:"#000000",size:Math.max(2,2*i),alpha:1,composite:"source-over",jitter:1,type:"pixel"};switch(e){case"pen":return{color:"#000000",size:Math.max(1,i),alpha:1,composite:"source-over",jitter:1.2,type:"pixel"};case"spray":return{color:"#000000",size:Math.max(2,2*i),alpha:.8,composite:"source-over",jitter:2,type:"spray"};case"pattern":return{color:"#000000",size:Math.max(3,2*i),alpha:1,composite:"source-over",jitter:.3,type:"pattern"};case"eraser":case"marker_eraser":return{color:"#000000",size:Math.max(3,2*i),alpha:1,composite:"destination-out",jitter:.5,type:"pixel"};default:return{color:"#000000",size:Math.max(2,2*i),alpha:1,composite:"source-over",jitter:1.2,type:"pixel"}}}setStabilizer(e){this.stabilizerLevel=parseInt(e,10);const t=document.getElementById("stabilizer-value-badge");t&&(0===this.stabilizerLevel?t.innerText=WigglyUI.t("stabilizer_off"):t.innerText=`Lv. ${this.stabilizerLevel}`),WigglyStorage.triggerAutoSave()}setBrushSize(e){this.brushPt=parseInt(e,10);const t=document.getElementById("brush-pt-badge");t&&(t.innerText=`${this.brushPt} pt`),WigglyStorage.triggerAutoSave()}setBrushTipShape(e){this.brushTipShape=e,this.updateShapeUI(),WigglyAudio.play("pop"),WigglyStorage.triggerAutoSave()}toggleMirror(e){"h"===e?this.isHorizontalMirror=!this.isHorizontalMirror:"v"===e&&(this.isVerticalMirror=!this.isVerticalMirror),this.updateMirrorUI(),WigglyAudio.play("pop")}updateMarkerColor(e,t){this.markerColors[e]=t;const i=document.getElementById(`swatch-${e}`);i&&(i.style.backgroundColor=t),this.selectTool(e),WigglyEngine.renderMainCanvas(),WigglyStorage.triggerAutoSave()}getCanvasCoordinates(e){const t=WigglyEngine.visibleCanvas.getBoundingClientRect(),i=WigglyEngine.width/t.width,a=WigglyEngine.height/t.height;let s=e.clientX,r=e.clientY;return e.touches&&e.touches.length>0&&(s=e.touches[0].clientX,r=e.touches[0].clientY),{x:(s-t.left)*i,y:(r-t.top)*a}}updateCoordinates(e){const t=document.getElementById("canvas-coords-indicator");if(!t)return;const i=this.getCanvasCoordinates(e),a=Math.max(0,Math.min(WigglyEngine.width,Math.floor(i.x))),s=Math.max(0,Math.min(WigglyEngine.height,Math.floor(i.y)));t.innerText=`X: ${a}, Y: ${s}`}resetCoordinates(){const e=document.getElementById("canvas-coords-indicator");e&&(e.innerText="X: --, Y: --")}startDrawing(e){if(1===e.button||"hand"===this.currentTool||WigglyViewport.isSpaceDown){e.preventDefault(),WigglyViewport.isPanning=!0,WigglyViewport.startX=e.clientX,WigglyViewport.startY=e.clientY,WigglyViewport.startPanX=WigglyViewport.panX,WigglyViewport.startPanY=WigglyViewport.panY;const t=document.getElementById("visibleCanvas");return void(t&&(t.style.cursor="grabbing"))}if(0!==e.button&&"mouse"===e.pointerType)return;if(e.preventDefault(),WigglyHistory.saveState(),this.isDrawing=!0,e.target&&e.target.setPointerCapture&&void 0!==e.pointerId)try{e.target.setPointerCapture(e.pointerId)}catch(e){}const t=this.getCanvasCoordinates(e),i=this.getEffectivePressure(e);this.lastX=t.x,this.lastY=t.y,this.smoothedX=t.x,this.smoothedY=t.y,this.lastMidX=t.x,this.lastMidY=t.y,this.drawPoint(t.x,t.y,i),WigglyAudio.play("squeak")}draw(e){if(WigglyViewport.isPanning)return e.preventDefault(),WigglyViewport.panX=WigglyViewport.startPanX+(e.clientX-WigglyViewport.startX),WigglyViewport.panY=WigglyViewport.startPanY+(e.clientY-WigglyViewport.startY),void WigglyViewport.updateTransform();if(!this.isDrawing)return;e.preventDefault();const t=e.getCoalescedEvents&&e.getCoalescedEvents().length>0?e.getCoalescedEvents():[e];for(let e=0;e<t.length;e++){const i=t[e],a=this.getCanvasCoordinates(i),s=this.getEffectivePressure(i);let r=a.x,n=a.y;if(this.stabilizerLevel>0){const e=Math.max(.015,Math.pow(.65,this.stabilizerLevel));this.smoothedX+=(a.x-this.smoothedX)*e,this.smoothedY+=(a.y-this.smoothedY)*e,r=this.smoothedX,n=this.smoothedY}const o=(this.lastX+r)/2,l=(this.lastY+n)/2;this.drawSmoothPixelSegment(this.lastMidX,this.lastMidY,this.lastX,this.lastY,o,l,s),this.lastX=r,this.lastY=n,this.lastMidX=o,this.lastMidY=l}WigglyAudio.play("squeak")}stopDrawing(e){if(WigglyViewport.isPanning){WigglyViewport.isPanning=!1;const e=document.getElementById("visibleCanvas");e&&(e.style.cursor="hand"===this.currentTool||WigglyViewport.isSpaceDown?"grab":"crosshair")}if(this.isDrawing){if(this.isDrawing=!1,e.target&&e.target.releasePointerCapture&&void 0!==e.pointerId)try{e.target.releasePointerCapture(e.pointerId)}catch(e){}WigglyStorage.triggerAutoSave()}}drawPoint(e,t,i=1){const a=this.getToolProps(this.currentTool,i),s=[{x:e,y:t}];this.isHorizontalMirror&&s.push({x:WigglyEngine.width-e,y:t}),this.isVerticalMirror&&s.push({x:e,y:WigglyEngine.height-t}),this.isHorizontalMirror&&this.isVerticalMirror&&s.push({x:WigglyEngine.width-e,y:WigglyEngine.height-t});for(let e=0;e<WigglyConfig.NUM_FRAMES;e++){const t=(Math.random()-.5)*a.jitter*1.5,i=(Math.random()-.5)*a.jitter*1.5;s.forEach(s=>{if("eraser"===this.currentTool)WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[e],s.x,s.y,a,t,i,e),WigglyEngine.drawMarkerStamp(e,s.x+t,s.y+i,a.size,this.brushTipShape,0);else if("marker_eraser"===this.currentTool)WigglyEngine.drawMarkerStamp(e,s.x+t,s.y+i,a.size,this.brushTipShape,0);else if(WigglyConfig.markerKeys.includes(this.currentTool)){const r=WigglyConfig.markerIdMap[this.currentTool];WigglyEngine.drawMarkerStamp(e,s.x+t,s.y+i,a.size,this.brushTipShape,r)}else WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[e],s.x,s.y,a,t,i,e)})}}drawSmoothPixelSegment(e,t,i,a,s,r,n=1){const o=[{p0x:e,p0y:t,p1x:i,p1y:a,p2x:s,p2y:r}];this.isHorizontalMirror&&o.push({p0x:WigglyEngine.width-e,p0y:t,p1x:WigglyEngine.width-i,p1y:a,p2x:WigglyEngine.width-s,p2y:r}),this.isVerticalMirror&&o.push({p0x:e,p0y:WigglyEngine.height-t,p1x:i,p1y:WigglyEngine.height-a,p2x:s,p2y:WigglyEngine.height-r}),this.isHorizontalMirror&&this.isVerticalMirror&&o.push({p0x:WigglyEngine.width-e,p0y:WigglyEngine.height-t,p1x:WigglyEngine.width-i,p1y:WigglyEngine.height-a,p2x:WigglyEngine.width-s,p2y:WigglyEngine.height-r}),o.forEach(e=>{this.drawSingleBezierSegment(e.p0x,e.p0y,e.p1x,e.p1y,e.p2x,e.p2y,n)})}drawSingleBezierSegment(e,t,i,a,s,r,n=1){const o=this.getToolProps(this.currentTool,n),l=Math.hypot(i-e,a-t)+Math.hypot(s-i,r-a),g=Math.max(1,Math.floor(o.size/4)),h=Math.max(1,Math.ceil(l/g)),c=[];for(let e=0;e<WigglyConfig.NUM_FRAMES;e++)c.push({jx:(Math.random()-.5)*o.jitter*1.5,jy:(Math.random()-.5)*o.jitter*1.5});for(let n=0;n<=h;n++){const l=n/h,g=1-l,p=g*g*e+2*g*l*i+l*l*s,u=g*g*t+2*g*l*a+l*l*r;for(let e=0;e<WigglyConfig.NUM_FRAMES;e++)if("eraser"===this.currentTool)WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[e],p,u,o,c[e].jx,c[e].jy,e),WigglyEngine.drawMarkerStamp(e,p+c[e].jx,u+c[e].jy,o.size,this.brushTipShape,0);else if("marker_eraser"===this.currentTool)WigglyEngine.drawMarkerStamp(e,p+c[e].jx,u+c[e].jy,o.size,this.brushTipShape,0);else if(WigglyConfig.markerKeys.includes(this.currentTool)){const t=WigglyConfig.markerIdMap[this.currentTool];WigglyEngine.drawMarkerStamp(e,p+c[e].jx,u+c[e].jy,o.size,this.brushTipShape,t)}else WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[e],p,u,o,c[e].jx,c[e].jy,e)}}bindCanvasInputEvents(){const e=WigglyEngine.visibleCanvas;e.addEventListener("pointermove",e=>{this.updateCoordinates(e),(this.isDrawing||WigglyViewport.isPanning)&&this.draw(e)}),e.addEventListener("pointerleave",()=>this.resetCoordinates()),window.PointerEvent?(e.addEventListener("pointerdown",e=>{this.updateCoordinates(e),this.startDrawing(e)}),window.addEventListener("pointerup",e=>this.stopDrawing(e)),window.addEventListener("pointercancel",e=>this.stopDrawing(e))):(e.addEventListener("mousedown",e=>{this.updateCoordinates(e),this.startDrawing(e)}),e.addEventListener("mousemove",e=>{this.updateCoordinates(e),this.draw(e)}),e.addEventListener("mouseleave",()=>this.resetCoordinates()),window.addEventListener("mouseup",e=>this.stopDrawing(e)),e.addEventListener("touchstart",e=>{this.updateCoordinates(e),this.startDrawing(e)},{passive:!1}),e.addEventListener("touchmove",e=>{this.updateCoordinates(e),this.draw(e)},{passive:!1}),window.addEventListener("touchend",e=>{this.resetCoordinates(),this.stopDrawing(e)}))}}const WigglyTools=new WigglyToolsModule;class WigglyStorageModule{constructor(){this.STORAGE_KEY="WIGGLY_PAINT_AUTOSAVE_V2",this.saveTimer=null,this.isSaving=!1,this.isRestoring=!1}init(){return this.restoreFromStorage()}triggerAutoSave(){this.isRestoring||(this.saveTimer&&clearTimeout(this.saveTimer),this.setIndicatorStatus("saving"),this.saveTimer=setTimeout(()=>{this.performSave()},600))}setIndicatorStatus(e){const t=document.getElementById("autosave-text"),i=document.getElementById("autosave-indicator");t&&i&&("saving"===e?(t.innerText=WigglyUI.t("status_saving"),i.classList.remove("text-emerald-800"),i.classList.add("text-amber-800")):(t.innerText=WigglyUI.t("status_saved"),i.classList.remove("text-amber-800"),i.classList.add("text-emerald-800")))}performSave(){if(!this.isRestoring)try{this.isSaving=!0;const e=WigglyEngine.baseFrameCanvases.map(e=>e.toDataURL("image/png")),t=WigglyEngine.markerPaletteMaps.map(e=>Array.from(e)),i={width:WigglyEngine.width,height:WigglyEngine.height,canvasBgColor:WigglyEngine.canvasBgColor,foregroundColor:WigglyEngine.foregroundColor,markerColors:{...WigglyTools.markerColors},brushPt:WigglyTools.brushPt,brushTipShape:WigglyTools.brushTipShape,stabilizerLevel:WigglyTools.stabilizerLevel,isPressureEnabled:WigglyTools.isPressureEnabled,currentLang:WigglyUI.currentLang,baseFrames:e,markerMaps:t,savedAt:Date.now()};localStorage.setItem(this.STORAGE_KEY,JSON.stringify(i)),this.setIndicatorStatus("saved")}catch(e){console.warn("Auto-save failed:",e),this.setIndicatorStatus("saved")}finally{this.isSaving=!1}}restoreFromStorage(){const e=localStorage.getItem(this.STORAGE_KEY);if(!e)return!1;try{this.isRestoring=!0;const t=JSON.parse(e);if(!t||!t.baseFrames||!t.markerMaps)return this.isRestoring=!1,!1;if(t.width&&t.height&&WigglyEngine.resizeDimensions(t.width,t.height,0,0,!0),t.canvasBgColor&&WigglyEngine.setCanvasBackground(t.canvasBgColor),t.foregroundColor&&WigglyEngine.setCanvasForeground(t.foregroundColor),t.markerColors&&(WigglyTools.markerColors={...t.markerColors},WigglyConfig.markerKeys.forEach(e=>{const i=t.markerColors[e];if(i){const t=document.getElementById(`picker-${e}`);t&&(t.value=i);const a=document.getElementById(`swatch-${e}`);a&&(a.style.backgroundColor=i)}})),t.brushPt){WigglyTools.brushPt=t.brushPt;const e=document.getElementById("brush-size-range");e&&(e.value=t.brushPt),WigglyTools.setBrushSize(t.brushPt)}if(t.brushTipShape&&WigglyTools.setBrushTipShape(t.brushTipShape),"number"==typeof t.stabilizerLevel){WigglyTools.stabilizerLevel=t.stabilizerLevel;const e=document.getElementById("stabilizer-range");e&&(e.value=t.stabilizerLevel),WigglyTools.setStabilizer(t.stabilizerLevel)}if("boolean"==typeof t.isPressureEnabled&&(WigglyTools.isPressureEnabled=t.isPressureEnabled,WigglyTools.updatePressureUI()),t.currentLang&&t.currentLang!==WigglyUI.currentLang&&WigglyUI.setLanguage(t.currentLang),t.markerMaps)for(let e=0;e<WigglyConfig.NUM_FRAMES;e++)t.markerMaps[e]&&WigglyEngine.markerPaletteMaps[e]&&WigglyEngine.markerPaletteMaps[e].set(new Uint8Array(t.markerMaps[e]));let i=0;for(let e=0;e<WigglyConfig.NUM_FRAMES;e++){const a=new Image;a.onload=()=>{WigglyEngine.baseFrameCtxs[e].clearRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.baseFrameCtxs[e].drawImage(a,0,0),i++,i===WigglyConfig.NUM_FRAMES&&(WigglyEngine.renderMainCanvas(),this.setIndicatorStatus("saved"),this.isRestoring=!1)},a.src=t.baseFrames[e]}return!0}catch(e){return console.error("Auto-load failed:",e),this.isRestoring=!1,!1}}}const WigglyStorage=new WigglyStorageModule;class WigglyUIModule{constructor(){this.currentLang="zh-TW"}init(){this.bindGlobalEvents(),this.applyLanguage()}t(e){return(WigglyConfig.i18n[this.currentLang]||WigglyConfig.i18n["zh-TW"])[e]||WigglyConfig.i18n["zh-TW"][e]||e}getPatternName(e){const t="pat_"+e.key;return this.t(t)||e.name}setLanguage(e){WigglyConfig.i18n[e]&&(this.currentLang=e,WigglyAudio.play("pop"),this.applyLanguage())}applyLanguage(){document.querySelectorAll("[data-i18n]").forEach(e=>{const t=e.getAttribute("data-i18n"),i=this.t(t);i&&(e.innerHTML=i)}),["zh-TW","en","ja"].forEach(e=>{const t=document.getElementById(`menu-check-lang-${e}`);t&&t.classList.toggle("opacity-0",this.currentLang!==e)});const e=document.getElementById("stabilizer-value-badge");e&&0===WigglyTools.stabilizerLevel&&(e.innerText=this.t("stabilizer_off")),this.updateCanvasDimIndicator(),WigglyViewport.updateIndicator(),WigglyTools.renderPatternButtons(),WigglyStorage.setIndicatorStatus(WigglyStorage.isSaving?"saving":"saved")}updateCanvasDimIndicator(){const e=document.getElementById("canvas-dim-indicator");e&&(e.innerText=`${WigglyEngine.width} x ${WigglyEngine.height} ${this.t("status_pixels")}`)}toggleMenu(e,t){t&&t.stopPropagation();const i=document.getElementById(e);if(!i)return;const a=i.classList.contains("hidden");this.closeAllMenus(),a&&(i.classList.remove("hidden"),WigglyAudio.play("pop"))}closeAllMenus(){document.querySelectorAll(".menu-dropdown-container > div").forEach(e=>e.classList.add("hidden"))}openModal(e){const t=document.getElementById(e);t&&(t.classList.add("active"),WigglyAudio.play("pop"),"export-modal"===e&&(document.getElementById("export-status-container").classList.remove("hidden"),document.getElementById("export-preview-container").classList.add("hidden"),setTimeout(()=>this.compileAndExportGIF(),100)))}closeModal(e){const t=document.getElementById(e);t&&t.classList.remove("active")}openCropModal(){document.getElementById("resize-width").value=WigglyEngine.width,document.getElementById("resize-height").value=WigglyEngine.height,document.getElementById("crop-top").value=0,document.getElementById("crop-bottom").value=0,document.getElementById("crop-left").value=0,document.getElementById("crop-right").value=0,this.openModal("crop-modal")}setPresetSize(e,t){document.getElementById("resize-width").value=e,document.getElementById("resize-height").value=t,WigglyAudio.play("pop")}applyDirectResize(){const e=parseInt(document.getElementById("resize-width").value,10)||WigglyEngine.width,t=parseInt(document.getElementById("resize-height").value,10)||WigglyEngine.height;e<=0||t<=0||(WigglyEngine.resizeDimensions(e,t,0,0),this.closeModal("crop-modal"),WigglyAudio.play("pop"))}applyCrop(){const e=parseInt(document.getElementById("crop-top").value,10)||0,t=parseInt(document.getElementById("crop-bottom").value,10)||0,i=parseInt(document.getElementById("crop-left").value,10)||0,a=parseInt(document.getElementById("crop-right").value,10)||0,s=Math.max(50,WigglyEngine.width-i-a),r=Math.max(50,WigglyEngine.height-e-t);WigglyEngine.resizeDimensions(s,r,i,e),this.closeModal("crop-modal"),WigglyAudio.play("pop")}applyTightFit(){let e=WigglyEngine.width,t=WigglyEngine.height,i=0,a=0,s=!1;for(let r=0;r<WigglyConfig.NUM_FRAMES;r++){const n=WigglyEngine.baseFrameCtxs[r].getImageData(0,0,WigglyEngine.width,WigglyEngine.height).data;for(let r=0;r<WigglyEngine.height;r++)for(let o=0;o<WigglyEngine.width;o++)n[4*(r*WigglyEngine.width+o)+3]>0&&(s=!0,o<e&&(e=o),o>i&&(i=o),r<t&&(t=r),r>a&&(a=r));const o=WigglyEngine.markerPaletteMaps[r];for(let r=0;r<WigglyEngine.height;r++)for(let n=0;n<WigglyEngine.width;n++)o[r*WigglyEngine.width+n]>0&&(s=!0,n<e&&(e=n),n>i&&(i=n),r<t&&(t=r),r>a&&(a=r))}if(!s)return;e=Math.max(0,e-10),t=Math.max(0,t-10),i=Math.min(WigglyEngine.width-1,i+10),a=Math.min(WigglyEngine.height-1,a+10);const r=i-e+1,n=a-t+1;WigglyEngine.resizeDimensions(r,n,e,t),this.closeModal("crop-modal"),WigglyAudio.play("pop")}applyPresetPalette(e){const t={classic:{bg:"#ffffff",fg:"#000000",m1:"#FF5588",m2:"#00CCFF",m3:"#FFE000",c1:"#00FF66",c2:"#A020F0",c3:"#FF6600"},retro:{bg:"#FDF6E3",fg:"#2B261F",m1:"#E88D8D",m2:"#8DAEE8",m3:"#E8D48D",c1:"#A8E88D",c2:"#C48DE8",c3:"#E8B28D"},cyber:{bg:"#121218",fg:"#FFFFFF",m1:"#FF007F",m2:"#00F0FF",m3:"#FFE600",c1:"#39FF14",c2:"#B026FF",c3:"#FF5F1F"},morandi:{bg:"#EAE8E3",fg:"#333333",m1:"#C08282",m2:"#829CB0",m3:"#D4C49A",c1:"#9AB09C",c2:"#A282B0",c3:"#C89B82"},gameboy:{bg:"#9BBC0F",fg:"#0F380F",m1:"#8BAC0F",m2:"#306230",m3:"#0F380F",c1:"#8BAC0F",c2:"#306230",c3:"#0F380F"},macaron:{bg:"#FFF5F5",fg:"#4A4A4A",m1:"#FFB7B2",m2:"#A2E8DD",m3:"#FFF1C5",c1:"#C7CEEA",c2:"#E2F0CB",c3:"#FFDAC1"}}[e];if(!t)return;WigglyEngine.setCanvasBackground(t.bg),WigglyEngine.setCanvasForeground(t.fg);const i={marker1:t.m1,marker2:t.m2,marker3:t.m3,custom1:t.c1,custom2:t.c2,custom3:t.c3};WigglyConfig.markerKeys.forEach(e=>{const t=i[e];WigglyTools.markerColors[e]=t;const a=document.getElementById(`picker-${e}`);a&&(a.value=t);const s=document.getElementById(`swatch-${e}`);s&&(s.style.backgroundColor=t)}),WigglyTools.renderPatternButtons(),WigglyEngine.renderMainCanvas(),WigglyAudio.play("pop"),WigglyStorage.triggerAutoSave()}promptClearCanvas(){this.clearCanvasNow()}clearCanvasNow(){WigglyHistory.saveState(),WigglyAudio.play("obliterate");for(let e=0;e<WigglyConfig.NUM_FRAMES;e++)WigglyEngine.baseFrameCtxs[e]&&WigglyEngine.baseFrameCtxs[e].clearRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.markerPaletteMaps[e]&&WigglyEngine.markerPaletteMaps[e].fill(0);WigglyEngine.stampCache&&WigglyEngine.stampCache.clear(),WigglyEngine.renderMainCanvas(),WigglyStorage.triggerAutoSave()}triggerOpenImage(){document.getElementById("image-open-loader").click()}handleOpenImage(e){const t=e.target.files[0];if(!t)return;const i=new FileReader;i.onload=t=>{const i=new Image;i.onload=()=>{WigglyHistory.saveState(),WigglyEngine.resizeDimensions(i.width,i.height,0,0,!0);for(let e=0;e<WigglyConfig.NUM_FRAMES;e++)WigglyEngine.baseFrameCtxs[e].clearRect(0,0,i.width,i.height),WigglyEngine.baseFrameCtxs[e].drawImage(i,0,0),WigglyEngine.markerPaletteMaps[e]&&WigglyEngine.markerPaletteMaps[e].fill(0);WigglyEngine.stampCache&&WigglyEngine.stampCache.clear(),WigglyEngine.renderMainCanvas(),WigglyAudio.play("pop"),WigglyStorage.triggerAutoSave(),e.target.value=""},i.src=t.target.result},i.readAsDataURL(t)}compileAndExportGIF(){const e=[];for(let t=0;t<WigglyConfig.NUM_FRAMES;t++){const i=document.createElement("canvas");i.width=WigglyEngine.width,i.height=WigglyEngine.height;const a=i.getContext("2d");a.imageSmoothingEnabled=!1,a.fillStyle=WigglyEngine.canvasBgColor,a.fillRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.renderMarkerLayerToCanvas(t),a.drawImage(WigglyEngine.markerRenderCanvas,0,0);const s=WigglyEngine.baseFrameCanvases[t];WigglyEngine.tintCtx.save(),WigglyEngine.tintCtx.globalCompositeOperation="source-over",WigglyEngine.tintCtx.clearRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.tintCtx.fillStyle=WigglyEngine.foregroundColor,WigglyEngine.tintCtx.fillRect(0,0,WigglyEngine.width,WigglyEngine.height),WigglyEngine.tintCtx.globalCompositeOperation="destination-in",WigglyEngine.tintCtx.drawImage(s,0,0),WigglyEngine.tintCtx.restore(),a.drawImage(WigglyEngine.tintCanvas,0,0),e.push(i.toDataURL("image/png"))}"undefined"!=typeof gifshot&&gifshot.createGIF({images:e,gifWidth:WigglyEngine.width,gifHeight:WigglyEngine.height,interval:.1,numFrames:3},function(e){if(!e.error){const t=e.image;document.getElementById("gif-preview-img").src=t,document.getElementById("gif-download-btn").href=t,document.getElementById("export-status-container").classList.add("hidden"),document.getElementById("export-preview-container").classList.remove("hidden")}})}bindGlobalEvents(){document.addEventListener("click",()=>this.closeAllMenus()),window.addEventListener("keydown",e=>{const t=e.target.tagName.toLowerCase();if("input"===t||"textarea"===t||"select"===t)return;const i=e.ctrlKey||e.metaKey;if("Space"===e.code&&!e.repeat){e.preventDefault(),WigglyViewport.isSpaceDown=!0;const t=document.getElementById("visibleCanvas");return void(t&&(t.style.cursor="grab"))}if(i){const t=e.key.toLowerCase();"1"===t?(e.preventDefault(),WigglyTools.selectTool("marker1")):"2"===t?(e.preventDefault(),WigglyTools.selectTool("marker2")):"3"===t?(e.preventDefault(),WigglyTools.selectTool("marker3")):"4"===t?(e.preventDefault(),WigglyTools.selectTool("custom1")):"5"===t?(e.preventDefault(),WigglyTools.selectTool("custom2")):"6"===t?(e.preventDefault(),WigglyTools.selectTool("custom3")):"0"===t?(e.preventDefault(),WigglyViewport.resetZoom()):"="===t||"+"===t?(e.preventDefault(),WigglyViewport.zoomIn()):"-"===t?(e.preventDefault(),WigglyViewport.zoomOut()):"o"===t?(e.preventDefault(),this.triggerOpenImage()):"z"!==t||e.shiftKey?"y"===t||e.shiftKey&&"z"===t?(e.preventDefault(),WigglyHistory.redo()):"e"===t?(e.preventDefault(),this.openModal("export-modal")):"n"===t&&(e.preventDefault(),this.promptClearCanvas()):(e.preventDefault(),WigglyHistory.undo())}else"1"===e.key||"b"===e.key.toLowerCase()?WigglyTools.selectTool("pen"):"2"===e.key?WigglyTools.selectTool("spray"):"3"===e.key||"e"===e.key.toLowerCase()&&!e.shiftKey?WigglyTools.selectTool("eraser"):"4"===e.key||"e"===e.key.toLowerCase()&&e.shiftKey?WigglyTools.selectTool("marker_eraser"):"5"===e.key||"h"===e.key.toLowerCase()?WigglyTools.selectTool("hand"):"+"===e.key||"="===e.key?WigglyViewport.zoomIn():"-"===e.key?WigglyViewport.zoomOut():"0"===e.key?WigglyViewport.resetZoom():"p"===e.key.toLowerCase()?(e.preventDefault(),WigglyTools.togglePressureSensitivity()):"F1"===e.key?(e.preventDefault(),this.openModal("help-modal")):"Escape"===e.key&&document.querySelectorAll(".modal-backdrop").forEach(e=>e.classList.remove("active"))}),window.addEventListener("keyup",e=>{if("Space"===e.code){WigglyViewport.isSpaceDown=!1;const e=document.getElementById("visibleCanvas");e&&(e.style.cursor="hand"===WigglyTools.currentTool?"grab":"crosshair")}})}}const WigglyUI=new WigglyUIModule;class WigglyAppModule{init(){WigglyEngine.init(),WigglyViewport.init(),WigglyTools.init(),WigglyUI.init();const e=WigglyStorage.init();WigglyTools.selectTool("pen"),requestAnimationFrame(e=>WigglyEngine.gameLoop(e)),e||WigglyUI.openModal("help-modal")}}const WigglyApp=new WigglyAppModule;window.WigglyConfig=WigglyConfig,window.WigglyAudio=WigglyAudio,window.WigglyHistory=WigglyHistory,window.WigglyEngine=WigglyEngine,window.WigglyViewport=WigglyViewport,window.WigglyTools=WigglyTools,window.WigglyStorage=WigglyStorage,window.WigglyUI=WigglyUI,window.WigglyApp=WigglyApp,window.onload=function(){WigglyApp.init()};
+        // =========================================================================
+        // MODULE 1: WigglyConfig.js (Constants, 18 Patterns, i18n & Defaults)
+        // =========================================================================
+        const WigglyConfig = {
+            NUM_FRAMES: 3,
+            MAX_UNDO: 15,
+            DEFAULT_WIDTH: 560,
+            DEFAULT_HEIGHT: 420,
+            
+            markerKeys: ['marker1', 'marker2', 'marker3', 'custom1', 'custom2', 'custom3'],
+            
+            markerIdMap: {
+                'marker1': 1,
+                'marker2': 2,
+                'marker3': 3,
+                'custom1': 4,
+                'custom2': 5,
+                'custom3': 6
+            },
+
+            defaultMarkerColors: {
+                'marker1': '#FF5588',
+                'marker2': '#00CCFF',
+                'marker3': '#FFE000',
+                'custom1': '#00FF66',
+                'custom2': '#A020F0',
+                'custom3': '#FF6600'
+            },
+
+            // 18 Curated Screentone Pattern Definitions
+            patterns: [
+                { key: "solid", name: "純黑實心", isDynamic: false, frames: [
+                    [1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,
+                     1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1]
+                ]},
+                { key: "checker50", name: "50% 棋盤點陣", isDynamic: false, frames: [
+                    [1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1, 1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1,
+                     1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1, 1,0,1,0,1,0,1,0, 0,1,0,1,0,1,0,1]
+                ]},
+                { key: "dot25", name: "25% 細網點", isDynamic: false, frames: [
+                    [1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0,
+                     1,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0]
+                ]},
+                { key: "dot75", name: "75% 濃密網點", isDynamic: false, frames: [
+                    [0,1,1,1,0,1,1,1, 1,1,1,1,1,1,1,1, 1,1,0,1,1,1,0,1, 1,1,1,1,1,1,1,1,
+                     0,1,1,1,0,1,1,1, 1,1,1,1,1,1,1,1, 1,1,0,1,1,1,0,1, 1,1,1,1,1,1,1,1]
+                ]},
+                { key: "dot12", name: "12.5% 稀疏點", isDynamic: false, frames: [
+                    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0,
+                     1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0]
+                ]},
+                { key: "dot6", name: "6.25% 超微點", isDynamic: false, frames: [
+                    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,
+                     0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0]
+                ]},
+                { key: "hline", name: "水平橫線", isDynamic: false, frames: [
+                    [1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0,
+                     1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1, 0,0,0,0,0,0,0,0]
+                ]},
+                { key: "vline", name: "垂直直線", isDynamic: false, frames: [
+                    [1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0,
+                     1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0, 1,0,1,0,1,0,1,0]
+                ]},
+                { key: "diag_r", name: "正斜線 /", isDynamic: false, frames: [
+                    [0,0,0,1,0,0,0,1, 0,0,1,0,0,0,1,0, 0,1,0,0,0,1,0,0, 1,0,0,0,1,0,0,0,
+                     0,0,0,1,0,0,0,1, 0,0,1,0,0,0,1,0, 0,1,0,0,0,1,0,0, 1,0,0,0,1,0,0,0]
+                ]},
+                { key: "diag_l", name: "反斜線 \\", isDynamic: false, frames: [
+                    [1,0,0,0,1,0,0,0, 0,1,0,0,0,1,0,0, 0,0,1,0,0,0,1,0, 0,0,0,1,0,0,0,1,
+                     1,0,0,0,1,0,0,0, 0,1,0,0,0,1,0,0, 0,0,1,0,0,0,1,0, 0,0,0,1,0,0,0,1]
+                ]},
+                { key: "grid_square", name: "正方網格 #", isDynamic: false, frames: [
+                    [1,1,1,1,1,1,1,1, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0,
+                     1,1,1,1,1,1,1,1, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0]
+                ]},
+                { key: "grid_cross", name: "斜向網格 X", isDynamic: false, frames: [
+                    [1,0,0,0,1,0,0,1, 0,1,0,1,0,1,1,0, 0,0,1,0,0,1,0,0, 0,1,0,1,1,0,1,0,
+                     1,0,0,1,1,0,0,1, 0,1,1,0,0,1,1,0, 0,1,0,0,0,0,1,0, 1,0,0,0,0,0,0,1]
+                ]},
+                { key: "brick", name: "磚牆紋理", isDynamic: false, frames: [
+                    [1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,
+                     0,0,0,0,1,0,0,0, 0,0,0,0,1,0,0,0, 1,1,1,1,1,1,1,1, 1,0,0,0,0,0,0,0]
+                ]},
+
+                // --- 5 ANIMATED SCREENTONES ---
+                { key: "tv_noise", name: "⚡ TV 噪訊", isDynamic: true, frames: [
+                    [1,0,0,1,0,1,0,1, 0,1,1,0,1,0,0,0, 1,0,0,1,0,0,1,1, 0,1,1,0,1,1,0,0, 1,0,0,1,0,1,0,1, 0,1,0,0,1,0,1,0, 1,0,1,1,0,1,0,0, 0,1,0,0,1,0,1,1],
+                    [0,1,1,0,1,0,1,0, 1,0,0,1,0,1,0,1, 0,1,1,0,1,1,0,0, 1,0,0,1,0,0,1,1, 0,1,1,0,1,0,1,0, 1,0,1,1,0,1,0,1, 0,1,0,0,1,0,1,1, 1,0,1,1,0,1,0,0],
+                    [1,1,0,0,1,0,0,1, 0,0,1,1,0,1,1,0, 1,1,0,0,1,0,0,1, 0,0,1,1,0,1,1,0, 1,0,1,0,1,1,0,0, 0,1,0,1,0,0,1,1, 1,1,0,0,1,0,1,0, 0,0,1,1,0,1,0,1]
+                ]},
+                { key: "rain", name: "🌧️ 下雨動態", isDynamic: true, frames: [
+                    [0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0],
+                    [1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0, 1,0,0,0,1,0,0,0, 1,0,0,0,1,0,0,0, 0,0,1,0,0,0,1,0, 0,0,1,0,0,0,1,0],
+                    [0,1,0,0,0,1,0,0, 0,1,0,0,0,1,0,0, 0,0,0,1,0,0,0,1, 0,0,0,1,0,0,0,1, 0,1,0,0,0,1,0,0, 0,1,0,0,0,1,0,0, 0,0,0,1,0,0,0,1, 0,0,0,1,0,0,0,1]
+                ]},
+                { key: "stars", name: "💫 閃爍星空", isDynamic: true, frames: [
+                    [1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0],
+                    [0,0,0,0,1,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,1,0, 0,0,0,0,0,0,0,0, 0,0,1,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+                    [0,0,1,0,0,0,1,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,1,0,0,0, 1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,1,0,0]
+                ]},
+                { key: "stripes", name: "🌀 滾動斜條", isDynamic: true, frames: [
+                    [1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1],
+                    [0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0],
+                    [0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0, 0,1,1,0,0,1,1,0, 0,0,1,1,0,0,1,1, 1,0,0,1,1,0,0,1, 1,1,0,0,1,1,0,0]
+                ]},
+                { key: "waves", name: "🌊 流動波浪", isDynamic: true, frames: [
+                    [0,1,1,0,0,1,1,0, 1,0,0,1,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,1,1,0,0,1,1,0, 1,0,0,1,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+                    [1,0,0,1,1,0,0,1, 0,1,1,0,0,1,1,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 1,0,0,1,1,0,0,1, 0,1,1,0,0,1,1,0, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0],
+                    [0,0,1,1,0,0,1,1, 0,1,0,0,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0, 0,0,1,1,0,0,1,1, 0,1,0,0,1,0,0,1, 0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0]
+                ]}
+            ],
+
+            // Multi-language Translation Dictionaries
+            i18n: {
+                'zh-TW': {
+                    app_tagline: "~ 順暢像素風格 3幀動態繪圖板 ~",
+                    menu_file: "檔案(<u>F</u>)",
+                    menu_new_canvas: "開新畫布",
+                    menu_open_file: "開啟圖檔...",
+                    menu_export_gif: "匯出 GIF 動畫...",
+                    menu_clear_canvas: "清空畫布",
+                    menu_edit: "編輯(<u>E</u>)",
+                    menu_undo: "復原 (Undo)",
+                    menu_redo: "重做 (Redo)",
+                    menu_pressure: "筆壓感應 (Pressure)",
+                    menu_tip_shape_switch: "筆尖形狀切換",
+                    menu_shape_round: "圓形筆尖 (Round)",
+                    menu_shape_square: "方形筆尖 (Square)",
+                    menu_shape_chisel: "斜角筆尖 (Chisel)",
+                    menu_mirror_switch: "鏡像仿筆功能",
+                    menu_mirror_h: "水平鏡像仿筆 (↔)",
+                    menu_mirror_v: "垂直鏡像仿筆 (↕)",
+                    menu_canvas_size: "畫布尺寸與裁切...",
+                    menu_tools: "工具(<u>T</u>)",
+                    tool_pen_full: "鋼筆 (Pen)",
+                    tool_spray_full: "噴漆槍 (Spray)",
+                    tool_eraser_full: "全域橡皮擦 (All)",
+                    tool_marker_eraser_full: "麥克筆橡皮擦 (Marker)",
+                    tool_hand_full: "拖曳畫布 (Pan)",
+                    menu_marker_switch: "麥克筆切換",
+                    marker_6colors: "6色",
+                    marker_1: "粉紅麥克筆",
+                    marker_2: "青藍麥克筆",
+                    marker_3: "亮黃麥克筆",
+                    marker_c1: "自訂麥克筆 A",
+                    marker_c2: "自訂麥克筆 B",
+                    marker_c3: "自訂麥克筆 C",
+                    menu_view: "檢視(<u>V</u>)",
+                    menu_zoom_in: "放大畫布 (Zoom In)",
+                    menu_zoom_out: "縮小畫布 (Zoom Out)",
+                    menu_zoom_reset: "重設縮放 (100%)",
+                    menu_language: "切換語言 (Language)",
+                    menu_sound: "音效回饋 (SFX)",
+                    menu_options: "畫布與主題設定...",
+                    menu_help: "說明(<u>H</u>)",
+                    menu_help_guide: "使用說明指南...",
+                    menu_changelog: "版本更新紀錄...",
+                    group_brushes: "筆刷工具",
+                    tool_pen: "鋼筆",
+                    tool_spray: "噴漆槍",
+                    tool_eraser: "全擦",
+                    tool_marker_eraser: "麥克筆擦",
+                    tool_hand: "拖曳畫布",
+                    group_markers: "麥克筆專區",
+                    lbl_size: "尺寸:",
+                    lbl_shape: "形狀:",
+                    btn_round: "圓",
+                    btn_square: "方",
+                    btn_chisel: "斜",
+                    lbl_mirror: "鏡像:",
+                    btn_mirror_h: "↔ 水平",
+                    btn_mirror_v: "↕ 垂直",
+                    btn_pressure: "筆壓",
+                    status_pixels: "像素",
+                    status_zoom: "縮放",
+                    status_saved: "已自動保存",
+                    status_saving: "正在保存...",
+                    btn_undo: "復原 (<u>U</u>)",
+                    btn_redo: "重做 (<u>R</u>)",
+                    group_screentones: "網點圖案",
+                    group_stabilizer: "手震修正",
+                    lbl_level: "修正等級:",
+                    stabilizer_off: "關閉",
+                    action_export_gif: "匯出 GIF...",
+                    action_canvas_size: "畫布尺寸...",
+                    action_options: "設定選項...",
+                    action_clear_canvas: "清空畫布",
+                    crop_title: "設定畫布尺寸與裁切",
+					crop_btn_swap: "交換",
+                    crop_group_resolution: "畫布解析度設定 (像素)",
+                    crop_lbl_width: "寬度 (Width):",
+                    crop_lbl_height: "高度 (Height):",
+                    crop_lbl_presets: "常用尺寸:",
+                    crop_btn_apply_resolution: "套用指定寬高",
+                    crop_group_tight: "智慧一鍵去邊",
+                    crop_desc_tight: "自動偵測目前作畫筆跡，切除畫布四周多餘的空白範圍。",
+                    crop_btn_tight: "自動緊密裁切畫布",
+                    crop_group_manual: "手動修剪四邊邊界 (px)",
+                    crop_top: "上方裁切:",
+                    crop_bottom: "下方裁切:",
+                    crop_left: "左側裁切:",
+                    crop_right: "右側裁切:",
+                    crop_btn_apply_manual: "套用邊緣裁切",
+                    btn_close: "關閉",
+                    btn_confirm: "確定",
+                    options_title: "畫布與色彩主題設定",
+                    options_group_colors: "畫布色彩與音效",
+                    options_lbl_bg: "畫布背景顏色 (底色):",
+                    options_lbl_fg: "畫布前景顏色 (線稿筆刷):",
+                    options_lbl_sound: "音效回饋 (Sound FX):",
+                    options_group_presets: "預設調色盤主題 (背景/前景與 6 色麥克筆)",
+                    preset_classic: "經典 Y2K",
+                    preset_retro: "復古奶油",
+                    preset_cyber: "賽博霓虹",
+                    preset_morandi: "日系莫蘭迪",
+                    preset_gameboy: "復古掌機",
+                    preset_macaron: "夢幻馬卡龍",
+                    export_title: "匯出動態 GIF 動畫",
+                    export_encoding: "正在編碼 3 幀抖動 GIF 動畫中...",
+                    export_download: "下載 GIF 圖檔",
+                    help_title: "WigglyPaint 使用說明指南",
+                    help_feature_title: "✨ 繪圖特色與原理",
+                    help_feature_desc: "WigglyPaint 在您作畫時，會自動同步生成 3 個具備有機微震幅的動態影格，並以 10 FPS 循環播放，賦予像素塗鴉如同早期手繪逐格動畫般的生動跳躍感！",
+                    help_tools_title: "🛠️ 繪圖工具指南",
+                    help_tools_1: "<strong>鋼筆 / 噴槍</strong>：共用「前景顏色」，並可搭配 18 款網點。",
+                    help_tools_2: "<strong>筆壓感應 (Pressure)</strong>：支援繪圖板與感壓觸控筆，依下筆力道自動調節粗細。",
+                    help_tools_3: "<strong>全擦 / 麥克筆擦</strong>：全擦抹除所有內容；麥克筆擦則只清除底層麥克筆，保留線稿。",
+                    help_tools_4: "<strong>滾輪縮放 & 拖曳畫布</strong>：滾動滑鼠滾輪縮放畫布（25%~800%）；按住空白鍵 Space 或滑鼠中鍵可自由拖動畫布。",
+                    help_shortcuts_title: "⌨️ 鍵盤快捷鍵",
+                    sc_1_2: "鋼筆 / 噴漆槍",
+                    sc_3_4_5: "全擦 / 麥克筆擦 / 拖曳",
+                    sc_zoom_pan: "縮放 / 拖曳畫布",
+                    sc_zoom_reset: "重設 100% 縮放",
+                    changelog_title: "版本更新紀錄 (Changelog)",
+                    pat_solid: "純黑實心",
+                    pat_checker50: "50% 棋盤點陣",
+                    pat_dot25: "25% 細網點",
+                    pat_dot75: "75% 濃密網點",
+                    pat_dot12: "12.5% 稀疏點",
+                    pat_dot6: "6.25% 超微點",
+                    pat_hline: "水平橫線",
+                    pat_vline: "垂直直線",
+                    pat_diag_r: "正斜線 /",
+                    pat_diag_l: "反斜線 \\",
+                    pat_grid_square: "正方網格 #",
+                    pat_grid_cross: "斜向網格 X",
+                    pat_brick: "磚牆紋理",
+                    pat_tv_noise: "⚡ TV 噪訊",
+                    pat_rain: "🌧️ 下雨動態",
+                    pat_stars: "💫 閃爍星空",
+                    pat_stripes: "🌀 滾動斜條",
+                    pat_waves: "🌊 流動波浪"
+                },
+                'en': {
+                    app_tagline: "~ Smooth Pixel 3-Frame Animated Doodler ~",
+                    menu_file: "File(<u>F</u>)",
+                    menu_new_canvas: "New Canvas",
+                    menu_open_file: "Open Image...",
+                    menu_export_gif: "Export Animated GIF...",
+                    menu_clear_canvas: "Clear Canvas",
+                    menu_edit: "Edit(<u>E</u>)",
+                    menu_undo: "Undo",
+                    menu_redo: "Redo",
+                    menu_pressure: "Pressure Sensitivity",
+                    menu_tip_shape_switch: "Tip Shape Switch",
+                    menu_shape_round: "Round Tip",
+                    menu_shape_square: "Square Tip",
+                    menu_shape_chisel: "Chisel Tip",
+                    menu_mirror_switch: "Mirror Drawing Mode",
+                    menu_mirror_h: "Horizontal Mirror (↔)",
+                    menu_mirror_v: "Vertical Mirror (↕)",
+                    menu_canvas_size: "Canvas Size & Crop...",
+                    menu_tools: "Tools(<u>T</u>)",
+                    tool_pen_full: "Pen Tool",
+                    tool_spray_full: "Spray Can Tool",
+                    tool_eraser_full: "Global Eraser (All)",
+                    tool_marker_eraser_full: "Marker Eraser (Marker)",
+                    tool_hand_full: "Pan Canvas Tool (Pan)",
+                    menu_marker_switch: "Markers",
+                    marker_6colors: "6 Colors",
+                    marker_1: "Pink Marker",
+                    marker_2: "Cyan Marker",
+                    marker_3: "Yellow Marker",
+                    marker_c1: "Custom Marker A",
+                    marker_c2: "Custom Marker B",
+                    marker_c3: "Custom Marker C",
+                    menu_view: "View(<u>V</u>)",
+                    menu_zoom_in: "Zoom In Canvas",
+                    menu_zoom_out: "Zoom Out Canvas",
+                    menu_zoom_reset: "Reset Zoom (100%)",
+                    menu_language: "Language",
+                    menu_sound: "Sound FX",
+                    menu_options: "Canvas & Theme Settings...",
+                    menu_help: "Help(<u>H</u>)",
+                    menu_help_guide: "User Guide...",
+                    menu_changelog: "Version Changelog...",
+                    group_brushes: "Brushes",
+                    tool_pen: "Pen",
+                    tool_spray: "Spray",
+                    tool_eraser: "Eraser",
+                    tool_marker_eraser: "Marker Eraser",
+                    tool_hand: "Pan Canvas",
+                    group_markers: "Markers Panel",
+                    lbl_size: "Size:",
+                    lbl_shape: "Shape:",
+                    btn_round: "Round",
+                    btn_square: "Square",
+                    btn_chisel: "Chisel",
+                    lbl_mirror: "Mirror:",
+                    btn_mirror_h: "↔ Horiz",
+                    btn_mirror_v: "↕ Vert",
+                    btn_pressure: "Pressure",
+                    status_pixels: "px",
+                    status_zoom: "Zoom",
+                    status_saved: "Auto-saved",
+                    status_saving: "Saving...",
+                    btn_undo: "Undo (<u>U</u>)",
+                    btn_redo: "Redo (<u>R</u>)",
+                    group_screentones: "Screentones",
+                    group_stabilizer: "Stabilizer",
+                    lbl_level: "Level:",
+                    stabilizer_off: "Off",
+                    action_export_gif: "Export GIF...",
+                    action_canvas_size: "Canvas Size...",
+                    action_options: "Options...",
+                    action_clear_canvas: "Clear Canvas",
+                    crop_title: "Canvas Resolution & Crop",
+					crop_btn_swap: "Swap",
+                    crop_group_resolution: "Canvas Resolution (px)",
+                    crop_lbl_width: "Width:",
+                    crop_lbl_height: "Height:",
+                    crop_lbl_presets: "Presets:",
+                    crop_btn_apply_resolution: "Apply Resolution",
+                    crop_group_tight: "Smart Tight Crop",
+                    crop_desc_tight: "Automatically detect drawing bounds and trim outer empty whitespace.",
+                    crop_btn_tight: "Auto Tight Fit Canvas",
+                    crop_group_manual: "Manual 4-Way Crop (px)",
+                    crop_top: "Top Crop:",
+                    crop_bottom: "Bottom Crop:",
+                    crop_left: "Left Crop:",
+                    crop_right: "Right Crop:",
+                    crop_btn_apply_manual: "Apply Border Crop",
+                    btn_close: "Close",
+                    btn_confirm: "OK",
+                    options_title: "Canvas & Theme Settings",
+                    options_group_colors: "Canvas Colors & Audio",
+                    options_lbl_bg: "Canvas Background Color:",
+                    options_lbl_fg: "Canvas Foreground Color:",
+                    options_lbl_sound: "Sound Feedback (SFX):",
+                    options_group_presets: "Preset Themes (Background / Foreground & 6 Markers)",
+                    preset_classic: "Classic Y2K",
+                    preset_retro: "Retro Cream",
+                    preset_cyber: "Cyber Neon",
+                    preset_morandi: "Morandi Muted",
+                    preset_gameboy: "GameBoy Green",
+                    preset_macaron: "Sweet Macaron",
+                    export_title: "Export Animated GIF",
+                    export_encoding: "Encoding 3-frame wiggly GIF animation...",
+                    export_download: "Download GIF Image",
+                    help_title: "WigglyPaint User Guide",
+                    help_feature_title: "✨ Concept & Feature",
+                    help_feature_desc: "WigglyPaint automatically generates 3 organic sub-frame wiggles while you draw, looping at 10 FPS to give your pixel art hand-drawn flipbook life!",
+                    help_tools_title: "🛠️ Tool Guide",
+                    help_tools_1: "<strong>Pen / Spray</strong>: Shares foreground color with 18 screentone patterns.",
+                    help_tools_2: "<strong>Pressure Sensitivity</strong>: Supports pen tablets & stylus pens with dynamic stroke thickness.",
+                    help_tools_3: "<strong>Eraser vs Marker Eraser</strong>: Global Eraser clears all; Marker Eraser only removes underlying marker ink.",
+                    help_tools_4: "<strong>Zoom & Pan Canvas</strong>: Scroll mouse wheel to zoom (25%~800%); hold Space or Middle-click to pan around.",
+                    help_shortcuts_title: "⌨️ Keyboard Shortcuts",
+                    sc_1_2: "Pen / Spray",
+                    sc_3_4_5: "Eraser / Marker Eraser / Pan",
+                    sc_zoom_pan: "Zoom / Pan Canvas",
+                    sc_zoom_reset: "Reset 100% Zoom",
+                    changelog_title: "Version Changelog",
+                    pat_solid: "Solid Black",
+                    pat_checker50: "50% Checkerboard",
+                    pat_dot25: "25% Fine Halftone",
+                    pat_dot75: "75% Dense Halftone",
+                    pat_dot12: "12.5% Sparse Dots",
+                    pat_dot6: "6.25% Micro Dots",
+                    pat_hline: "Horizontal Lines",
+                    pat_vline: "Vertical Lines",
+                    pat_diag_r: "Forward Slash /",
+                    pat_diag_l: "Backslash \\",
+                    pat_grid_square: "Square Grid #",
+                    pat_grid_cross: "Cross Grid X",
+                    pat_brick: "Brick Texture",
+                    pat_tv_noise: "⚡ TV Noise",
+                    pat_rain: "🌧️ Rain Dynamic",
+                    pat_stars: "💫 Twinkle Stars",
+                    pat_stripes: "🌀 Rolling Stripes",
+                    pat_waves: "🌊 Flowing Waves"
+                },
+                'ja': {
+                    app_tagline: "~ なめらかピクセル風 3コマ動的落書き板 ~",
+                    menu_file: "ファイル(<u>F</u>)",
+                    menu_new_canvas: "新規キャンバス",
+                    menu_open_file: "画像を開く...",
+                    menu_export_gif: "GIFアニメ出力...",
+                    menu_clear_canvas: "キャンバス消去",
+                    menu_edit: "編集(<u>E</u>)",
+                    menu_undo: "元に戻す (Undo)",
+                    menu_redo: "やり直す (Redo)",
+                    menu_pressure: "筆壓感知 (Pressure)",
+                    menu_tip_shape_switch: "ペン先形状切替",
+                    menu_shape_round: "丸ペン先 (Round)",
+                    menu_shape_square: "角ペン先 (Square)",
+                    menu_shape_chisel: "斜めペン先 (Chisel)",
+                    menu_mirror_switch: "ミラー描画機能",
+                    menu_mirror_h: "水平ミラー (↔)",
+                    menu_mirror_v: "垂直ミラー (↕)",
+                    menu_canvas_size: "キャンバスサイズ・トリミング...",
+                    menu_tools: "ツール(<u>T</u>)",
+                    tool_pen_full: "ペン (Pen)",
+                    tool_spray_full: "スプレー (Spray)",
+                    tool_eraser_full: "全体消しゴム (All)",
+                    tool_marker_eraser_full: "マーカー専用消しゴム (Marker)",
+                    tool_hand_full: "画面移動 (Pan)",
+                    menu_marker_switch: "マーカー切替",
+                    marker_6colors: "6色",
+                    marker_1: "ピンクマーカー",
+                    marker_2: "シアンマーカー",
+                    marker_3: "イエローマーカー",
+                    marker_c1: "カスタムマーカー A",
+                    marker_c2: "カスタムマーカー B",
+                    marker_c3: "カスタムマーカー C",
+                    menu_view: "表示(<u>V</u>)",
+                    menu_zoom_in: "キャンバス拡大 (Zoom In)",
+                    menu_zoom_out: "キャンバス縮小 (Zoom Out)",
+                    menu_zoom_reset: "倍率リセット (100%)",
+                    menu_language: "言語切替 (Language)",
+                    menu_sound: "効果音 (SFX)",
+                    menu_options: "キャンバス・テーマ設定...",
+                    menu_help: "ヘルプ(<u>H</u>)",
+                    menu_help_guide: "使い方ガイド...",
+                    menu_changelog: "更新履歴...",
+                    group_brushes: "ブラシツール",
+                    tool_pen: "ペン",
+                    tool_spray: "スプレー",
+                    tool_eraser: "全消し",
+                    tool_marker_eraser: "マーカー消し",
+                    tool_hand: "画面移動",
+                    group_markers: "マーカー専用",
+                    lbl_size: "サイズ:",
+                    lbl_shape: "形状:",
+                    btn_round: "丸",
+                    btn_square: "角",
+                    btn_chisel: "斜",
+                    lbl_mirror: "ミラー:",
+                    btn_mirror_h: "↔ 水平",
+                    btn_mirror_v: "↕ 垂直",
+                    btn_pressure: "筆壓",
+                    status_pixels: "ピクセル",
+                    status_zoom: "倍率",
+                    status_saved: "自動保存完了",
+                    status_saving: "保存中...",
+                    btn_undo: "元に戻す (<u>U</u>)",
+                    btn_redo: "やり直す (<u>R</u>)",
+                    group_screentones: "トーンパターン",
+                    group_stabilizer: "手ブレ補正",
+                    lbl_level: "補正レベル:",
+                    stabilizer_off: "オフ",
+                    action_export_gif: "GIF出力...",
+                    action_canvas_size: "サイズ...",
+                    action_options: "設定...",
+                    action_clear_canvas: "キャンバス消去",
+                    crop_title: "キャンバスサイズとトリミング設定",
+					crop_btn_swap: "入替",
+                    crop_group_resolution: "解像度設定 (ピクセル)",
+                    crop_lbl_width: "幅 (Width):",
+                    crop_lbl_height: "高さ (Height):",
+                    crop_lbl_presets: "プリセット:",
+                    crop_btn_apply_resolution: "サイズ適用",
+                    crop_group_tight: "スマート余白カット",
+                    crop_desc_tight: "描画範囲を自動検出し、周囲の不要な余白をトリミングします。",
+                    crop_btn_tight: "自動ぴったりトリミング",
+                    crop_group_manual: "手動4方向トリミング (px)",
+                    crop_top: "上部カット:",
+                    crop_bottom: "下部カット:",
+                    crop_left: "左側カット:",
+                    crop_right: "右側カット:",
+                    crop_btn_apply_manual: "境界トリミング適用",
+                    btn_close: "閉じる",
+                    btn_confirm: "OK",
+                    options_title: "キャンバスとカラーテーマ設定",
+                    options_group_colors: "キャンバスカラー・音声",
+                    options_lbl_bg: "背景カラー (下地):",
+                    options_lbl_fg: "前景カラー (線画ブラシ):",
+                    options_lbl_sound: "効果音フィードバック (SFX):",
+                    options_group_presets: "プリセットカラーパレット (背景/前景と6色マーカー)",
+                    preset_classic: "クラシック Y2K",
+                    preset_retro: "レトロクリーム",
+                    preset_cyber: "サイバーネオン",
+                    preset_morandi: "モランディ",
+                    preset_gameboy: "レトロ携帯機",
+                    preset_macaron: "スイートマカロン",
+                    export_title: "アニメーションGIF出力",
+                    export_encoding: "3コマ揺動GIFアニメーションを生成中...",
+                    export_download: "GIF画像をダウンロード",
+                    help_title: "WigglyPaint 操作説明ガイド",
+                    help_feature_title: "✨ 特徴と仕組み",
+                    help_feature_desc: "描画時に微小な有機的振動を持つ3コマを自動生成し、10 FPSでループ再生。昔の手描きパラパラマンガのような生きた躍動感を与えます！",
+                    help_tools_title: "🛠️ ツール解説",
+                    help_tools_1: "<strong>ペン / スプレー</strong>: 前景カラーを共有し、18種のトーンに対応。",
+                    help_tools_2: "<strong>筆壓感知 (Pressure)</strong>: ペンタブやスタイラスペンの筆壓に応じた動的な太さ変化をサポート。",
+                    help_tools_3: "<strong>全消し / マーカー消し</strong>: 全消しはすべて消去。マーカー消しは線画を残して下地マーカーのみ消去。",
+                    help_tools_4: "<strong>キャンバス拡大縮小・画面移動</strong>: マウスホイールで拡大縮小（25%~800%）。Spaceキー長押しまたは中クリックで自由に画面移動。",
+                    help_shortcuts_title: "⌨️ キーボードショートカット",
+                    sc_1_2: "ペン / スプレー",
+                    sc_3_4_5: "全消し / マーカー消し / 画面移動",
+                    sc_zoom_pan: "拡大縮小 / 画面移動",
+                    sc_zoom_reset: "100%倍率リセット",
+                    changelog_title: "更新履歴 (Changelog)",
+                    pat_solid: "ベタ塗り黒",
+                    pat_checker50: "50% 市松ドット",
+                    pat_dot25: "25% 細トーン",
+                    pat_dot75: "75% 濃トーン",
+                    pat_dot12: "12.5% まばら点",
+                    pat_dot6: "6.25% 極微点",
+                    pat_hline: "横ストライプ",
+                    pat_vline: "縦ストライプ",
+                    pat_diag_r: "斜線 /",
+                    pat_diag_l: "逆斜線 \\",
+                    pat_grid_square: "正方グリッド #",
+                    pat_grid_cross: "斜めグリッド X",
+                    pat_brick: "レンガテクスチャ",
+                    pat_tv_noise: "⚡ TVノイズ",
+                    pat_rain: "🌧️ 雨アニメ",
+                    pat_stars: "💫 きらめく星空",
+                    pat_stripes: "🌀 回転斜縞",
+                    pat_waves: "🌊 流動ウェーブ"
+                }
+            }
+        };
+
+        // =========================================================================
+        // MODULE 2: WigglyAudio.js (Sound Synthesizer)
+        // =========================================================================
+        class WigglyAudioModule {
+            constructor() {
+                this.audioCtx = null;
+                this.lastSqueakTime = 0;
+            }
+
+            init() {
+                if (!this.audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) this.audioCtx = new AudioContext();
+                }
+            }
+
+            play(type) {
+                const toggle = document.getElementById('sound-toggle');
+                if (toggle && !toggle.checked) return;
+
+                if (type === 'squeak') {
+                    const nowMs = performance.now();
+                    if (nowMs - this.lastSqueakTime < 80) return;
+                    this.lastSqueakTime = nowMs;
+                }
+
+                this.init();
+                if (!this.audioCtx) return;
+
+                try {
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+
+                    const now = this.audioCtx.currentTime;
+
+                    if (type === 'pop') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(400, now);
+                        osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+                        osc.start(now);
+                        osc.stop(now + 0.05);
+                    } else if (type === 'squeak') {
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(600 + Math.random() * 200, now);
+                        gain.gain.setValueAtTime(0.03, now);
+                        gain.gain.linearRampToValueAtTime(0.001, now + 0.03);
+                        osc.start(now);
+                        osc.stop(now + 0.03);
+                    } else if (type === 'obliterate') {
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(300, now);
+                        osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+                        gain.gain.setValueAtTime(0.3, now);
+                        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                        osc.start(now);
+                        osc.stop(now + 0.3);
+                    } else if (type === 'undo') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(600, now);
+                        osc.frequency.exponentialRampToValueAtTime(250, now + 0.08);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                        osc.start(now);
+                        osc.stop(now + 0.08);
+                    }
+                } catch(e) {}
+            }
+
+            toggleSoundMenu() {
+                const toggle = document.getElementById('sound-toggle');
+                if (toggle) toggle.checked = !toggle.checked;
+                const menuCheck = document.getElementById('menu-check-sound');
+                if (menuCheck) menuCheck.classList.toggle('opacity-0', !toggle.checked);
+            }
+        }
+        const WigglyAudio = new WigglyAudioModule();
+
+        // =========================================================================
+        // MODULE 3: WigglyHistory.js (Undo/Redo Engine with Unified Marker Maps)
+        // =========================================================================
+        class WigglyHistoryModule {
+            constructor() {
+                this.undoStack = [];
+                this.redoStack = [];
+            }
+
+            cloneCanvasBuffer(srcCanvas) {
+                const copy = document.createElement('canvas');
+                copy.width = srcCanvas.width;
+                copy.height = srcCanvas.height;
+                const ctx = copy.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(srcCanvas, 0, 0);
+                return copy;
+            }
+
+            saveState() {
+                const state = {
+                    width: WigglyEngine.width,
+                    height: WigglyEngine.height,
+                    baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
+                };
+
+                this.undoStack.push(state);
+                if (this.undoStack.length > WigglyConfig.MAX_UNDO) this.undoStack.shift();
+                this.redoStack = [];
+            }
+
+            undo() {
+                if (this.undoStack.length === 0) return;
+                
+                const currentState = {
+                    width: WigglyEngine.width,
+                    height: WigglyEngine.height,
+                    baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
+                };
+                this.redoStack.push(currentState);
+                if (this.redoStack.length > WigglyConfig.MAX_UNDO) this.redoStack.shift();
+
+                const previousState = this.undoStack.pop();
+                this.restoreState(previousState);
+                WigglyAudio.play('undo');
+            }
+
+            redo() {
+                if (this.redoStack.length === 0) return;
+
+                const currentState = {
+                    width: WigglyEngine.width,
+                    height: WigglyEngine.height,
+                    baseFrameCanvases: WigglyEngine.baseFrameCanvases.map(c => this.cloneCanvasBuffer(c)),
+                    markerPaletteMaps: WigglyEngine.markerPaletteMaps.map(m => new Uint8Array(m))
+                };
+                this.undoStack.push(currentState);
+                if (this.undoStack.length > WigglyConfig.MAX_UNDO) this.undoStack.shift();
+
+                const nextState = this.redoStack.pop();
+                this.restoreState(nextState);
+                WigglyAudio.play('pop');
+            }
+
+            restoreState(state) {
+                if (state.width !== WigglyEngine.width || state.height !== WigglyEngine.height) {
+                    WigglyEngine.resizeDimensions(state.width, state.height, 0, 0, true);
+                }
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    WigglyEngine.baseFrameCtxs[f].drawImage(state.baseFrameCanvases[f], 0, 0);
+
+                    WigglyEngine.markerPaletteMaps[f].set(state.markerPaletteMaps[f]);
+                }
+                WigglyEngine.renderMainCanvas();
+            }
+        }
+        const WigglyHistory = new WigglyHistoryModule();
+
+        // =========================================================================
+        // MODULE 4: WigglyEngine.js (Unified Marker Palette Map Engine)
+        // =========================================================================
+        class WigglyEngineModule {
+            constructor() {
+                this.width = WigglyConfig.DEFAULT_WIDTH;
+                this.height = WigglyConfig.DEFAULT_HEIGHT;
+                this.currentFrameIndex = 0;
+                this.lastFrameTime = performance.now();
+
+                this.canvasBgColor = '#ffffff';
+                this.foregroundColor = '#000000';
+
+                // 3 Line/Foreground Frames
+                this.baseFrameCanvases = [];
+                this.baseFrameCtxs = [];
+                
+                // Unified 3-Frame Marker Palette Maps (Uint8Array per frame: 0=Empty, 1..6=MarkerID)
+                this.markerPaletteMaps = [];
+
+                // Offscreen Render Canvas for Marker Layer
+                this.markerRenderCanvas = document.createElement('canvas');
+                this.markerRenderCtx = this.markerRenderCanvas.getContext('2d');
+
+                this.tintCanvas = document.createElement('canvas');
+                this.tintCtx = this.tintCanvas.getContext('2d');
+
+                this.visibleCanvas = null;
+                this.visibleCtx = null;
+                this.previewCanvas = null;
+                this.previewCtx = null;
+
+                this.stampCache = new Map();
+                this.dynamicPatternCanvases = [];
+            }
+
+            init() {
+                this.visibleCanvas = document.getElementById('visibleCanvas');
+                this.visibleCtx = this.visibleCanvas.getContext('2d');
+                this.visibleCtx.imageSmoothingEnabled = false;
+
+                this.previewCanvas = document.getElementById('previewCanvas');
+                this.previewCtx = this.previewCanvas ? this.previewCanvas.getContext('2d') : null;
+
+                this.initCanvasBuffers();
+            }
+
+            initCanvasBuffers() {
+                this.baseFrameCanvases = [];
+                this.baseFrameCtxs = [];
+                this.markerPaletteMaps = [];
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const bCanvas = document.createElement('canvas');
+                    bCanvas.width = this.width;
+                    bCanvas.height = this.height;
+                    const bCtx = bCanvas.getContext('2d');
+                    bCtx.imageSmoothingEnabled = false;
+                    this.baseFrameCanvases.push(bCanvas);
+                    this.baseFrameCtxs.push(bCtx);
+
+                    this.markerPaletteMaps.push(new Uint8Array(this.width * this.height));
+                }
+
+                this.markerRenderCanvas.width = this.width;
+                this.markerRenderCanvas.height = this.height;
+                this.markerRenderCtx.imageSmoothingEnabled = false;
+
+                this.tintCanvas.width = this.width;
+                this.tintCanvas.height = this.height;
+                this.tintCtx.imageSmoothingEnabled = false;
+            }
+
+            resizeDimensions(newW, newH, offsetX = 0, offsetY = 0, skipUndoSave = false) {
+                if (!skipUndoSave) WigglyHistory.saveState();
+
+                const tempBase = this.baseFrameCanvases.map(c => WigglyHistory.cloneCanvasBuffer(c));
+                const tempMaps = this.markerPaletteMaps.map(m => new Uint8Array(m));
+                const oldW = this.width;
+                const oldH = this.height;
+
+                this.width = newW;
+                this.height = newH;
+
+                this.visibleCanvas.width = newW;
+                this.visibleCanvas.height = newH;
+                this.markerRenderCanvas.width = newW;
+                this.markerRenderCanvas.height = newH;
+                this.tintCanvas.width = newW;
+                this.tintCanvas.height = newH;
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    this.baseFrameCanvases[f].width = newW;
+                    this.baseFrameCanvases[f].height = newH;
+                    this.baseFrameCtxs[f].imageSmoothingEnabled = false;
+                    this.baseFrameCtxs[f].clearRect(0, 0, newW, newH);
+                    this.baseFrameCtxs[f].drawImage(tempBase[f], -offsetX, -offsetY);
+
+                    const newMap = new Uint8Array(newW * newH);
+                    const oldMap = tempMaps[f];
+                    for (let y = 0; y < oldH; y++) {
+                        const newY = y - offsetY;
+                        if (newY >= 0 && newY < newH) {
+                            for (let x = 0; x < oldW; x++) {
+                                const newX = x - offsetX;
+                                if (newX >= 0 && newX < newW) {
+                                    newMap[newY * newW + newX] = oldMap[y * oldW + x];
+                                }
+                            }
+                        }
+                    }
+                    this.markerPaletteMaps[f] = newMap;
+                }
+
+                WigglyUI.updateCanvasDimIndicator();
+                this.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setCanvasBackground(colorHex) {
+                this.canvasBgColor = colorHex;
+                const picker = document.getElementById('bg-color-picker');
+                if (picker) picker.value = colorHex;
+                const hexText = document.getElementById('bg-hex-text');
+                if (hexText) hexText.innerText = colorHex;
+
+                this.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setCanvasForeground(colorHex) {
+                this.foregroundColor = colorHex;
+                const picker = document.getElementById('fg-color-picker');
+                if (picker) picker.value = colorHex;
+                const hexText = document.getElementById('fg-hex-text');
+                if (hexText) hexText.innerText = colorHex;
+
+                this.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            renderMarkerLayerToCanvas(frameIndex) {
+                const map = this.markerPaletteMaps[frameIndex];
+                const w = this.width;
+                const h = this.height;
+                const imgData = this.markerRenderCtx.createImageData(w, h);
+                const data32 = new Uint32Array(imgData.data.buffer);
+
+                const colorLookup = new Uint32Array(7);
+                colorLookup[0] = 0x00000000;
+
+                WigglyConfig.markerKeys.forEach(mKey => {
+                    const id = WigglyConfig.markerIdMap[mKey];
+                    const hex = WigglyTools.markerColors[mKey] || WigglyConfig.defaultMarkerColors[mKey];
+                    let r = parseInt(hex.slice(1, 3), 16) || 0;
+                    let g = parseInt(hex.slice(3, 5), 16) || 0;
+                    let b = parseInt(hex.slice(5, 7), 16) || 0;
+                    colorLookup[id] = (0xFF << 24) | (b << 16) | (g << 8) | r;
+                });
+
+                const len = w * h;
+                for (let i = 0; i < len; i++) {
+                    const markerId = map[i];
+                    if (markerId > 0) {
+                        data32[i] = colorLookup[markerId];
+                    }
+                }
+
+                this.markerRenderCtx.putImageData(imgData, 0, 0);
+            }
+
+            renderMainCanvas() {
+                this.visibleCtx.clearRect(0, 0, this.width, this.height);
+
+                // 1. Draw Background
+                this.visibleCtx.fillStyle = this.canvasBgColor;
+                this.visibleCtx.fillRect(0, 0, this.width, this.height);
+
+                // 2. Render and Draw Unified Marker Layer
+                this.renderMarkerLayerToCanvas(this.currentFrameIndex);
+                this.visibleCtx.drawImage(this.markerRenderCanvas, 0, 0);
+
+                // 3. Draw Foreground/Line Layer with Dynamic Tinting
+                const lineMaskCanvas = this.baseFrameCanvases[this.currentFrameIndex];
+                this.tintCtx.save();
+                this.tintCtx.globalCompositeOperation = 'source-over';
+                this.tintCtx.clearRect(0, 0, this.width, this.height);
+                this.tintCtx.fillStyle = this.foregroundColor;
+                this.tintCtx.fillRect(0, 0, this.width, this.height);
+                this.tintCtx.globalCompositeOperation = 'destination-in';
+                this.tintCtx.drawImage(lineMaskCanvas, 0, 0);
+                this.tintCtx.restore();
+
+                this.visibleCtx.drawImage(this.tintCanvas, 0, 0);
+
+                // 4. Update Thumbnail Preview
+                if (this.previewCanvas && this.previewCtx) {
+                    if (this.previewCanvas.width !== this.width || this.previewCanvas.height !== this.height) {
+                        this.previewCanvas.width = this.width;
+                        this.previewCanvas.height = this.height;
+                        this.previewCtx.imageSmoothingEnabled = false;
+                    }
+                    this.previewCtx.clearRect(0, 0, this.width, this.height);
+                    this.previewCtx.drawImage(this.visibleCanvas, 0, 0);
+                }
+            }
+
+            gameLoop(timestamp) {
+                if (timestamp - this.lastFrameTime >= 100) {
+                    this.currentFrameIndex = (this.currentFrameIndex + 1) % WigglyConfig.NUM_FRAMES;
+                    this.lastFrameTime = timestamp;
+                    this.updateDynamicPatternThumbnails();
+                }
+
+                this.renderMainCanvas();
+                requestAnimationFrame(t => this.gameLoop(t));
+            }
+
+            drawPatternThumbnail(pCtx, patObj, frameIdx) {
+                pCtx.clearRect(0, 0, 16, 16);
+                pCtx.fillStyle = this.foregroundColor;
+                const pat = patObj.frames[frameIdx % patObj.frames.length];
+
+                for (let y = 0; y < 16; y++) {
+                    for (let x = 0; x < 16; x++) {
+                        const patVal = pat[(y % 8) * 8 + (x % 8)];
+                        if (patVal === 1) {
+                            pCtx.fillRect(x, y, 1, 1);
+                        }
+                    }
+                }
+            }
+
+            updateDynamicPatternThumbnails() {
+                this.dynamicPatternCanvases.forEach(item => {
+                    this.drawPatternThumbnail(item.ctx, item.patObj, this.currentFrameIndex);
+                });
+            }
+
+            getStampCanvas(props, frameIndex = 0, offX = 0, offY = 0) {
+                const key = `${props.type}_${props.size}_${WigglyTools.brushTipShape}_${props.color}_${props.composite}_${WigglyTools.selectedPatternIdx}_${frameIndex}_${offX}_${offY}`;
+                if (this.stampCache.has(key)) return this.stampCache.get(key);
+
+                const size = props.size;
+                const pad = size + 4;
+                const sCanvas = document.createElement('canvas');
+                sCanvas.width = pad;
+                sCanvas.height = pad;
+                const sCtx = sCanvas.getContext('2d');
+                sCtx.imageSmoothingEnabled = false;
+
+                sCtx.fillStyle = props.color;
+                const cx = Math.floor(pad / 2);
+                const cy = Math.floor(pad / 2);
+
+                const isInsideShape = (dx, dy) => {
+                    if (WigglyTools.brushTipShape === 'square') {
+                        const half = Math.floor(size / 2);
+                        return Math.abs(dx) <= half && Math.abs(dy) <= half;
+                    } else if (WigglyTools.brushTipShape === 'chisel') {
+                        const thick = Math.max(1, Math.floor(size / 3));
+                        return Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick;
+                    } else {
+                        if (size <= 2) {
+                            const half = Math.floor(size / 2);
+                            return Math.abs(dx) <= half && Math.abs(dy) <= half;
+                        } else {
+                            const r = size / 2;
+                            return (dx * dx + dy * dy) <= (r * r + 0.25);
+                        }
+                    }
+                };
+
+                const half = Math.ceil(size / 2);
+
+                if (props.type === 'pixel') {
+                    for (let dy = -half; dy <= half; dy++) {
+                        for (let dx = -half; dx <= half; dx++) {
+                            if (isInsideShape(dx, dy)) {
+                                sCtx.fillRect(cx + dx, cy + dy, 1, 1);
+                            }
+                        }
+                    }
+                } else if (props.type === 'dither') {
+                    for (let dy = -half; dy <= half; dy++) {
+                        for (let dx = -half; dx <= half; dx++) {
+                            if (isInsideShape(dx, dy) && (offX + dx + offY + dy) % 2 === 0) {
+                                sCtx.fillRect(cx + dx, cy + dy, 1, 1);
+                            }
+                        }
+                    }
+                } else if (props.type === 'pattern') {
+                    const patObj = WigglyConfig.patterns[WigglyTools.selectedPatternIdx] || WigglyConfig.patterns[0];
+                    const activePat = patObj ? patObj.frames[frameIndex % patObj.frames.length] : null;
+
+                    for (let dy = -half; dy <= half; dy++) {
+                        for (let dx = -half; dx <= half; dx++) {
+                            if (isInsideShape(dx, dy)) {
+                                const curAbsX = ((offX + dx) % 8 + 8) % 8;
+                                const curAbsY = ((offY + dy) % 8 + 8) % 8;
+                                if (activePat && activePat[curAbsY * 8 + curAbsX] === 1) {
+                                    sCtx.fillRect(cx + dx, cy + dy, 1, 1);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                this.stampCache.set(key, sCanvas);
+                return sCanvas;
+            }
+
+            drawPixelStamp(ctx, x, y, props, jx = 0, jy = 0, frameIndex = 0) {
+                ctx.save();
+                ctx.globalCompositeOperation = props.composite;
+                ctx.globalAlpha = 1.0;
+
+                const px = Math.floor(x + jx);
+                const py = Math.floor(y + jy);
+
+                if (props.type === 'spray') {
+                    ctx.fillStyle = props.color;
+                    const radius = props.size * 2;
+                    const density = Math.max(5, props.size * 3);
+                    for (let i = 0; i < density; i++) {
+                        const ang = Math.random() * Math.PI * 2;
+                        const r = Math.random() * radius;
+                        const sx = Math.floor(px + Math.cos(ang) * r);
+                        const sy = Math.floor(py + Math.sin(ang) * r);
+                        ctx.fillRect(sx, sy, 1, 1);
+                    }
+                } else {
+                    const offX = ((px % 8) + 8) % 8;
+                    const offY = ((py % 8) + 8) % 8;
+                    const stamp = this.getStampCanvas(props, frameIndex, offX, offY);
+                    const half = Math.floor(stamp.width / 2);
+                    ctx.drawImage(stamp, px - half, py - half);
+                }
+
+                ctx.restore();
+            }
+
+            drawMarkerStamp(frameIndex, x, y, size, shape, markerId) {
+                const w = this.width;
+                const h = this.height;
+                const map = this.markerPaletteMaps[frameIndex];
+                const px = Math.floor(x);
+                const py = Math.floor(y);
+
+                const half = Math.ceil(size / 2);
+
+                const isInsideShape = (dx, dy) => {
+                    if (shape === 'square') {
+                        const hSize = Math.floor(size / 2);
+                        return Math.abs(dx) <= hSize && Math.abs(dy) <= hSize;
+                    } else if (shape === 'chisel') {
+                        const thick = Math.max(1, Math.floor(size / 3));
+                        return Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick;
+                    } else {
+                        if (size <= 2) {
+                            const hSize = Math.floor(size / 2);
+                            return Math.abs(dx) <= hSize && Math.abs(dy) <= hSize;
+                        } else {
+                            const r = size / 2;
+                            return (dx * dx + dy * dy) <= (r * r + 0.25);
+                        }
+                    }
+                };
+
+                for (let dy = -half; dy <= half; dy++) {
+                    const curY = py + dy;
+                    if (curY < 0 || curY >= h) continue;
+                    for (let dx = -half; dx <= half; dx++) {
+                        const curX = px + dx;
+                        if (curX < 0 || curX >= w) continue;
+
+                        if (isInsideShape(dx, dy)) {
+                            map[curY * w + curX] = markerId;
+                        }
+                    }
+                }
+            }
+        }
+        const WigglyEngine = new WigglyEngineModule();
+
+        // =========================================================================
+        // MODULE 4.5: WigglyViewport.js (Zoom & Pan Navigation Engine)
+        // =========================================================================
+        class WigglyViewportModule {
+            constructor() {
+                this.zoom = 1.0;
+                this.panX = 0;
+                this.panY = 0;
+                this.isPanning = false;
+                this.isSpaceDown = false;
+                this.startX = 0;
+                this.startY = 0;
+                this.startPanX = 0;
+                this.startPanY = 0;
+            }
+
+            init() {
+                this.bindViewportEvents();
+                this.updateTransform();
+            }
+
+            setZoom(newZoom, originClientX, originClientY) {
+                const oldZoom = this.zoom;
+                newZoom = Math.max(0.25, Math.min(8.0, newZoom));
+                if (Math.abs(newZoom - oldZoom) < 0.001) return;
+
+                const container = document.getElementById('canvas-container');
+                if (container && originClientX !== undefined && originClientY !== undefined) {
+                    const rect = container.getBoundingClientRect();
+                    const cx = originClientX - (rect.left + rect.width / 2);
+                    const cy = originClientY - (rect.top + rect.height / 2);
+                    const scaleRatio = newZoom / oldZoom;
+                    this.panX = cx - (cx - this.panX) * scaleRatio;
+                    this.panY = cy - (cy - this.panY) * scaleRatio;
+                }
+
+                this.zoom = newZoom;
+                this.updateTransform();
+            }
+
+            zoomIn() {
+                this.setZoom(this.zoom * 1.25);
+                WigglyAudio.play('pop');
+            }
+
+            zoomOut() {
+                this.setZoom(this.zoom / 1.25);
+                WigglyAudio.play('pop');
+            }
+
+            resetZoom() {
+                this.zoom = 1.0;
+                this.panX = 0;
+                this.panY = 0;
+                this.updateTransform();
+                WigglyAudio.play('pop');
+            }
+
+            updateTransform() {
+                const canvas = document.getElementById('visibleCanvas');
+                if (canvas) {
+                    canvas.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.zoom})`;
+                    canvas.style.transformOrigin = 'center center';
+                }
+                this.updateIndicator();
+            }
+
+            updateIndicator() {
+                const indicator = document.getElementById('canvas-zoom-indicator');
+                if (indicator) {
+                    const pct = Math.round(this.zoom * 100);
+                    const lbl = WigglyUI.t('status_zoom');
+                    indicator.innerText = `${pct}% ${lbl}`;
+                }
+            }
+
+            bindViewportEvents() {
+                const container = document.getElementById('canvas-container');
+                if (!container) return;
+
+                // 滑鼠滾輪縮放 (Mouse Wheel Zoom)
+                container.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY < 0 ? 1.15 : 0.87;
+                    this.setZoom(this.zoom * delta, e.clientX, e.clientY);
+                }, { passive: false });
+
+                // 雙擊縮放重設 (Double Click Reset)
+                container.addEventListener('dblclick', (e) => {
+                    if (WigglyTools.currentTool === 'hand' || this.isSpaceDown) {
+                        this.resetZoom();
+                    }
+                });
+            }
+        }
+        const WigglyViewport = new WigglyViewportModule();
+
+        // =========================================================================
+        // MODULE 5: WigglyTools.js (Brushes, Markers, Tremor Stabilizer, Mirror, Pressure, Coordinates)
+        // =========================================================================
+        class WigglyToolsModule {
+            constructor() {
+                this.currentTool = 'pen';
+                this.previousTool = 'pen';
+                this.selectedPatternIdx = 0;
+                this.brushPt = 3;
+                this.brushTipShape = 'round';
+
+                this.isHorizontalMirror = false;
+                this.isVerticalMirror = false;
+                this.isPressureEnabled = true;
+
+                this.stabilizerLevel = 3;
+                this.isDrawing = false;
+
+                this.lastX = 0;
+                this.lastY = 0;
+                this.smoothedX = 0;
+                this.smoothedY = 0;
+                this.lastMidX = 0;
+                this.lastMidY = 0;
+
+                this.markerColors = { ...WigglyConfig.defaultMarkerColors };
+            }
+
+            init() {
+                this.renderPatternButtons();
+                this.bindCanvasInputEvents();
+                this.updatePressureUI();
+                this.updateShapeUI();
+                this.updateMirrorUI();
+            }
+
+            renderPatternButtons() {
+                const grid = document.getElementById('pattern-buttons-grid');
+                if (!grid) return;
+                grid.innerHTML = '';
+                WigglyEngine.dynamicPatternCanvases = [];
+
+                WigglyConfig.patterns.forEach((patObj, idx) => {
+                    const btn = document.createElement('button');
+                    const isActive = (idx === this.selectedPatternIdx && this.currentTool === 'pattern');
+                    btn.className = `retro-btn h-8 w-full p-0 flex items-center justify-center relative ${isActive ? 'active' : ''}`;
+                    const patName = WigglyUI.getPatternName(patObj);
+                    btn.title = `${patObj.isDynamic ? '[' + (WigglyUI.currentLang === 'en' ? 'Dynamic' : WigglyUI.currentLang === 'ja' ? '動的' : '動態') + '] ' : ''}${patName} (#${idx + 1})`;
+                    btn.onclick = () => {
+                        this.selectedPatternIdx = idx;
+                        this.selectTool('pattern');
+                    };
+
+                    const pCanvas = document.createElement('canvas');
+                    pCanvas.width = 16;
+                    pCanvas.height = 16;
+                    pCanvas.className = 'shrink-0';
+                    const pCtx = pCanvas.getContext('2d');
+
+                    WigglyEngine.drawPatternThumbnail(pCtx, patObj, 0);
+
+                    if (patObj.isDynamic) {
+                        WigglyEngine.dynamicPatternCanvases.push({ canvas: pCanvas, ctx: pCtx, patObj: patObj });
+                        
+                        const badge = document.createElement('span');
+                        badge.className = "text-[7px] font-bold text-black bg-yellow-300 border border-black px-0.5 leading-none absolute top-0.5 right-0.5 pointer-events-none";
+                        badge.innerText = WigglyUI.currentLang === 'en' ? 'ANI' : WigglyUI.currentLang === 'ja' ? '動' : '動';
+                        btn.appendChild(badge);
+                    }
+
+                    btn.appendChild(pCanvas);
+                    grid.appendChild(btn);
+                });
+            }
+
+            togglePressureSensitivity() {
+                this.isPressureEnabled = !this.isPressureEnabled;
+                this.updatePressureUI();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            updatePressureUI() {
+                const btn = document.getElementById('btn-pressure-mode');
+                if (btn) btn.classList.toggle('active', this.isPressureEnabled);
+                const menuCheck = document.getElementById('menu-check-pressure');
+                if (menuCheck) menuCheck.classList.toggle('opacity-0', !this.isPressureEnabled);
+            }
+
+            updateShapeUI() {
+                document.querySelectorAll('#tip-shape-buttons .retro-btn').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById(`btn-shape-${this.brushTipShape}`);
+                if (activeBtn) activeBtn.classList.add('active');
+
+                ['round', 'square', 'chisel'].forEach(shape => {
+                    const check = document.getElementById(`menu-check-shape-${shape}`);
+                    if (check) check.classList.toggle('opacity-0', this.brushTipShape !== shape);
+                });
+            }
+
+            updateMirrorUI() {
+                const btnH = document.getElementById('btn-mirror-h');
+                if (btnH) btnH.classList.toggle('active', this.isHorizontalMirror);
+                const menuH = document.getElementById('menu-check-mirror-h');
+                if (menuH) menuH.classList.toggle('opacity-0', !this.isHorizontalMirror);
+
+                const btnV = document.getElementById('btn-mirror-v');
+                if (btnV) btnV.classList.toggle('active', this.isVerticalMirror);
+                const menuV = document.getElementById('menu-check-mirror-v');
+                if (menuV) menuV.classList.toggle('opacity-0', !this.isVerticalMirror);
+            }
+
+            getEffectivePressure(e) {
+                if (!this.isPressureEnabled || !e) return 1.0;
+                if (e.pointerType === 'pen' || (typeof e.pressure === 'number' && e.pressure > 0 && e.pressure !== 0.5)) {
+                    const p = Math.max(0.05, Math.min(1.0, e.pressure));
+                    return 0.3 + 1.1 * p;
+                }
+                return 1.0;
+            }
+
+            selectTool(toolName) {
+                if (this.currentTool !== 'hand') {
+                    this.previousTool = this.currentTool;
+                }
+                this.currentTool = toolName;
+                WigglyAudio.play('pop');
+
+                document.querySelectorAll('#tool-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('#markers-group .retro-btn').forEach(btn => btn.classList.remove('active'));
+
+                if (toolName !== 'pattern') {
+                    document.querySelectorAll('#pattern-buttons-grid .retro-btn').forEach(btn => btn.classList.remove('active'));
+                }
+
+                const activeStdBtn = document.querySelector(`[data-tool="${toolName}"]`);
+                if (activeStdBtn) {
+                    activeStdBtn.classList.add('active');
+                } else {
+                    const markerBtn = document.getElementById(`btn-${toolName}`);
+                    if (markerBtn) markerBtn.classList.add('active');
+                }
+
+                const canvas = document.getElementById('visibleCanvas');
+                if (canvas) {
+                    canvas.style.cursor = (toolName === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
+                }
+            }
+
+            getToolProps(tool, pressureRatio = 1.0) {
+                const baseSize = Math.max(1, Math.round(this.brushPt * pressureRatio));
+                
+                if (WigglyConfig.markerKeys.includes(tool)) {
+                    return {
+                        color: '#000000',
+                        size: Math.max(2, baseSize * 2),
+                        alpha: 1.0,
+                        composite: 'source-over',
+                        jitter: 1.0,
+                        type: 'pixel'
+                    };
+                }
+
+                switch (tool) {
+                    case 'pen':
+                        return { color: '#000000', size: Math.max(1, baseSize), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                    case 'spray':
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 0.8, composite: 'source-over', jitter: 2.0, type: 'spray' };
+                    case 'pattern':
+                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                    case 'eraser':
+                    case 'marker_eraser':
+                        return { color: '#000000', size: Math.max(3, baseSize * 2), alpha: 1.0, composite: 'destination-out', jitter: 0.5, type: 'pixel' };
+                    default:
+                        return { color: '#000000', size: Math.max(2, baseSize * 2), alpha: 1.0, composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                }
+            }
+
+            setStabilizer(val) {
+                this.stabilizerLevel = parseInt(val, 10);
+                const badge = document.getElementById('stabilizer-value-badge');
+                if (badge) {
+                    if (this.stabilizerLevel === 0) badge.innerText = WigglyUI.t('stabilizer_off');
+                    else badge.innerText = `Lv. ${this.stabilizerLevel}`;
+                }
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setBrushSize(val) {
+                this.brushPt = parseInt(val, 10);
+                const badge = document.getElementById('brush-pt-badge');
+                if (badge) badge.innerText = `${this.brushPt} pt`;
+                WigglyStorage.triggerAutoSave();
+            }
+
+            setBrushTipShape(shape) {
+                this.brushTipShape = shape;
+                this.updateShapeUI();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            toggleMirror(axis) {
+                if (axis === 'h') {
+                    this.isHorizontalMirror = !this.isHorizontalMirror;
+                } else if (axis === 'v') {
+                    this.isVerticalMirror = !this.isVerticalMirror;
+                }
+                this.updateMirrorUI();
+                WigglyAudio.play('pop');
+            }
+
+            updateMarkerColor(markerKey, hexColor) {
+                this.markerColors[markerKey] = hexColor;
+                const swatch = document.getElementById(`swatch-${markerKey}`);
+                if (swatch) swatch.style.backgroundColor = hexColor;
+
+                this.selectTool(markerKey);
+                WigglyEngine.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            getCanvasCoordinates(e) {
+                const rect = WigglyEngine.visibleCanvas.getBoundingClientRect();
+                const scaleX = WigglyEngine.width / rect.width;
+                const scaleY = WigglyEngine.height / rect.height;
+
+                let clientX = e.clientX;
+                let clientY = e.clientY;
+
+                if (e.touches && e.touches.length > 0) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY
+                };
+            }
+
+            updateCoordinates(e) {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (!coordsEl) return;
+                const coords = this.getCanvasCoordinates(e);
+                const x = Math.max(0, Math.min(WigglyEngine.width, Math.floor(coords.x)));
+                const y = Math.max(0, Math.min(WigglyEngine.height, Math.floor(coords.y)));
+                coordsEl.innerText = `X: ${x}, Y: ${y}`;
+            }
+
+            resetCoordinates() {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (coordsEl) {
+                    coordsEl.innerText = 'X: --, Y: --';
+                }
+            }
+
+            startDrawing(e) {
+                // Check if panning mode is active (Middle click, Hand Tool, or Spacebar held)
+                if (e.button === 1 || this.currentTool === 'hand' || WigglyViewport.isSpaceDown) {
+                    e.preventDefault();
+                    WigglyViewport.isPanning = true;
+                    WigglyViewport.startX = e.clientX;
+                    WigglyViewport.startY = e.clientY;
+                    WigglyViewport.startPanX = WigglyViewport.panX;
+                    WigglyViewport.startPanY = WigglyViewport.panY;
+                    const canvas = document.getElementById('visibleCanvas');
+                    if (canvas) canvas.style.cursor = 'grabbing';
+                    return;
+                }
+
+                if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+                e.preventDefault();
+                WigglyHistory.saveState();
+                this.isDrawing = true;
+                
+                if (e.target && e.target.setPointerCapture && e.pointerId !== undefined) {
+                    try { e.target.setPointerCapture(e.pointerId); } catch(err) {}
+                }
+
+                const coords = this.getCanvasCoordinates(e);
+                const pressureRatio = this.getEffectivePressure(e);
+                this.lastX = coords.x;
+                this.lastY = coords.y;
+                this.smoothedX = coords.x;
+                this.smoothedY = coords.y;
+                this.lastMidX = coords.x;
+                this.lastMidY = coords.y;
+
+                this.drawPoint(coords.x, coords.y, pressureRatio);
+                WigglyAudio.play('squeak');
+            }
+
+            draw(e) {
+                if (WigglyViewport.isPanning) {
+                    e.preventDefault();
+                    WigglyViewport.panX = WigglyViewport.startPanX + (e.clientX - WigglyViewport.startX);
+                    WigglyViewport.panY = WigglyViewport.startPanY + (e.clientY - WigglyViewport.startY);
+                    WigglyViewport.updateTransform();
+                    return;
+                }
+
+                if (!this.isDrawing) return;
+                e.preventDefault();
+
+                const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
+
+                for (let i = 0; i < events.length; i++) {
+                    const curEvent = events[i];
+                    const coords = this.getCanvasCoordinates(curEvent);
+                    const pressureRatio = this.getEffectivePressure(curEvent);
+                    
+                    let targetX = coords.x;
+                    let targetY = coords.y;
+
+                    if (this.stabilizerLevel > 0) {
+                        const alpha = Math.max(0.015, Math.pow(0.65, this.stabilizerLevel));
+                        this.smoothedX += (coords.x - this.smoothedX) * alpha;
+                        this.smoothedY += (coords.y - this.smoothedY) * alpha;
+                        targetX = this.smoothedX;
+                        targetY = this.smoothedY;
+                    }
+                    
+                    const midX = (this.lastX + targetX) / 2;
+                    const midY = (this.lastY + targetY) / 2;
+
+                    this.drawSmoothPixelSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, pressureRatio);
+
+                    this.lastX = targetX;
+                    this.lastY = targetY;
+                    this.lastMidX = midX;
+                    this.lastMidY = midY;
+                }
+
+                WigglyAudio.play('squeak');
+            }
+
+            stopDrawing(e) {
+                if (WigglyViewport.isPanning) {
+                    WigglyViewport.isPanning = false;
+                    const canvas = document.getElementById('visibleCanvas');
+                    if (canvas) {
+                        canvas.style.cursor = (this.currentTool === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
+                    }
+                }
+
+                if (this.isDrawing) {
+                    this.isDrawing = false;
+                    if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
+                        try { e.target.releasePointerCapture(e.pointerId); } catch(err) {}
+                    }
+                    WigglyStorage.triggerAutoSave();
+                }
+            }
+
+            drawPoint(x, y, pressureRatio = 1.0) {
+                const props = this.getToolProps(this.currentTool, pressureRatio);
+                
+                const points = [{x, y}];
+                if (this.isHorizontalMirror) points.push({x: WigglyEngine.width - x, y});
+                if (this.isVerticalMirror) points.push({x, y: WigglyEngine.height - y});
+                if (this.isHorizontalMirror && this.isVerticalMirror) points.push({x: WigglyEngine.width - x, y: WigglyEngine.height - y});
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const jx = (Math.random() - 0.5) * props.jitter * 1.5;
+                    const jy = (Math.random() - 0.5) * props.jitter * 1.5;
+
+                    points.forEach(pt => {
+                        if (this.currentTool === 'eraser') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
+                        } else if (this.currentTool === 'marker_eraser') {
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, 0);
+                        } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, pt.x + jx, pt.y + jy, props.size, this.brushTipShape, markerId);
+                        } else {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], pt.x, pt.y, props, jx, jy, f);
+                        }
+                    });
+                }
+            }
+
+            drawSmoothPixelSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
+                const curves = [{ p0x, p0y, p1x, p1y, p2x, p2y }];
+
+                if (this.isHorizontalMirror) {
+                    curves.push({
+                        p0x: WigglyEngine.width - p0x, p0y,
+                        p1x: WigglyEngine.width - p1x, p1y,
+                        p2x: WigglyEngine.width - p2x, p2y
+                    });
+                }
+
+                if (this.isVerticalMirror) {
+                    curves.push({
+                        p0x, p0y: WigglyEngine.height - p0y,
+                        p1x, p1y: WigglyEngine.height - p1y,
+                        p2x, p2y: WigglyEngine.height - p2y
+                    });
+                }
+
+                if (this.isHorizontalMirror && this.isVerticalMirror) {
+                    curves.push({
+                        p0x: WigglyEngine.width - p0x, p0y: WigglyEngine.height - p0y,
+                        p1x: WigglyEngine.width - p1x, p1y: WigglyEngine.height - p1y,
+                        p2x: WigglyEngine.width - p2x, p2y: WigglyEngine.height - p2y
+                    });
+                }
+
+                curves.forEach(c => {
+                    this.drawSingleBezierSegment(c.p0x, c.p0y, c.p1x, c.p1y, c.p2x, c.p2y, pressureRatio);
+                });
+            }
+
+            drawSingleBezierSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
+                const props = this.getToolProps(this.currentTool, pressureRatio);
+
+                const dist = Math.hypot(p1x - p0x, p1y - p0y) + Math.hypot(p2x - p1x, p2y - p1y);
+                const minStep = Math.max(1, Math.floor(props.size / 4));
+                const steps = Math.max(1, Math.ceil(dist / minStep));
+
+                const jitters = [];
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    jitters.push({
+                        jx: (Math.random() - 0.5) * props.jitter * 1.5,
+                        jy: (Math.random() - 0.5) * props.jitter * 1.5
+                    });
+                }
+
+                for (let s = 0; s <= steps; s++) {
+                    const t = s / steps;
+                    const invT = 1 - t;
+
+                    const cx = invT * invT * p0x + 2 * invT * t * p1x + t * t * p2x;
+                    const cy = invT * invT * p0y + 2 * invT * t * p1y + t * t * p2y;
+
+                    for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                        if (this.currentTool === 'eraser') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
+                        } else if (this.currentTool === 'marker_eraser') {
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, 0);
+                        } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, cx + jitters[f].jx, cy + jitters[f].jy, props.size, this.brushTipShape, markerId);
+                        } else {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, jitters[f].jx, jitters[f].jy, f);
+                        }
+                    }
+                }
+            }
+
+            bindCanvasInputEvents() {
+                const canvas = WigglyEngine.visibleCanvas;
+
+                // 即時座標追蹤
+                canvas.addEventListener('pointermove', e => {
+                    this.updateCoordinates(e);
+                    if (this.isDrawing || WigglyViewport.isPanning) this.draw(e);
+                });
+                canvas.addEventListener('pointerleave', () => this.resetCoordinates());
+
+                if (window.PointerEvent) {
+                    canvas.addEventListener('pointerdown', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    });
+                    window.addEventListener('pointerup', e => this.stopDrawing(e));
+                    window.addEventListener('pointercancel', e => this.stopDrawing(e));
+                } else {
+                    canvas.addEventListener('mousedown', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    });
+                    canvas.addEventListener('mousemove', e => {
+                        this.updateCoordinates(e);
+                        this.draw(e);
+                    });
+                    canvas.addEventListener('mouseleave', () => this.resetCoordinates());
+                    window.addEventListener('mouseup', e => this.stopDrawing(e));
+
+                    canvas.addEventListener('touchstart', e => {
+                        this.updateCoordinates(e);
+                        this.startDrawing(e);
+                    }, { passive: false });
+                    canvas.addEventListener('touchmove', e => {
+                        this.updateCoordinates(e);
+                        this.draw(e);
+                    }, { passive: false });
+                    window.addEventListener('touchend', e => {
+                        this.resetCoordinates();
+                        this.stopDrawing(e);
+                    });
+                }
+            }
+        }
+        const WigglyTools = new WigglyToolsModule();
+
+        // =========================================================================
+        // MODULE 6: WigglyStorage.js (LocalStorage Auto-Save & Restore Engine)
+        // =========================================================================
+        class WigglyStorageModule {
+            constructor() {
+                this.STORAGE_KEY = 'WIGGLY_PAINT_AUTOSAVE_V2';
+                this.saveTimer = null;
+                this.isSaving = false;
+                this.isRestoring = false;
+            }
+
+            init() {
+                return this.restoreFromStorage();
+            }
+
+            triggerAutoSave() {
+                if (this.isRestoring) return;
+                if (this.saveTimer) clearTimeout(this.saveTimer);
+
+                this.setIndicatorStatus('saving');
+                this.saveTimer = setTimeout(() => {
+                    this.performSave();
+                }, 600);
+            }
+
+            setIndicatorStatus(state) {
+                const textEl = document.getElementById('autosave-text');
+                const indicator = document.getElementById('autosave-indicator');
+                if (!textEl || !indicator) return;
+
+                if (state === 'saving') {
+                    textEl.innerText = WigglyUI.t('status_saving');
+                    indicator.classList.remove('text-emerald-800');
+                    indicator.classList.add('text-amber-800');
+                } else {
+                    textEl.innerText = WigglyUI.t('status_saved');
+                    indicator.classList.remove('text-amber-800');
+                    indicator.classList.add('text-emerald-800');
+                }
+            }
+
+            performSave() {
+                if (this.isRestoring) return;
+                try {
+                    this.isSaving = true;
+
+                    // 1. 3 幀黑白線稿轉為 Base64 PNG
+                    const baseFrames = WigglyEngine.baseFrameCanvases.map(c => c.toDataURL('image/png'));
+                    
+                    // 2. 3 幀麥克筆 Uint8Array 點陣轉為字串
+                    const markerMaps = WigglyEngine.markerPaletteMaps.map(m => Array.from(m));
+
+                    const payload = {
+                        width: WigglyEngine.width,
+                        height: WigglyEngine.height,
+                        canvasBgColor: WigglyEngine.canvasBgColor,
+                        foregroundColor: WigglyEngine.foregroundColor,
+                        markerColors: { ...WigglyTools.markerColors },
+                        brushPt: WigglyTools.brushPt,
+                        brushTipShape: WigglyTools.brushTipShape,
+                        stabilizerLevel: WigglyTools.stabilizerLevel,
+                        isPressureEnabled: WigglyTools.isPressureEnabled,
+                        currentLang: WigglyUI.currentLang,
+                        baseFrames: baseFrames,
+                        markerMaps: markerMaps,
+                        savedAt: Date.now()
+                    };
+
+                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(payload));
+                    this.setIndicatorStatus('saved');
+                } catch (e) {
+                    console.warn('Auto-save failed:', e);
+                    this.setIndicatorStatus('saved');
+                } finally {
+                    this.isSaving = false;
+                }
+            }
+
+            restoreFromStorage() {
+                const raw = localStorage.getItem(this.STORAGE_KEY);
+                if (!raw) return false;
+
+                try {
+                    this.isRestoring = true;
+                    const data = JSON.parse(raw);
+                    if (!data || !data.baseFrames || !data.markerMaps) {
+                        this.isRestoring = false;
+                        return false;
+                    }
+
+                    // 1. 還原尺寸
+                    if (data.width && data.height) {
+                        WigglyEngine.resizeDimensions(data.width, data.height, 0, 0, true);
+                    }
+
+                    // 2. 還原色彩設定
+                    if (data.canvasBgColor) WigglyEngine.setCanvasBackground(data.canvasBgColor);
+                    if (data.foregroundColor) WigglyEngine.setCanvasForeground(data.foregroundColor);
+                    if (data.markerColors) {
+                        WigglyTools.markerColors = { ...data.markerColors };
+                        WigglyConfig.markerKeys.forEach(mKey => {
+                            const val = data.markerColors[mKey];
+                            if (val) {
+                                const picker = document.getElementById(`picker-${mKey}`);
+                                if (picker) picker.value = val;
+                                const swatch = document.getElementById(`swatch-${mKey}`);
+                                if (swatch) swatch.style.backgroundColor = val;
+                            }
+                        });
+                    }
+
+                    // 3. 還原筆刷與語系
+                    if (data.brushPt) {
+                        WigglyTools.brushPt = data.brushPt;
+                        const rEl = document.getElementById('brush-size-range');
+                        if (rEl) rEl.value = data.brushPt;
+                        WigglyTools.setBrushSize(data.brushPt);
+                    }
+                    if (data.brushTipShape) WigglyTools.setBrushTipShape(data.brushTipShape);
+                    if (typeof data.stabilizerLevel === 'number') {
+                        WigglyTools.stabilizerLevel = data.stabilizerLevel;
+                        const sEl = document.getElementById('stabilizer-range');
+                        if (sEl) sEl.value = data.stabilizerLevel;
+                        WigglyTools.setStabilizer(data.stabilizerLevel);
+                    }
+                    if (typeof data.isPressureEnabled === 'boolean') {
+                        WigglyTools.isPressureEnabled = data.isPressureEnabled;
+                        WigglyTools.updatePressureUI();
+                    }
+                    if (data.currentLang && data.currentLang !== WigglyUI.currentLang) {
+                        WigglyUI.setLanguage(data.currentLang);
+                    }
+
+                    // 4. 還原麥克筆 3 幀圖元 Map
+                    if (data.markerMaps) {
+                        for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                            if (data.markerMaps[f] && WigglyEngine.markerPaletteMaps[f]) {
+                                WigglyEngine.markerPaletteMaps[f].set(new Uint8Array(data.markerMaps[f]));
+                            }
+                        }
+                    }
+
+                    // 5. 還原線稿圖層並重繪
+                    let loadedCount = 0;
+                    for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                        const img = new Image();
+                        img.onload = () => {
+                            WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                            WigglyEngine.baseFrameCtxs[f].drawImage(img, 0, 0);
+                            loadedCount++;
+                            if (loadedCount === WigglyConfig.NUM_FRAMES) {
+                                WigglyEngine.renderMainCanvas();
+                                this.setIndicatorStatus('saved');
+                                this.isRestoring = false;
+                            }
+                        };
+                        img.src = data.baseFrames[f];
+                    }
+                    return true;
+                } catch (e) {
+                    console.error('Auto-load failed:', e);
+                    this.isRestoring = false;
+                    return false;
+                }
+            }
+        }
+        const WigglyStorage = new WigglyStorageModule();
+
+        // =========================================================================
+        // MODULE 7: WigglyUI.js (Modals, Menus, Palette Presets, GIF Export, i18n)
+        // =========================================================================
+        class WigglyUIModule {
+            constructor() {
+                this.currentLang = 'zh-TW';
+            }
+
+            init() {
+                this.bindGlobalEvents();
+                this.applyLanguage();
+            }
+
+            t(key) {
+                const dict = WigglyConfig.i18n[this.currentLang] || WigglyConfig.i18n['zh-TW'];
+                return dict[key] || WigglyConfig.i18n['zh-TW'][key] || key;
+            }
+
+            getPatternName(patObj) {
+                const key = 'pat_' + patObj.key;
+                return this.t(key) || patObj.name;
+            }
+
+            setLanguage(lang) {
+                if (!WigglyConfig.i18n[lang]) return;
+                this.currentLang = lang;
+                WigglyAudio.play('pop');
+                this.applyLanguage();
+            }
+			
+			swapDimensions() {
+				const wEl = document.getElementById('resize-width');
+				const hEl = document.getElementById('resize-height');
+				if (!wEl || !hEl) return;
+
+				const temp = wEl.value;
+				wEl.value = hEl.value;
+				hEl.value = temp;
+
+				WigglyAudio.play('pop');
+			}
+
+            applyLanguage() {
+                // 1. Update all static i18n data-i18n elements
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const text = this.t(key);
+                    if (text) {
+                        el.innerHTML = text;
+                    }
+                });
+
+                // 2. Update language checkboxes in View menu
+                ['zh-TW', 'en', 'ja'].forEach(lang => {
+                    const chk = document.getElementById(`menu-check-lang-${lang}`);
+                    if (chk) chk.classList.toggle('opacity-0', this.currentLang !== lang);
+                });
+
+                // 3. Update dynamic elements (stabilizer badge, pattern grid tooltips, status dimensions)
+                const badge = document.getElementById('stabilizer-value-badge');
+                if (badge && WigglyTools.stabilizerLevel === 0) {
+                    badge.innerText = this.t('stabilizer_off');
+                }
+                this.updateCanvasDimIndicator();
+                WigglyViewport.updateIndicator();
+                WigglyTools.renderPatternButtons();
+                WigglyStorage.setIndicatorStatus(WigglyStorage.isSaving ? 'saving' : 'saved');
+            }
+
+            updateCanvasDimIndicator() {
+                const indicator = document.getElementById('canvas-dim-indicator');
+                if (indicator) {
+                    indicator.innerText = `${WigglyEngine.width} x ${WigglyEngine.height} ${this.t('status_pixels')}`;
+                }
+            }
+
+            toggleMenu(menuId, event) {
+                if (event) event.stopPropagation();
+                const menu = document.getElementById(menuId);
+                if (!menu) return;
+                const isHidden = menu.classList.contains('hidden');
+                this.closeAllMenus();
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    WigglyAudio.play('pop');
+                }
+            }
+
+            closeAllMenus() {
+                document.querySelectorAll('.menu-dropdown-container > div').forEach(m => m.classList.add('hidden'));
+            }
+
+            openModal(id) {
+                const modal = document.getElementById(id);
+                if (!modal) return;
+                modal.classList.add('active');
+                WigglyAudio.play('pop');
+
+                if (id === 'export-modal') {
+                    document.getElementById('export-status-container').classList.remove('hidden');
+                    document.getElementById('export-preview-container').classList.add('hidden');
+                    setTimeout(() => this.compileAndExportGIF(), 100);
+                }
+            }
+
+            closeModal(id) {
+                const modal = document.getElementById(id);
+                if (!modal) return;
+                modal.classList.remove('active');
+            }
+
+            openCropModal() {
+                document.getElementById('resize-width').value = WigglyEngine.width;
+                document.getElementById('resize-height').value = WigglyEngine.height;
+                document.getElementById('crop-top').value = 0;
+                document.getElementById('crop-bottom').value = 0;
+                document.getElementById('crop-left').value = 0;
+                document.getElementById('crop-right').value = 0;
+                this.openModal('crop-modal');
+            }
+
+            setPresetSize(w, h) {
+                document.getElementById('resize-width').value = w;
+                document.getElementById('resize-height').value = h;
+                WigglyAudio.play('pop');
+            }
+
+            applyDirectResize() {
+                const newW = parseInt(document.getElementById('resize-width').value, 10) || WigglyEngine.width;
+                const newH = parseInt(document.getElementById('resize-height').value, 10) || WigglyEngine.height;
+
+                if (newW <= 0 || newH <= 0) return;
+
+                WigglyEngine.resizeDimensions(newW, newH, 0, 0);
+                this.closeModal('crop-modal');
+                WigglyAudio.play('pop');
+            }
+
+            applyCrop() {
+                const top = parseInt(document.getElementById('crop-top').value, 10) || 0;
+                const bottom = parseInt(document.getElementById('crop-bottom').value, 10) || 0;
+                const left = parseInt(document.getElementById('crop-left').value, 10) || 0;
+                const right = parseInt(document.getElementById('crop-right').value, 10) || 0;
+
+                const newW = Math.max(50, WigglyEngine.width - left - right);
+                const newH = Math.max(50, WigglyEngine.height - top - bottom);
+
+                WigglyEngine.resizeDimensions(newW, newH, left, top);
+                this.closeModal('crop-modal');
+                WigglyAudio.play('pop');
+            }
+
+            applyTightFit() {
+                let minX = WigglyEngine.width, minY = WigglyEngine.height, maxX = 0, maxY = 0;
+                let hasPixels = false;
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const imgData = WigglyEngine.baseFrameCtxs[f].getImageData(0, 0, WigglyEngine.width, WigglyEngine.height).data;
+                    for (let y = 0; y < WigglyEngine.height; y++) {
+                        for (let x = 0; x < WigglyEngine.width; x++) {
+                            const alpha = imgData[(y * WigglyEngine.width + x) * 4 + 3];
+                            if (alpha > 0) {
+                                hasPixels = true;
+                                if (x < minX) minX = x;
+                                if (x > maxX) maxX = x;
+                                if (y < minY) minY = y;
+                                if (y > maxY) maxY = y;
+                            }
+                        }
+                    }
+
+                    const map = WigglyEngine.markerPaletteMaps[f];
+                    for (let y = 0; y < WigglyEngine.height; y++) {
+                        for (let x = 0; x < WigglyEngine.width; x++) {
+                            if (map[y * WigglyEngine.width + x] > 0) {
+                                hasPixels = true;
+                                if (x < minX) minX = x;
+                                if (x > maxX) maxX = x;
+                                if (y < minY) minY = y;
+                                if (y > maxY) maxY = y;
+                            }
+                        }
+                    }
+                }
+
+                if (!hasPixels) return;
+
+                const pad = 10;
+                minX = Math.max(0, minX - pad);
+                minY = Math.max(0, minY - pad);
+                maxX = Math.min(WigglyEngine.width - 1, maxX + pad);
+                maxY = Math.min(WigglyEngine.height - 1, maxY + pad);
+
+                const newW = maxX - minX + 1;
+                const newH = maxY - minY + 1;
+
+                WigglyEngine.resizeDimensions(newW, newH, minX, minY);
+                this.closeModal('crop-modal');
+                WigglyAudio.play('pop');
+            }
+
+            applyPresetPalette(presetKey) {
+                const presets = {
+                    classic: { bg: '#ffffff', fg: '#000000', m1: '#FF5588', m2: '#00CCFF', m3: '#FFE000', c1: '#00FF66', c2: '#A020F0', c3: '#FF6600' },
+                    retro: { bg: '#FDF6E3', fg: '#2B261F', m1: '#E88D8D', m2: '#8DAEE8', m3: '#E8D48D', c1: '#A8E88D', c2: '#C48DE8', c3: '#E8B28D' },
+                    cyber: { bg: '#121218', fg: '#FFFFFF', m1: '#FF007F', m2: '#00F0FF', m3: '#FFE600', c1: '#39FF14', c2: '#B026FF', c3: '#FF5F1F' },
+                    morandi: { bg: '#EAE8E3', fg: '#333333', m1: '#C08282', m2: '#829CB0', m3: '#D4C49A', c1: '#9AB09C', c2: '#A282B0', c3: '#C89B82' },
+                    gameboy: { bg: '#9BBC0F', fg: '#0F380F', m1: '#8BAC0F', m2: '#306230', m3: '#0F380F', c1: '#8BAC0F', c2: '#306230', c3: '#0F380F' },
+                    macaron: { bg: '#FFF5F5', fg: '#4A4A4A', m1: '#FFB7B2', m2: '#A2E8DD', m3: '#FFF1C5', c1: '#C7CEEA', c2: '#E2F0CB', c3: '#FFDAC1' }
+                };
+
+                const p = presets[presetKey];
+                if (!p) return;
+
+                WigglyEngine.setCanvasBackground(p.bg);
+                WigglyEngine.setCanvasForeground(p.fg);
+
+                const mMapping = { 'marker1': p.m1, 'marker2': p.m2, 'marker3': p.m3, 'custom1': p.c1, 'custom2': p.c2, 'custom3': p.c3 };
+                WigglyConfig.markerKeys.forEach(mKey => {
+                    const color = mMapping[mKey];
+                    WigglyTools.markerColors[mKey] = color;
+                    const picker = document.getElementById(`picker-${mKey}`);
+                    if (picker) picker.value = color;
+                    const swatch = document.getElementById(`swatch-${mKey}`);
+                    if (swatch) swatch.style.backgroundColor = color;
+                });
+
+                WigglyTools.renderPatternButtons();
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            promptClearCanvas() {
+                this.clearCanvasNow();
+            }
+
+            clearCanvasNow() {
+                WigglyHistory.saveState();
+                WigglyAudio.play('obliterate');
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    if (WigglyEngine.baseFrameCtxs[f]) {
+                        WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    }
+                    if (WigglyEngine.markerPaletteMaps[f]) {
+                        WigglyEngine.markerPaletteMaps[f].fill(0);
+                    }
+                }
+                if (WigglyEngine.stampCache) {
+                    WigglyEngine.stampCache.clear();
+                }
+                WigglyEngine.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            triggerOpenImage() {
+                document.getElementById('image-open-loader').click();
+            }
+
+            handleOpenImage(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        WigglyHistory.saveState();
+                        WigglyEngine.resizeDimensions(img.width, img.height, 0, 0, true);
+                        for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                            WigglyEngine.baseFrameCtxs[f].clearRect(0, 0, img.width, img.height);
+                            WigglyEngine.baseFrameCtxs[f].drawImage(img, 0, 0);
+                            if (WigglyEngine.markerPaletteMaps[f]) {
+                                WigglyEngine.markerPaletteMaps[f].fill(0);
+                            }
+                        }
+                        if (WigglyEngine.stampCache) {
+                            WigglyEngine.stampCache.clear();
+                        }
+                        WigglyEngine.renderMainCanvas();
+                        WigglyAudio.play('pop');
+                        WigglyStorage.triggerAutoSave();
+                        e.target.value = '';
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            compileAndExportGIF() {
+                const tempCanvases = [];
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const fCanvas = document.createElement('canvas');
+                    fCanvas.width = WigglyEngine.width;
+                    fCanvas.height = WigglyEngine.height;
+                    const fCtx = fCanvas.getContext('2d');
+                    fCtx.imageSmoothingEnabled = false;
+
+                    // 1. Fill Background
+                    fCtx.fillStyle = WigglyEngine.canvasBgColor;
+                    fCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+
+                    // 2. Render and Draw Marker Layer
+                    WigglyEngine.renderMarkerLayerToCanvas(f);
+                    fCtx.drawImage(WigglyEngine.markerRenderCanvas, 0, 0);
+
+                    // 3. Draw Foreground/Line Layer
+                    const lineMaskCanvas = WigglyEngine.baseFrameCanvases[f];
+                    WigglyEngine.tintCtx.save();
+                    WigglyEngine.tintCtx.globalCompositeOperation = 'source-over';
+                    WigglyEngine.tintCtx.clearRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    WigglyEngine.tintCtx.fillStyle = WigglyEngine.foregroundColor;
+                    WigglyEngine.tintCtx.fillRect(0, 0, WigglyEngine.width, WigglyEngine.height);
+                    WigglyEngine.tintCtx.globalCompositeOperation = 'destination-in';
+                    WigglyEngine.tintCtx.drawImage(lineMaskCanvas, 0, 0);
+                    WigglyEngine.tintCtx.restore();
+
+                    fCtx.drawImage(WigglyEngine.tintCanvas, 0, 0);
+
+                    tempCanvases.push(fCanvas.toDataURL('image/png'));
+                }
+
+                if (typeof gifshot !== 'undefined') {
+                    gifshot.createGIF({
+                        images: tempCanvases,
+                        gifWidth: WigglyEngine.width,
+                        gifHeight: WigglyEngine.height,
+                        interval: 0.1,
+                        numFrames: 3
+                    }, function (obj) {
+                        if (!obj.error) {
+                            const animatedGIF = obj.image;
+                            document.getElementById('gif-preview-img').src = animatedGIF;
+                            document.getElementById('gif-download-btn').href = animatedGIF;
+
+                            document.getElementById('export-status-container').classList.add('hidden');
+                            document.getElementById('export-preview-container').classList.remove('hidden');
+                        }
+                    });
+                }
+            }
+
+            bindGlobalEvents() {
+                document.addEventListener('click', () => this.closeAllMenus());
+
+                window.addEventListener('keydown', (e) => {
+                    const tag = e.target.tagName.toLowerCase();
+                    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+
+                    const isCmdOrCtrl = e.ctrlKey || e.metaKey;
+
+                    // Spacebar 觸發手掌拖移 (Hold Space to Pan)
+                    if (e.code === 'Space' && !e.repeat) {
+                        e.preventDefault();
+                        WigglyViewport.isSpaceDown = true;
+                        const canvas = document.getElementById('visibleCanvas');
+                        if (canvas) canvas.style.cursor = 'grab';
+                        return;
+                    }
+
+                    if (isCmdOrCtrl) {
+                        const key = e.key.toLowerCase();
+                        if (key === '1') { e.preventDefault(); WigglyTools.selectTool('marker1'); }
+                        else if (key === '2') { e.preventDefault(); WigglyTools.selectTool('marker2'); }
+                        else if (key === '3') { e.preventDefault(); WigglyTools.selectTool('marker3'); }
+                        else if (key === '4') { e.preventDefault(); WigglyTools.selectTool('custom1'); }
+                        else if (key === '5') { e.preventDefault(); WigglyTools.selectTool('custom2'); }
+                        else if (key === '6') { e.preventDefault(); WigglyTools.selectTool('custom3'); }
+                        else if (key === '0') { e.preventDefault(); WigglyViewport.resetZoom(); }
+                        else if (key === '=' || key === '+') { e.preventDefault(); WigglyViewport.zoomIn(); }
+                        else if (key === '-') { e.preventDefault(); WigglyViewport.zoomOut(); }
+                        else if (key === 'o') { e.preventDefault(); this.triggerOpenImage(); }
+                        else if (key === 'z' && !e.shiftKey) { e.preventDefault(); WigglyHistory.undo(); }
+                        else if (key === 'y' || (e.shiftKey && key === 'z')) { e.preventDefault(); WigglyHistory.redo(); }
+                        else if (key === 'e') { e.preventDefault(); this.openModal('export-modal'); }
+                        else if (key === 'n') { e.preventDefault(); this.promptClearCanvas(); }
+                    } else {
+                        if (e.key === '1' || e.key.toLowerCase() === 'b') WigglyTools.selectTool('pen');
+                        else if (e.key === '2') WigglyTools.selectTool('spray');
+                        else if (e.key === '3' || (e.key.toLowerCase() === 'e' && !e.shiftKey)) WigglyTools.selectTool('eraser');
+                        else if (e.key === '4' || (e.key.toLowerCase() === 'e' && e.shiftKey)) WigglyTools.selectTool('marker_eraser');
+                        else if (e.key === '5' || e.key.toLowerCase() === 'h') WigglyTools.selectTool('hand');
+                        else if (e.key === '+' || e.key === '=') WigglyViewport.zoomIn();
+                        else if (e.key === '-') WigglyViewport.zoomOut();
+                        else if (e.key === '0') WigglyViewport.resetZoom();
+                        else if (e.key.toLowerCase() === 'p') { e.preventDefault(); WigglyTools.togglePressureSensitivity(); }
+                        else if (e.key === 'F1') { e.preventDefault(); this.openModal('help-modal'); }
+                        else if (e.key === 'Escape') {
+                            document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('active'));
+                        }
+                    }
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    if (e.code === 'Space') {
+                        WigglyViewport.isSpaceDown = false;
+                        const canvas = document.getElementById('visibleCanvas');
+                        if (canvas) {
+                            canvas.style.cursor = (WigglyTools.currentTool === 'hand') ? 'grab' : 'crosshair';
+                        }
+                    }
+                });
+            }
+        }
+        const WigglyUI = new WigglyUIModule();
+
+        // =========================================================================
+        // MODULE 8: WigglyApp.js (Bootstrap & Orchestrator)
+        // =========================================================================
+        class WigglyAppModule {
+            init() {
+                WigglyEngine.init();
+                WigglyViewport.init();
+                WigglyTools.init();
+                WigglyUI.init();
+                
+                // 優先從 localStorage 載入存檔
+                const hasSavedState = WigglyStorage.init();
+                
+                WigglyTools.selectTool('pen');
+                requestAnimationFrame(t => WigglyEngine.gameLoop(t));
+
+                // 若為全新開啟（無存檔紀錄）才顯示使用說明
+                if (!hasSavedState) {
+                    WigglyUI.openModal('help-modal');
+                }
+            }
+        }
+        const WigglyApp = new WigglyAppModule();
+
+        // 綁定至 window 全域以支援 HTML 上的 onclick 呼叫
+        window.WigglyConfig = WigglyConfig;
+        window.WigglyAudio = WigglyAudio;
+        window.WigglyHistory = WigglyHistory;
+        window.WigglyEngine = WigglyEngine;
+        window.WigglyViewport = WigglyViewport;
+        window.WigglyTools = WigglyTools;
+        window.WigglyStorage = WigglyStorage;
+        window.WigglyUI = WigglyUI;
+        window.WigglyApp = WigglyApp;
+
+        // 網頁載入完成後啟動
+        window.onload = function () {
+            WigglyApp.init();
+        };
     </script>
 </body>
 </html>

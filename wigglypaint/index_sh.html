@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WigglyPaint v2.7.2 - 復古像素抖動塗鴉板</title>
+    <title>WigglyPaint - v2.7.5</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Gifshot CDN for exporting animated GIFs -->
@@ -265,7 +265,7 @@
         <div class="retro-titlebar px-2 py-1 flex justify-between items-center select-none w-full border-b border-gray-700">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-pen-nib text-yellow-300 text-xs"></i>
-                <span class="font-bold tracking-wide text-xs">WIGGLYPAINT v2.7.2</span>
+                <span class="font-bold tracking-wide text-xs"> WigglyPaint - v2.7.5</span>
             </div>
             <div class="flex items-center gap-1">
                 <span id="titlebar-tagline" class="text-[11px] text-blue-200 font-sans hidden sm:inline" data-i18n="app_tagline">~ 順暢像素風格 3幀動態繪圖板 ~</span>
@@ -413,67 +413,63 @@
                 </div>
             </div>
 
-            <!-- View Menu -->
-            <div class="relative inline-block menu-dropdown-container">
-                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
-                <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
-                    
-                    <!-- Zoom View Options -->
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-magnifying-glass-plus w-4"></i><span data-i18n="menu_zoom_in">放大畫布 (Zoom In)</span></span>
-                        <span class="text-[10px] opacity-75">+</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-magnifying-glass-minus w-4"></i><span data-i18n="menu_zoom_out">縮小畫布 (Zoom Out)</span></span>
-                        <span class="text-[10px] opacity-75">-</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-arrows-to-dot w-4"></i><span data-i18n="menu_zoom_reset">重設縮放 (100%)</span></span>
-                        <span class="text-[10px] opacity-75">Ctrl+0</span>
-                    </button>
+            <!-- View Menu (已移除語系選單) -->
+<div class="relative inline-block menu-dropdown-container">
+    <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
+    <div id="menu-view" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-magnifying-glass-plus w-4"></i><span data-i18n="menu_zoom_in">放大畫布 (Zoom In)</span></span>
+            <span class="text-[10px] opacity-75">+</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-magnifying-glass-minus w-4"></i><span data-i18n="menu_zoom_out">縮小畫布 (Zoom Out)</span></span>
+            <span class="text-[10px] opacity-75">-</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-compress w-4"></i><span data-i18n="menu_zoom_reset">重置縮放 (100%)</span></span>
+            <span class="text-[10px] opacity-75">Ctrl+0</span>
+        </button>
+        <div class="border-t border-gray-400 my-1"></div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i><span data-i18n="menu_sound">音效回饋 (SFX)</span></span>
+        </button>
+        <div class="border-t border-gray-400 my-1"></div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.openModal('options-modal'); WigglyUI.closeAllMenus();">
+            <span><i class="fa-solid fa-sliders w-4"></i><span data-i18n="menu_options">畫布與主題設定...</span></span>
+        </button>
+    </div>
+</div>
 
-                    <div class="border-t border-gray-400 my-1"></div>
+<!-- Help Menu (加入切換語言選項卡) -->
+<div class="relative inline-block menu-dropdown-container">
+    <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-help', event)"><span data-i18n="menu_help">說明(<u>H</u>)</span></button>
+    <div id="menu-help" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-black text-xs">
+        <!-- Language Selection Submenu -->
+        <div class="px-3 py-0.5 text-[10px] font-bold text-gray-700 bg-gray-300 flex items-center justify-between">
+            <span><i class="fa-solid fa-language mr-1"></i><span data-i18n="menu_language">切換語言 (Language)</span></span>
+        </div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('zh-TW'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-zh-TW" class="fa-solid fa-check text-xs w-4"></i>繁體中文 (Traditional Chinese)</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('en'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-en" class="fa-solid fa-check text-xs w-4 opacity-0"></i>English (英文)</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('ja'); WigglyUI.closeAllMenus();">
+            <span><i id="menu-check-lang-ja" class="fa-solid fa-check text-xs w-4 opacity-0"></i>日本語 (Japanese)</span>
+        </button>
 
-                    <!-- Language Selection Submenu Section -->
-                    <div class="px-3 py-0.5 text-[10px] font-bold text-gray-700 bg-gray-300 flex items-center justify-between">
-                        <span><i class="fa-solid fa-language mr-1"></i><span data-i18n="menu_language">切換語言 (Language)</span></span>
-                    </div>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('zh-TW'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-zh-TW" class="fa-solid fa-check text-xs w-4"></i>繁體中文 (Traditional Chinese)</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('en'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-en" class="fa-solid fa-check text-xs w-4 opacity-0"></i>English (英文)</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.setLanguage('ja'); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-lang-ja" class="fa-solid fa-check text-xs w-4 opacity-0"></i>日本語 (Japanese)</span>
-                    </button>
+        <div class="border-t border-gray-400 my-1"></div>
 
-                    <div class="border-t border-gray-400 my-1"></div>
-
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
-                        <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i><span data-i18n="menu_sound">音效回饋 (SFX)</span></span>
-                    </button>
-                    <div class="border-t border-gray-400 my-1"></div>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center" onclick="WigglyUI.openModal('options-modal'); WigglyUI.closeAllMenus();">
-                        <span><i class="fa-solid fa-sliders w-4"></i><span data-i18n="menu_options">畫布與主題設定...</span></span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Help Menu -->
-            <div class="relative inline-block menu-dropdown-container">
-                <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white rounded-none cursor-pointer" onclick="WigglyUI.toggleMenu('menu-help', event)"><span data-i18n="menu_help">說明(<u>H</u>)</span></button>
-                <div id="menu-help" class="hidden absolute left-0 top-full bg-[#c3c3c3] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-52 z-40 text-black text-xs">
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();">
-                        <i class="fa-solid fa-circle-question w-4"></i>
-                        <span data-i18n="menu_help_guide">使用說明指南...</span>
-                    </button>
-                    <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();">
-                        <i class="fa-solid fa-list-check w-4"></i>
-                        <span data-i18n="menu_changelog">版本更新紀錄...</span>
-                    </button>
-                </div>
-            </div>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();">
+            <i class="fa-solid fa-circle-question w-4"></i>
+            <span data-i18n="menu_help_guide">使用說明指南...</span>
+        </button>
+        <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2" onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();">
+            <i class="fa-solid fa-list-check w-4"></i>
+            <span data-i18n="menu_changelog">版本更新紀錄...</span>
+        </button>
+    </div>
+</div>
 
             <input type="file" id="image-open-loader" accept="image/png, image/jpeg, image/webp" class="hidden" onchange="WigglyUI.handleOpenImage(event)">
         </div>
@@ -754,36 +750,42 @@
             
             <div class="p-2.5 sm:p-3 flex flex-col gap-2.5 overflow-y-auto text-xs bg-[#c3c3c3]">
                 <!-- GroupBox 1: Direct Resolution -->
-                <fieldset class="win98-fieldset flex flex-col gap-2">
-                    <legend class="win98-legend" data-i18n="crop_group_resolution">畫布解析度設定 (像素)</legend>
-                    
-                    <div class="grid grid-cols-2 gap-2 mt-1">
-                        <div>
-                            <label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_width">寬度 (Width):</label>
-                            <input type="number" id="resize-width" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
-                        </div>
-                        <div>
-                            <label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_height">高度 (Height):</label>
-                            <input type="number" id="resize-height" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-1 mt-0.5">
-                        <span class="text-[10px] text-gray-700 font-bold whitespace-nowrap" data-i18n="crop_lbl_presets">常用尺寸:</span>
-                        <div class="flex flex-wrap gap-1">
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(560, 420)">560x420</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(800, 600)">800x600</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(400, 400)">400x400</button>
-                            <button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(1024, 768)">1024x768</button>
-                        </div>
-                    </div>
+				<fieldset class="win98-fieldset flex flex-col gap-2">
+					<legend class="win98-legend" data-i18n="crop_group_resolution">畫布解析度設定 (像素)</legend>
+					
+					<div class="flex items-center gap-2 mt-1">
+						<div class="flex-1">
+							<label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_width">寬度 (Width):</label>
+							<input type="number" id="resize-width" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
+						</div>
 
-                    <div class="flex justify-end mt-1">
-                        <button class="retro-btn h-7 px-4 text-xs" onclick="WigglyUI.applyDirectResize()">
-                            <i class="fa-solid fa-check text-green-700"></i> <span data-i18n="crop_btn_apply_resolution">套用指定寬高</span>
-                        </button>
-                    </div>
-                </fieldset>
+						<button class="retro-btn h-8 px-2 mt-4 text-xs font-bold shrink-0" onclick="WigglyUI.swapDimensions()" title="交換寬度與高度 (Swap Width & Height)">
+							<i class="fa-solid fa-right-left text-blue-800"></i>
+							<span data-i18n="crop_btn_swap">交換</span>
+						</button>
+
+						<div class="flex-1">
+							<label class="font-bold text-gray-800 block mb-1" data-i18n="crop_lbl_height">高度 (Height):</label>
+							<input type="number" id="resize-height" min="50" max="3000" class="retro-box-inset p-1.5 w-full text-xs font-mono font-bold text-black">
+						</div>
+					</div>
+					
+					<div class="flex items-center gap-1 mt-0.5">
+						<span class="text-[10px] text-gray-700 font-bold whitespace-nowrap" data-i18n="crop_lbl_presets">常用尺寸:</span>
+						<div class="flex flex-wrap gap-1">
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(560, 420)">560x420</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(800, 600)">800x600</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(400, 400)">400x400</button>
+							<button class="retro-btn text-[10px] px-1.5 py-0.5" onclick="WigglyUI.setPresetSize(1024, 768)">1024x768</button>
+						</div>
+					</div>
+
+					<div class="flex justify-end mt-1">
+						<button class="retro-btn h-7 px-4 text-xs" onclick="WigglyUI.applyDirectResize()">
+							<i class="fa-solid fa-check text-green-700"></i> <span data-i18n="crop_btn_apply_resolution">套用指定寬高</span>
+						</button>
+					</div>
+				</fieldset>
 
                 <!-- GroupBox 2: Auto Tight Fit -->
                 <fieldset class="win98-fieldset flex flex-col gap-1.5">
@@ -1209,6 +1211,7 @@
                     action_options: "設定選項...",
                     action_clear_canvas: "清空畫布",
                     crop_title: "設定畫布尺寸與裁切",
+					crop_btn_swap: "交換",
                     crop_group_resolution: "畫布解析度設定 (像素)",
                     crop_lbl_width: "寬度 (Width):",
                     crop_lbl_height: "高度 (Height):",
@@ -1347,6 +1350,7 @@
                     action_options: "Options...",
                     action_clear_canvas: "Clear Canvas",
                     crop_title: "Canvas Resolution & Crop",
+					crop_btn_swap: "Swap",
                     crop_group_resolution: "Canvas Resolution (px)",
                     crop_lbl_width: "Width:",
                     crop_lbl_height: "Height:",
@@ -1485,6 +1489,7 @@
                     action_options: "設定...",
                     action_clear_canvas: "キャンバス消去",
                     crop_title: "キャンバスサイズとトリミング設定",
+					crop_btn_swap: "入替",
                     crop_group_resolution: "解像度設定 (ピクセル)",
                     crop_lbl_width: "幅 (Width):",
                     crop_lbl_height: "高さ (Height):",
@@ -2894,6 +2899,18 @@
                 WigglyAudio.play('pop');
                 this.applyLanguage();
             }
+			
+			swapDimensions() {
+				const wEl = document.getElementById('resize-width');
+				const hEl = document.getElementById('resize-height');
+				if (!wEl || !hEl) return;
+
+				const temp = wEl.value;
+				wEl.value = hEl.value;
+				hEl.value = temp;
+
+				WigglyAudio.play('pop');
+			}
 
             applyLanguage() {
                 // 1. Update all static i18n data-i18n elements

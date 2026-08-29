@@ -50,24 +50,7 @@
             --body-bg: #181820;
             --body-dot: #2a2a38;
         }
-        
-        .theme-win98-dark .checkerboard {
-            background-color: #1a1a24;
-            background-image: 
-                linear-gradient(45deg, #12121a 25%, transparent 25%), 
-                linear-gradient(-45deg, #12121a 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #12121a 75%), 
-                linear-gradient(-45deg, transparent 75%, #12121a 75%);
-        }
 
-        /* 深色模式下的畫布凹陷框邊框調整，避免亮白邊反差 */
-        .theme-win98-dark #canvas-container.retro-box-inset {
-            border-top: 2px solid var(--win-darker);
-            border-left: 2px solid var(--win-darker);
-            border-bottom: 2px solid var(--win-light);
-            border-right: 2px solid var(--win-light);F
-            box-shadow: inset 1px 1px 0px #000000;
-        }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body {
             height: 100%; height: 100dvh; width: 100%; margin: 0; padding: 0;
@@ -202,6 +185,23 @@
             background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
         }
 
+        .theme-win98-dark .checkerboard {
+            background-color: #1a1a24;
+            background-image: 
+                linear-gradient(45deg, #12121a 25%, transparent 25%), 
+                linear-gradient(-45deg, #12121a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #12121a 75%), 
+                linear-gradient(-45deg, transparent 75%, #12121a 75%);
+        }
+
+        .theme-win98-dark #canvas-container.retro-box-inset {
+            border-top: 2px solid var(--win-darker);
+            border-left: 2px solid var(--win-darker);
+            border-bottom: 2px solid var(--win-light);
+            border-right: 2px solid var(--win-light);
+            box-shadow: inset 1px 1px 0px #000000;
+        }
+
         .modal-backdrop { display: none !important; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.65); z-index: 9999; align-items: center; justify-content: center; padding: 8px; }
         .modal-backdrop.active { display: flex !important; }
 
@@ -267,7 +267,7 @@
                         </div>
                     </div>
 
-                    <!-- Tools Menu (工具) -->
+                    <!-- Tools Menu (工具 - 含 6 隻麥克筆) -->
                     <div class="relative inline-block menu-dropdown-container">
                         <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer" onclick="WigglyUI.toggleMenu('menu-tools', event)"><span data-i18n="menu_tools">工具(<u>T</u>)</span></button>
                         <div id="menu-tools" class="hidden absolute left-0 top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-40 text-[var(--win-text)] text-xs">
@@ -356,7 +356,7 @@
                         </div>
                     </div>
 
-                    <!-- Settings Menu (設定 O - 全新整合分類) -->
+                    <!-- Settings Menu (設定 O - 整合所有設定項目) -->
                     <div class="relative inline-block menu-dropdown-container">
                         <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer" onclick="WigglyUI.toggleMenu('menu-settings', event)"><span data-i18n="menu_settings">設定(<u>O</u>)</span></button>
                         <div id="menu-settings" class="hidden absolute left-0 top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-64 z-40 text-[var(--win-text)] text-xs">
@@ -545,7 +545,7 @@
                 <div class="flex flex-row gap-2 items-stretch justify-center w-full flex-1 min-h-0">
                     
                     <!-- LEFT COLUMN: Desktop Basic Tools & Markers -->
-                    <div class="hidden lg:flex w-52 flex-col gap-1.5 shrink-0 overflow-y-auto justify-start">
+                    <div class="hidden lg:flex w-52 flex-col gap-1.5 shrink-0 overflow-visible justify-start">
                         <!-- Desktop Undo / Redo -->
                         <div class="grid grid-cols-2 gap-1 shrink-0">
                             <button class="retro-btn h-7 px-1 text-xs" onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">
@@ -583,22 +583,22 @@
                                         ▼
                                     </button>
 
-                                    <!-- ERASER OPTIONS FLYOUT (PC) -->
-                                    <div id="eraser-flyout-menu" class="hidden absolute left-0 top-full mt-0.5 bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-2xl py-1 w-52 z-50 text-[var(--win-text)] text-xs">
+                                    <!-- ERASER OPTIONS FLYOUT (PC) - Aligned to right to avoid overflow and clipping -->
+                                    <div id="eraser-flyout-menu" class="hidden absolute right-0 left-auto top-full mt-0.5 bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-2xl py-1 w-48 z-50 text-[var(--win-text)] text-xs whitespace-nowrap">
                                         <div class="px-2 py-0.5 text-[10px] font-bold opacity-75 bg-[var(--win-dark)] mb-0.5">選擇橡皮擦類型</div>
-                                        <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('eraser')">
-                                            <i class="fa-solid fa-eraser text-red-600 w-4 text-center"></i>
-                                            <span class="flex-1 font-bold" data-i18n="eraser_type_all">全域橡皮擦 (All)</span>
+                                        <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('eraser')">
+                                            <i class="fa-solid fa-eraser text-red-600 w-4 text-center shrink-0"></i>
+                                            <span class="flex-1 font-bold truncate" data-i18n="eraser_type_all">全域橡皮擦 (All)</span>
                                             <i id="flyout-check-eraser" class="fa-solid fa-check text-[10px]"></i>
                                         </button>
-                                        <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('whiteout')">
-                                            <i class="fa-solid fa-wand-magic-sparkles text-sky-600 w-4 text-center"></i>
-                                            <span class="flex-1 font-bold" data-i18n="eraser_type_whiteout">修正液 (White-Out)</span>
+                                        <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('whiteout')">
+                                            <i class="fa-solid fa-wand-magic-sparkles text-sky-600 w-4 text-center shrink-0"></i>
+                                            <span class="flex-1 font-bold truncate" data-i18n="eraser_type_whiteout">修正液 (White-Out)</span>
                                             <i id="flyout-check-whiteout" class="fa-solid fa-check text-[10px] opacity-0"></i>
                                         </button>
-                                        <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('marker_eraser')">
-                                            <i class="fa-solid fa-eraser text-amber-600 w-4 text-center"></i>
-                                            <span class="flex-1 font-bold" data-i18n="eraser_type_marker">橡皮擦 (Marker)</span>
+                                        <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('marker_eraser')">
+                                            <i class="fa-solid fa-eraser text-amber-600 w-4 text-center shrink-0"></i>
+                                            <span class="flex-1 font-bold truncate" data-i18n="eraser_type_marker">橡皮擦 (Marker)</span>
                                             <i id="flyout-check-marker_eraser" class="fa-solid fa-check text-[10px] opacity-0"></i>
                                         </button>
                                     </div>
@@ -689,19 +689,19 @@
                                         </button>
 
                                         <!-- MOBILE ERASER FLYOUT -->
-                                        <div id="m-eraser-flyout-menu" class="hidden absolute left-0 top-full mt-0.5 bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-2xl py-1 w-48 z-50 text-[var(--win-text)] text-xs">
+                                        <div id="m-eraser-flyout-menu" class="hidden absolute left-0 top-full mt-0.5 bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-2xl py-1 w-52 z-50 text-[var(--win-text)] text-xs">
                                             <div class="px-2 py-0.5 text-[10px] font-bold opacity-75 bg-[var(--win-dark)] mb-0.5">選擇橡皮擦類型</div>
-                                            <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('eraser')">
+                                            <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('eraser')">
                                                 <i class="fa-solid fa-eraser text-red-600 w-4 text-center"></i>
                                                 <span class="flex-1 font-bold" data-i18n="eraser_type_all">全域橡皮擦 (All)</span>
                                                 <i id="m-flyout-check-eraser" class="fa-solid fa-check text-[10px]"></i>
                                             </button>
-                                            <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('whiteout')">
+                                            <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('whiteout')">
                                                 <i class="fa-solid fa-wand-magic-sparkles text-sky-600 w-4 text-center"></i>
                                                 <span class="flex-1 font-bold" data-i18n="eraser_type_whiteout">修正液 (White-Out)</span>
                                                 <i id="m-flyout-check-whiteout" class="fa-solid fa-check text-[10px] opacity-0"></i>
                                             </button>
-                                            <button class="w-full text-left px-2 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('marker_eraser')">
+                                            <button class="w-full text-left px-2 py-1.5 hover:bg-[#000080] hover:text-white flex items-center gap-2 cursor-pointer" onclick="WigglyTools.setEraserMode('marker_eraser')">
                                                 <i class="fa-solid fa-eraser text-amber-600 w-4 text-center"></i>
                                                 <span class="flex-1 font-bold" data-i18n="eraser_type_marker">橡皮擦 (Marker)</span>
                                                 <i id="m-flyout-check-marker_eraser" class="fa-solid fa-check text-[10px] opacity-0"></i>
@@ -2095,7 +2095,7 @@
             drawSmoothPixelSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
                 const curves = [{ p0x, p0y, p1x, p1y, p2x, p2y }];
                 if (this.isHorizontalMirror) curves.push({ p0x: WigglyEngine.width - p0x, p0y, p1x: WigglyEngine.width - p1x, p1y, p2x: WigglyEngine.width - p2x, p2y });
-                if (this.isVerticalMirror) curves.push({ p0x, p0y: WigglyEngine.height - p0y, p1x, p1y: WigglyEngine.height - p1y, p2x, p2y: WigglyEngine.height - p2y });
+                if (this.isVerticalMirror) curves.push({ p0x: WigglyEngine.height - p0y, p1x: WigglyEngine.height - p1y, p2x: WigglyEngine.height - p2y });
                 if (this.isHorizontalMirror && this.isVerticalMirror) curves.push({ p0x: WigglyEngine.width - p0x, p0y: WigglyEngine.height - p0y, p1x: WigglyEngine.width - p1x, p1y: WigglyEngine.height - p1y, p2x: WigglyEngine.width - p2x, p2y: WigglyEngine.height - p2y });
 
                 curves.forEach(c => {

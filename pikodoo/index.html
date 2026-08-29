@@ -687,18 +687,12 @@
                                         data-i18n="menu_pressure">筆壓感應 (Pressure)</span></span><span
                                     class="text-[10px] opacity-75 font-mono">P</span>
                             </button>
+                            <div class="border-t border-gray-400 my-1"></div>
                             <button
                                 class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                 onclick="WigglyAudio.toggleSoundMenu(); WigglyUI.closeAllMenus();">
                                 <span><i id="menu-check-sound" class="fa-solid fa-check text-xs w-4"></i><span
                                         data-i18n="menu_sound">音效回饋 (SFX)</span></span>
-                            </button>
-                            <div class="border-t border-gray-400 my-1"></div>
-                            <button
-                                class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                onclick="WigglyUI.openMarkerDrawer(); WigglyUI.closeAllMenus();">
-                                <i class="fa-solid fa-sliders w-4"></i><span
-                                    data-i18n="menu_options">畫布與色彩主題設定...</span>
                             </button>
                             <div class="border-t border-gray-400 my-1"></div>
                             <button
@@ -746,7 +740,7 @@
                     <div class="retro-titlebar px-2 py-1 flex justify-between items-center drag-handle">
                         <span class="font-bold flex items-center gap-1.5"><i
                                 class="fa-solid fa-border-none text-yellow-300"></i><span
-                                data-i18n="group_screentones">30款精選漫畫與動態網點</span></span>
+                                data-i18n="group_screentones">精選漫畫與動態網點</span></span>
                         <button onclick="WigglyUI.closePatternDrawer()" class="win98-close-btn">✕</button>
                     </div>
                     <div class="p-2.5 flex flex-col gap-2 overflow-y-auto bg-[var(--win-bg)] text-xs">
@@ -1334,36 +1328,51 @@
             patterns: [],
             initPatterns() {
                 const defs = [
-                    { k: "solid", n: "純黑實心", d: false, h: ["FFFFFFFFFFFFFFFF"] },
-                    { k: "checker50", n: "50% 棋盤點陣", d: false, h: ["AA55AA55AA55AA55"] },
-                    { k: "dot25", n: "25% 細網點", d: false, h: ["8800220088002200"] },
-                    { k: "dot75", n: "75% 濃密網點", d: false, h: ["77FFDDFF77FFDDFF"] },
-                    { k: "dot12", n: "12.5% 稀疏點", d: false, h: ["8000080080000800"] },
-                    { k: "dot6", n: "6.25% 超微點", d: false, h: ["8000000008000000"] },
+                    // --- 1. 基礎灰階濃度網點 (Tone Density: 深 -> 淺) ---
+                    { k: "dot75", n: "75% 網點", d: false, h: ["77FFDDFF77FFDDFF"] },
+                    { k: "dot50", n: "50% 網點", d: false, h: ["AA55AA55AA55AA55"] },
+                    { k: "dot25", n: "25% 網點", d: false, h: ["8800220088002200"] },
+                    { k: "dot12", n: "12% 網點", d: false, h: ["8000080080000800"] },
+                    { k: "dot6", n: "6% 網點", d: false, h: ["8000000008000000"] },
+
+                    // --- 2. 漫畫圓點與漸層 (Manga Dots & Gradients) ---
+                    { k: "manga_polka", n: "經典漫畫圓點", d: false, h: ["387CFEFEFE7C3800"] },
                     { k: "manga_coarse", n: "60L 粗圓點", d: false, h: ["60F0F060060F0F06"] },
                     { k: "manga_grad", n: "40L 漸層點", d: false, h: ["904833331824CC00"] },
+
+                    // --- 3. 線條與方向排線 (Lines & Hatches) ---
                     { k: "hline", n: "水平橫線", d: false, h: ["FF00FF00FF00FF00"] },
                     { k: "vline", n: "垂直直線", d: false, h: ["AAAAAAAAAAAAAAAA"] },
+                    { k: "speed_lines", n: "速度細直線", d: false, h: ["5555555555555555"] },
                     { k: "diag_r", n: "正斜線 /", d: false, h: ["1122448811224488"] },
                     { k: "diag_l", n: "反斜線 \\", d: false, h: ["8844221188442211"] },
-                    { k: "grid_square", n: "正方網格 #", d: false, h: ["FF888888FF888888"] },
-                    { k: "grid_cross", n: "斜向網格 X", d: false, h: ["8956245A99664281"] },
+                    { k: "fine_stripe", n: "細密斜紋", d: false, h: ["2244881122448811"] },
                     { k: "dense_hatch", n: "密集排線", d: false, h: ["CC663399CC663399"] },
-                    { k: "brick", n: "磚牆紋理", d: false, h: ["FF8080FF0808FF80"] },
+
+                    // --- 4. 幾何網格與編織 (Grids & Weaves) ---
+                    { k: "grid_square", n: "正方網格 #", d: false, h: ["FF888888FF888888"] },
+                    { k: "grid_cross", n: "斜向網格", d: false, h: ["8142241818244281"] },
+                    { k: "diamond", n: "菱形晶鑽", d: false, h: ["1824428181422418"] },
+                    { k: "chunky_cross", n: "粗目十字網格", d: false, h: ["181818FFFF181818"] },
+                    { k: "weave", n: "編織陰影", d: false, h: ["C8C432318C4C2313"] },
+                    { k: "brick", n: "磚牆紋理", d: false, h: ["FF888888FF222222"] },
                     { k: "houndstooth", n: "千鳥紋", d: false, h: ["C8CC36338CCC6333"] },
                     { k: "asanoha", n: "麻之葉", d: false, h: ["8850205088205020"] },
                     { k: "wave_scale", n: "魚鱗波浪", d: false, h: ["6699003030488000"] },
-                    { k: "circles", n: "同心圓環", d: false, h: ["3C4299A5A599423C"] },
-                    { k: "weave", n: "編織陰影", d: false, h: ["E3E31C1CE3E31C1C"] },
-                    { k: "diamond", n: "菱形晶鑽", d: false, h: ["1824428181422418"] },
+
+                    // --- 6. 3 幀動態網點 (3-Frame Dynamic Animation Tones) ---
                     { k: "tv_noise", n: "⚡ TV 噪訊", d: true, h: ["9568936CA54AA54B", "6AA56C936AA54B94", "C936C936A649C535"] },
                     { k: "rain", n: "🌧️ 下雨動態", d: true, h: ["2222888822228888", "8888222288882222", "4444111144441111"] },
-                    { k: "stars", n: "💫 閃爍星空", d: true, h: ["8000080020000200", "0800800002002000", "2200000880000002"] },
-                    { k: "stripes", n: "🌀 滾動斜條", d: true, h: ["CC663399CC663399", "3399CC663399CC66", "663399CC663399CC"] },
-                    { k: "waves", n: "🌊 流動波浪", d: true, h: ["6699000066990000", "9966000099660000", "3349000033490000"] },
+                    { k: "stars", n: "💫 閃爍星空", d: true, h: ["2070200207020000", "0020000000020000", "0207020020702000"] },
                     { k: "flame", n: "🔥 浮動火焰", d: true, h: ["103078FC040C1E3F", "08183C7E103078FC", "2060F0FC08183C7E"] },
                     { k: "stardust", n: "✨ 閃爍粒子", d: true, h: ["8220044110028820", "2009801440092280", "4480220881240049"] },
-                    { k: "heartbeat", n: "💓 悸動心跳", d: true, h: ["66FFFF7E3C180000", "0066FFFF7E3C1800", "000066FFFF7E3C18"] }
+                    { k: "heartbeat", n: "💓 悸動心跳", d: true, h: ["50F87020050F0702", "0050200000050200", "050F070250F87020"] },
+                    { k: "drips", n: "💧 水滴流動", d: true, h: ["2020702002020702", "0020207000020207", "0202070220207020"] },
+                    { k: "pulse", n: "⚡ 脈衝電波", d: true, h: ["2070A82002070A02", "002070A80002070A", "02070A022070A820"] },
+                    { k: "petals", n: "🌸 櫻花飄落", d: true, h: ["0C18000000030600", "000C180000000306", "0600000C18000003"] },
+                    { k: "matrix", n: "🌌 矩陣數位流", d: true, h: ["8020080280200802", "4010040140100401", "2008028020080280"] },
+                    { k: "vortex", n: "🌀 擴散光圈", d: true, h: ["0000181800000000", "003C24243C000000", "7E424242427E0000"] },
+                    { k: "checker_glitch", n: "🔲 像素跳格", d: true, h: ["F00FF00FF00FF00F", "0FF00FF00FF00FF0", "AAAAAAAAAAAAAAAA"] },
                 ];
                 this.patterns = defs.map(d => ({ key: d.k, name: d.n, isDynamic: d.d, frames: this.decodeHexFrames(d.h) }));
             },
@@ -1374,7 +1383,7 @@
                     menu_file: "檔案(<u>F</u>)", menu_new_canvas: "開新畫布", menu_open_file: "開啟圖檔...", menu_export_gif: "匯出 GIF 動畫...", menu_clear_storage: "清除快取並重設...", menu_clear_canvas: "清空畫布",
                     menu_edit: "編輯(<u>E</u>)", menu_undo: "復原 (Undo)", menu_redo: "重做 (Redo)",
                     menu_tools: "工具(<u>T</u>)", tool_pen_full: "鋼筆 (Pen)", tool_spray_full: "噴漆槍 (Spray)", tool_pattern_full: "網點筆刷 (Pattern)", tool_eraser_full: "全域橡皮擦 (All)", tool_whiteout_full: "修正液 (White-Out)", tool_marker_eraser_full: "橡皮擦 (Marker)", tool_select_full: "矩形選取 (Select)", tool_hand_full: "拖曳畫布 (Pan)",
-                    menu_view: "檢視(<u>V</u>)", menu_zoom_in: "放大畫布 (Zoom In)", menu_zoom_out: "縮小畫布 (Zoom Out)", menu_zoom_reset: "重設縮放 (100%)", menu_screentones_drawer: "漫畫網點視窗 (30種)...", menu_marker_drawer: "麥克筆調色盤視窗...",
+                    menu_view: "檢視(<u>V</u>)", menu_zoom_in: "放大畫布 (Zoom In)", menu_zoom_out: "縮小畫布 (Zoom Out)", menu_zoom_reset: "重設縮放 (100%)", menu_screentones_drawer: "漫畫網點視窗...", menu_marker_drawer: "麥克筆調色盤視窗...",
                     menu_settings: "設定(<u>O</u>)", menu_theme: "介面外觀主題 (Theme)", menu_language: "切換語言 (Language)", menu_sound: "音效回饋 (SFX)", menu_pressure: "筆壓感應 (Pressure)", menu_canvas_size: "畫布尺寸與裁切...", menu_options: "畫布與色彩主題設定...",
                     menu_help: "說明(<u>H</u>)", menu_help_guide: "使用說明指南...", menu_changelog: "版本更新紀錄...",
                     group_brushes: "筆刷工具", tool_pen: "鋼筆", tool_spray: "噴漆槍", tool_pattern: "網點筆刷", tool_eraser: "全域橡皮擦", tool_whiteout: "修正液", tool_marker_eraser: "橡皮擦", tool_select: "選取", tool_hand: "拖曳",
@@ -1382,7 +1391,7 @@
                     marker_palette_window_title: "畫布與色彩主題設定", marker_palette_legend: "6 色麥克筆自訂色彩", lbl_select_pattern: "點選以套用網點",
                     lbl_size: "尺寸:", lbl_stabilizer: "防抖:", lbl_shape: "形狀:", btn_round: "圓", btn_square: "方", btn_chisel: "斜", lbl_mirror: "鏡像:", btn_mirror_h: "↔", btn_mirror_v: "↕", btn_pressure: "筆壓",
                     status_pixels: "像素", status_zoom: "縮放", status_saved: "已保存", status_saving: "正在保存...", status_cleared_storage: "已重設", btn_undo: "復原 (U)", btn_redo: "重做 (R)",
-                    group_screentones: "30款精選漫畫與動態網點", stabilizer_off: "關閉", action_export_gif: "匯出 GIF...", action_canvas_size: "畫布尺寸...", action_clear_canvas: "清空畫布",
+                    group_screentones: "精選漫畫與動態網點", stabilizer_off: "關閉", action_export_gif: "匯出 GIF...", action_canvas_size: "畫布尺寸...", action_clear_canvas: "清空畫布",
                     crop_title: "設定畫布尺寸與裁切", crop_btn_swap: "交換", crop_group_resolution: "畫布解析度設定 (像素)", crop_lbl_width: "寬度 (Width):", crop_lbl_height: "高度 (Height):", crop_lbl_presets: "常用尺寸:", crop_btn_apply_resolution: "套用指定寬高", crop_group_tight: "智慧一鍵去邊", crop_desc_tight: "自動切除畫布四周多餘的空白範圍。", crop_btn_tight: "自動緊密去邊裁切", crop_group_manual: "手動修剪四邊邊界 (px)", crop_top: "上方裁切:", crop_bottom: "下方裁切:", crop_left: "左側裁切:", crop_right: "右側裁切:", crop_btn_apply_manual: "套用邊緣裁切", btn_close: "關閉", btn_confirm: "確定",
                     options_title: "畫布與色彩主題設定", options_group_colors: "畫布色彩與音效", options_lbl_bg: "背景顏色 (底色):", options_lbl_fg: "前景顏色 (線稿):", options_lbl_sound: "音效回饋 (Sound FX):", options_group_presets: "預設調色盤主題",
                     preset_classic: "經典 Y2K", preset_retro: "復古奶油", preset_cyber: "賽博霓虹", preset_morandi: "日系莫蘭迪", preset_gameboy: "復古掌機", preset_macaron: "夢幻馬卡龍",
@@ -1397,7 +1406,7 @@
                     menu_file: "File(<u>F</u>)", menu_new_canvas: "New Canvas", menu_open_file: "Open Image...", menu_export_gif: "Export GIF...", menu_clear_storage: "Clear Cache & Reset...", menu_clear_canvas: "Clear Canvas",
                     menu_edit: "Edit(<u>E</u>)", menu_undo: "Undo", menu_redo: "Redo",
                     menu_tools: "Tools(<u>T</u>)", tool_pen_full: "Pen Tool", tool_spray_full: "Spray Can Tool", tool_pattern_full: "Pattern Brush", tool_eraser_full: "Global Eraser", tool_whiteout_full: "White-Out", tool_marker_eraser_full: "Marker Eraser", tool_select_full: "Rectangle Select", tool_hand_full: "Pan Canvas",
-                    menu_view: "View(<u>V</u>)", menu_zoom_in: "Zoom In", menu_zoom_out: "Zoom Out", menu_zoom_reset: "Reset Zoom (100%)", menu_screentones_drawer: "Screentones Window (30)...", menu_marker_drawer: "Marker Palette Window...",
+                    menu_view: "View(<u>V</u>)", menu_zoom_in: "Zoom In", menu_zoom_out: "Zoom Out", menu_zoom_reset: "Reset Zoom (100%)", menu_screentones_drawer: "Screentones Window...", menu_marker_drawer: "Marker Palette Window...",
                     menu_settings: "Settings(<u>O</u>)", menu_theme: "Theme", menu_language: "Language", menu_sound: "Sound FX", menu_pressure: "Pressure Sensitivity", menu_canvas_size: "Canvas Size & Crop...", menu_options: "Canvas & Theme Settings...",
                     menu_help: "Help(<u>H</u>)", menu_help_guide: "User Guide...", menu_changelog: "Changelog...",
                     group_brushes: "Brushes", tool_pen: "Pen", tool_spray: "Spray", tool_pattern: "Pattern", tool_eraser: "Global Eraser", tool_whiteout: "White-Out", tool_marker_eraser: "Eraser", tool_select: "Select", tool_hand: "Pan",
@@ -1405,7 +1414,7 @@
                     marker_palette_window_title: "Canvas & Theme Settings", marker_palette_legend: "6 Marker Custom Colors", lbl_select_pattern: "Select a Pattern",
                     lbl_size: "Size:", lbl_stabilizer: "Stab:", lbl_shape: "Shape:", btn_round: "Round", btn_square: "Square", btn_chisel: "Chisel", lbl_mirror: "Mirror:", btn_mirror_h: "↔", btn_mirror_v: "↕", btn_pressure: "Pressure",
                     status_pixels: "px", status_zoom: "Zoom", status_saved: "Saved", status_saving: "Saving...", status_cleared_storage: "Reset Cache", btn_undo: "Undo (U)", btn_redo: "Redo (R)",
-                    group_screentones: "30 Screentone Patterns", stabilizer_off: "Off", action_export_gif: "Export GIF...", action_canvas_size: "Canvas Size...", action_clear_canvas: "Clear Canvas",
+                    group_screentones: "Screentone Patterns", stabilizer_off: "Off", action_export_gif: "Export GIF...", action_canvas_size: "Canvas Size...", action_clear_canvas: "Clear Canvas",
                     crop_title: "Canvas Resolution & Crop", crop_btn_swap: "Swap", crop_group_resolution: "Canvas Resolution (px)", crop_lbl_width: "Width:", crop_lbl_height: "Height:", crop_lbl_presets: "Presets:", crop_btn_apply_resolution: "Apply Resolution", crop_group_tight: "Smart Tight Crop", crop_desc_tight: "Trim outer empty whitespace.", crop_btn_tight: "Auto Tight Fit Canvas", crop_group_manual: "Manual 4-Way Crop (px)", crop_top: "Top Crop:", crop_bottom: "Bottom Crop:", crop_left: "Left Crop:", crop_right: "Right Crop:", crop_btn_apply_manual: "Apply Border Crop", btn_close: "Close", btn_confirm: "OK",
                     options_title: "Canvas & Theme Settings", options_group_colors: "Canvas Colors & Audio", options_lbl_bg: "Background Color:", options_lbl_fg: "Foreground Color:", options_lbl_sound: "Sound Feedback (SFX):", options_group_presets: "Preset Themes",
                     preset_classic: "Classic Y2K", preset_retro: "Retro Cream", preset_cyber: "Cyber Neon", preset_morandi: "Morandi Muted", preset_gameboy: "GameBoy Green", preset_macaron: "Sweet Macaron",
@@ -1420,7 +1429,7 @@
                     menu_file: "ファイル(<u>F</u>)", menu_new_canvas: "新規キャンバス", menu_open_file: "画像を開く...", menu_export_gif: "GIFアニメ出力...", menu_clear_storage: "キャッシュ初期化...", menu_clear_canvas: "キャンバス消去",
                     menu_edit: "編集(<u>E</u>)", menu_undo: "元に戻す (Undo)", menu_redo: "やり直す (Redo)",
                     menu_tools: "ツール(<u>T</u>)", tool_pen_full: "ペン (Pen)", tool_spray_full: "スプレー (Spray)", tool_pattern_full: "トーンブラシ (Pattern)", tool_eraser_full: "全域消しゴム (All)", tool_whiteout_full: "修正液 (White-Out)", tool_marker_eraser_full: "消しゴム (Marker)", tool_select_full: "矩形選択 (Select)", tool_hand_full: "画面移動 (Pan)",
-                    menu_view: "表示(<u>V</u>)", menu_zoom_in: "キャンバス拡大", menu_zoom_out: "キャンバス縮小", menu_zoom_reset: "倍率リセット (100%)", menu_screentones_drawer: "トーンウィンドウ (30種)...", menu_marker_drawer: "マーカーカラー設定...",
+                    menu_view: "表示(<u>V</u>)", menu_zoom_in: "キャンバス拡大", menu_zoom_out: "キャンバス縮小", menu_zoom_reset: "倍率リセット (100%)", menu_screentones_drawer: "トーンウィンドウ...", menu_marker_drawer: "マーカーカラー設定...",
                     menu_settings: "設定(<u>O</u>)", menu_theme: "テーマ (Theme)", menu_language: "言語切替 (Language)", menu_sound: "効果音 (SFX)", menu_pressure: "筆壓感知 (Pressure)", menu_canvas_size: "キャンバスサイズ・トリミング...", menu_options: "キャンバスとカラーテーマ設定...",
                     menu_help: "ヘルプ(<u>H</u>)", menu_help_guide: "使い方ガイド...", menu_changelog: "更新履歴...",
                     group_brushes: "ブラシツール", tool_pen: "ペン", tool_spray: "スプレー", tool_pattern: "トーン", tool_eraser: "全域消しゴム", tool_whiteout: "修正液", tool_marker_eraser: "消しゴム", tool_select: "選択", tool_hand: "移動",
@@ -1428,7 +1437,7 @@
                     marker_palette_window_title: "キャンバス・テーマ設定", marker_palette_legend: "6色マーカーカラー設定", lbl_select_pattern: "トーン選択",
                     lbl_size: "サイズ:", lbl_stabilizer: "補正:", lbl_shape: "形状:", btn_round: "丸", btn_square: "角", btn_chisel: "斜", lbl_mirror: "ミラー:", btn_mirror_h: "↔", btn_mirror_v: "↕", btn_pressure: "筆壓",
                     status_pixels: "ピクセル", status_zoom: "倍率", status_saved: "保存済", status_saving: "保存中...", status_cleared_storage: "初期化完了", btn_undo: "元に戻す (U)", btn_redo: "やり直す (R)",
-                    group_screentones: "30種トーンパターン", stabilizer_off: "オフ", action_export_gif: "GIF出力...", action_canvas_size: "サイズ...", action_clear_canvas: "キャンバス消去",
+                    group_screentones: "トーンパターン一覧", stabilizer_off: "オフ", action_export_gif: "GIF出力...", action_canvas_size: "サイズ...", action_clear_canvas: "キャンバス消去",
                     crop_title: "キャンバスサイズとトリミング設定", crop_btn_swap: "入替", crop_group_resolution: "解像度設定 (ピクセル)", crop_lbl_width: "幅 (Width):", crop_lbl_height: "高さ (Height):", crop_lbl_presets: "プリセット:", crop_btn_apply_resolution: "サイズ適用", crop_group_tight: "スマート余白カット", crop_desc_tight: "不要な余白をトリミングします。", crop_btn_tight: "自動ぴったりトリミング", crop_group_manual: "手動4方向トリミング (px)", crop_top: "上部カット:", crop_bottom: "下部カット:", crop_left: "左側カット:", crop_right: "右側カット:", crop_btn_apply_manual: "境界トリミング適用", btn_close: "閉じる", btn_confirm: "OK",
                     options_title: "キャンバスとカラーテーマ設定", options_group_colors: "キャンバスカラー・音声", options_lbl_bg: "背景カラー (下地):", options_lbl_fg: "前景カラー (線画ブラシ):", options_lbl_sound: "効果音フィードバック (SFX):", options_group_presets: "プリセットカラーパレット",
                     preset_classic: "クラシック Y2K", preset_retro: "レトロクリーム", preset_cyber: "サイバーネオン", preset_morandi: "モランディ", preset_gameboy: "レトロ携帯機", preset_macaron: "スイートマカロン",

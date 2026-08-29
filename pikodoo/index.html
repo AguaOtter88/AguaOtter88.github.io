@@ -2756,14 +2756,16 @@
                         return;
                     }
                     if (this.isDrawing) {
-                        // 抬起筆尖時，平滑補齊殘留距離至游標最後位置，並自然拉尖
+                        // 抬起筆尖時平滑補齊殘留距離至游標終點
                         if (this.stabilizerLevel > 0) {
                             const curCoords = this.getCanvasCoordinates(e);
-                            const finalP = this.lastPressure * 0.5;
+                            // 僅在開啟筆壓時才進行收筆漸細；關閉筆壓時維持等寬 1.0
+                            const finalP = this.isPressureEnabled ? this.lastPressure * 0.5 : 1.0;
+                            const endP = this.isPressureEnabled ? 0.2 : 1.0;
                             const midX = (this.lastX + curCoords.x) / 2;
                             const midY = (this.lastY + curCoords.y) / 2;
                             this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, this.lastPressure, finalP);
-                            this.drawSmoothSegment(midX, midY, curCoords.x, curCoords.y, curCoords.x, curCoords.y, finalP, 0.2);
+                            this.drawSmoothSegment(midX, midY, curCoords.x, curCoords.y, curCoords.x, curCoords.y, finalP, endP);
                         }
 
                         this.isDrawing = false;
@@ -2779,7 +2781,6 @@
 
         }
         const WigglyTools = new ToolsModule();
-
 
         // =========================================================================
         // MODULE 7: WigglyStorage.js (LocalStorage Persistence)

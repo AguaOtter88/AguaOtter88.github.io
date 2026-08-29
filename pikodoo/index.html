@@ -1860,6 +1860,9 @@
                 this.markerColors = { ...WigglyConfig.defaultMarkerColors };
                 this.lastX = 0; this.lastY = 0; this.smoothedX = 0; this.smoothedY = 0;
                 this.lastMidX = 0; this.lastMidY = 0;
+                this.rawCursorX = 0; this.rawCursorY = 0;
+                this.lastPressure = 1.0;
+                this.smoothedPressure = 1.0;
 
                 this.clipboard = null;
                 this.selectionState = {
@@ -1970,7 +1973,9 @@
             getEffectivePressure(e) {
                 if (!this.isPressureEnabled || !e) return 1.0;
                 if (e.pointerType === 'pen' || (typeof e.pressure === 'number' && e.pressure > 0 && e.pressure !== 0.5)) {
-                    return 0.3 + 1.1 * Math.max(0.05, Math.min(1.0, e.pressure));
+                    const rawP = Math.max(0.05, Math.min(1.0, e.pressure));
+                    // 輕壓 0.35x ~ 重壓 1.25x 線性響應，保證細線過渡不跳階
+                    return 0.35 + 0.9 * rawP;
                 }
                 return 1.0;
             }
@@ -2099,10 +2104,10 @@
 
                 for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
                     // 1. 僅裁切畫布內的線稿
-                    const sc = document.createElement('canvas'); 
-                    sc.width = finalW; 
+                    const sc = document.createElement('canvas');
+                    sc.width = finalW;
                     sc.height = finalH;
-                    const sctx = sc.getContext('2d'); 
+                    const sctx = sc.getContext('2d');
                     sctx.imageSmoothingEnabled = false;
                     sctx.drawImage(WigglyEngine.baseFrameCanvases[f], x1, y1, finalW, finalH, 0, 0, finalW, finalH);
                     s.floatBaseCanvases.push(sc);
@@ -2532,29 +2537,37 @@
                     });
                 }
             }
-            drawSmoothSegment(p0x, p0y, p1x, p1y, p2x, p2y, pressureRatio = 1.0) {
+            drawSmoothSegment(p0x, p0y, p1x, p1y, p2x, p2y, startPressure = 1.0, endPressure = 1.0) {
                 const curves = [{ p0x, p0y, p1x, p1y, p2x, p2y }];
                 const W = WigglyEngine.width, H = WigglyEngine.height;
                 if (this.isHorizontalMirror) curves.push({ p0x: W - p0x, p0y, p1x: W - p1x, p1y, p2x: W - p2x, p2y });
-                if (this.isVerticalMirror) curves.push({ p0x, p0y: H - p0y, p1x, p1y: H - p1y, p2x, p2y: H - p2y });
+                if (this.isVerticalMirror) curves.push({ p0x, p0y: H - p0y, p1x, p1y: H - p1y, p2x: W - p2x, p2y });
                 if (this.isHorizontalMirror && this.isVerticalMirror) curves.push({ p0x: W - p0x, p0y: H - p0y, p1x: W - p1x, p1y: H - p1y, p2x: W - p2x, p2y: H - p2y });
 
                 curves.forEach(c => {
-                    const props = this.getToolProps(this.currentTool, pressureRatio);
+                    const maxP = Math.max(startPressure, endPressure);
+                    const maxProps = this.getToolProps(this.currentTool, maxP);
                     const dist = Math.hypot(c.p1x - c.p0x, c.p1y - c.p0y) + Math.hypot(c.p2x - c.p1x, c.p2y - c.p1y);
-                    const steps = Math.max(1, Math.ceil(dist / Math.max(1, Math.floor(props.size / 4))));
-                    const jitters = Array.from({ length: WigglyConfig.NUM_FRAMES }, () => ({
-                        jx: (Math.random() - 0.5) * props.jitter * 1.5,
-                        jy: (Math.random() - 0.5) * props.jitter * 1.5
+                    const stepSize = Math.max(0.75, Math.floor(maxProps.size / 3));
+                    const steps = Math.max(1, Math.ceil(dist / stepSize));
+
+                    // 每一段生成固定 3 幀微動，消除每個像素亂跳的毛刺
+                    const frameJitters = Array.from({ length: WigglyConfig.NUM_FRAMES }, () => ({
+                        jx: (Math.random() - 0.5) * maxProps.jitter * 0.8,
+                        jy: (Math.random() - 0.5) * maxProps.jitter * 0.8
                     }));
 
-                    for (let s = 0; s <= steps; s++) {
+                    for (let s = 1; s <= steps; s++) {
                         const t = s / steps, invT = 1 - t;
                         const cx = invT * invT * c.p0x + 2 * invT * t * c.p1x + t * t * c.p2x;
                         const cy = invT * invT * c.p0y + 2 * invT * t * c.p1y + t * t * c.p2y;
 
+                        // 連續線性內插筆壓，平滑過渡粗細
+                        const curPressure = startPressure + (endPressure - startPressure) * t;
+                        const props = this.getToolProps(this.currentTool, curPressure);
+
                         for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
-                            const j = jitters[f];
+                            const j = frameJitters[f];
                             if (this.currentTool === 'eraser') {
                                 WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
                                 WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, 0);
@@ -2598,13 +2611,11 @@
                     if (this.currentTool === 'select') {
                         e.preventDefault();
                         if (this.selectionState.active && this.isInsideSelection(coords.x, coords.y)) {
-                            // 在選區內拖曳平移
                             this.selectionState.isMoving = true;
                             this.selectionState.dragOffsetX = coords.x - this.selectionState.x;
                             this.selectionState.dragOffsetY = coords.y - this.selectionState.y;
                             canvas.style.cursor = 'move';
                         } else {
-                            // 點擊選區外部 -> 確認貼下，並從當前點（即便在畫布外）開始框選
                             if (this.selectionState.active) this.commitSelection();
                             this.selectionState.isSelecting = true;
                             this.selectionState.startX = coords.x;
@@ -2626,16 +2637,18 @@
                         if (e.target.setPointerCapture && e.pointerId !== undefined) {
                             try { e.target.setPointerCapture(e.pointerId); } catch (err) { }
                         }
-                        const pressureRatio = this.getEffectivePressure(e);
+                        const p = this.getEffectivePressure(e);
+                        this.lastPressure = p;
+                        this.smoothedPressure = p;
+                        this.rawCursorX = coords.x; this.rawCursorY = coords.y;
                         this.lastX = coords.x; this.lastY = coords.y;
                         this.smoothedX = coords.x; this.smoothedY = coords.y;
                         this.lastMidX = coords.x; this.lastMidY = coords.y;
-                        this.drawPoint(coords.x, coords.y, pressureRatio);
+                        this.drawPoint(coords.x, coords.y, p);
                         WigglyAudio.play('squeak');
                     }
                 };
 
-                // 綁定畫布與外圍容器的按下事件
                 canvas.addEventListener('pointerdown', handlePointerDown);
                 if (container) {
                     container.addEventListener('pointerdown', e => {
@@ -2643,12 +2656,11 @@
                     });
                 }
 
-                // 全域移動監聽（無論游標在畫布內外都能即時拉框與平移）
+                // 全域移動監聽
                 window.addEventListener('pointermove', e => {
                     this.updateCoordinates(e);
                     const coords = this.getCanvasCoordinates(e);
 
-                    // 視角平移
                     if (WigglyViewport.isPanning) {
                         e.preventDefault();
                         const clientX = e.clientX || (e.touches && e.touches[0].clientX);
@@ -2659,24 +2671,19 @@
                         return;
                     }
 
-                    // 選取工具（支援拉到畫布外）
                     if (this.currentTool === 'select') {
                         const s = this.selectionState;
-
                         if (s.isSelecting) {
                             e.preventDefault();
                             const x1 = Math.min(s.startX, coords.x);
                             const y1 = Math.min(s.startY, coords.y);
                             const x2 = Math.max(s.startX, coords.x);
                             const y2 = Math.max(s.startY, coords.y);
-                            s.x = x1;
-                            s.y = y1;
-                            s.w = Math.max(1, x2 - x1);
-                            s.h = Math.max(1, y2 - y1);
+                            s.x = x1; s.y = y1;
+                            s.w = Math.max(1, x2 - x1); s.h = Math.max(1, y2 - y1);
                             WigglyEngine.renderMainCanvas();
                             return;
                         }
-
                         if (s.isMoving) {
                             e.preventDefault();
                             s.x = coords.x - s.dragOffsetX;
@@ -2684,34 +2691,42 @@
                             WigglyEngine.renderMainCanvas();
                             return;
                         }
-
                         if (s.active) {
                             canvas.style.cursor = this.isInsideSelection(coords.x, coords.y) ? 'move' : 'crosshair';
                         }
                         return;
                     }
 
-                    // 筆刷作畫
                     if (!this.isDrawing) return;
                     e.preventDefault();
                     const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
                     for (let i = 0; i < events.length; i++) {
                         const curEvent = events[i];
                         const curCoords = this.getCanvasCoordinates(curEvent);
-                        const pressureRatio = this.getEffectivePressure(curEvent);
+                        const targetP = this.getEffectivePressure(curEvent);
+                        this.rawCursorX = curCoords.x;
+                        this.rawCursorY = curCoords.y;
+
                         let targetX = curCoords.x, targetY = curCoords.y;
+                        let nextPressure = targetP;
 
                         if (this.stabilizerLevel > 0) {
-                            const alpha = Math.max(0.015, Math.pow(0.65, this.stabilizerLevel));
-                            this.smoothedX += (curCoords.x - this.smoothedX) * alpha;
-                            this.smoothedY += (curCoords.y - this.smoothedY) * alpha;
-                            targetX = this.smoothedX; targetY = this.smoothedY;
+                            // 自適應平滑權重 (Lv.1~10)
+                            const weight = Math.max(0.08, 0.75 * Math.pow(0.72, this.stabilizerLevel * 0.6));
+                            this.smoothedX += (curCoords.x - this.smoothedX) * weight;
+                            this.smoothedY += (curCoords.y - this.smoothedY) * weight;
+                            this.smoothedPressure += (targetP - this.smoothedPressure) * weight;
+
+                            targetX = this.smoothedX;
+                            targetY = this.smoothedY;
+                            nextPressure = this.smoothedPressure;
                         }
 
                         const midX = (this.lastX + targetX) / 2, midY = (this.lastY + targetY) / 2;
-                        this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, pressureRatio);
+                        this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, this.lastPressure, nextPressure);
                         this.lastX = targetX; this.lastY = targetY;
                         this.lastMidX = midX; this.lastMidY = midY;
+                        this.lastPressure = nextPressure;
                     }
                     WigglyAudio.play('squeak');
                 });
@@ -2741,6 +2756,16 @@
                         return;
                     }
                     if (this.isDrawing) {
+                        // 抬起筆尖時，平滑補齊殘留距離至游標最後位置，並自然拉尖
+                        if (this.stabilizerLevel > 0) {
+                            const curCoords = this.getCanvasCoordinates(e);
+                            const finalP = this.lastPressure * 0.5;
+                            const midX = (this.lastX + curCoords.x) / 2;
+                            const midY = (this.lastY + curCoords.y) / 2;
+                            this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, this.lastPressure, finalP);
+                            this.drawSmoothSegment(midX, midY, curCoords.x, curCoords.y, curCoords.x, curCoords.y, finalP, 0.2);
+                        }
+
                         this.isDrawing = false;
                         if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
                             try { e.target.releasePointerCapture(e.pointerId); } catch (err) { }

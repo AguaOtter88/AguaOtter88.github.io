@@ -15,16 +15,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Gifshot CDN for exporting animated GIFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
-	<script>
-    // 攔截所有 2D Canvas 的 getContext，全域注入 willReadFrequently 優化
-    const originalGetContext = HTMLCanvasElement.prototype.getContext;
-    HTMLCanvasElement.prototype.getContext = function (type, options) {
-        if (type === '2d') {
-            options = Object.assign({}, options, { willReadFrequently: true });
-        }
-        return originalGetContext.call(this, type, options);
-    };
-</script>
+    <script>
+        // 攔截所有 2D Canvas 的 getContext，全域注入 willReadFrequently 優化
+        const originalGetContext = HTMLCanvasElement.prototype.getContext;
+        HTMLCanvasElement.prototype.getContext = function (type, options) {
+            if (type === '2d') {
+                options = Object.assign({}, options, { willReadFrequently: true });
+            }
+            return originalGetContext.call(this, type, options);
+        };
+    </script>
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -257,8 +257,14 @@
         }
 
         canvas {
+            image-rendering: -moz-crisp-edges;
+            /* Firefox */
+            image-rendering: -webkit-crisp-edges;
+            /* Safari / WebKit */
             image-rendering: pixelated;
+            /* Chrome / Edge */
             image-rendering: crisp-edges;
+            -ms-interpolation-mode: nearest-neighbor;
             touch-action: none;
         }
 
@@ -302,7 +308,7 @@
             margin-top: -6px;
             cursor: pointer;
         }
-		
+
         input[type="color"] {
             -webkit-appearance: none;
             appearance: none;
@@ -382,24 +388,35 @@
         }
 
 
-		/* Win11 風格浮動抽屜面板 (Popovers) */
-		.ribbon-popover {
-			position: absolute;
-			top: 100%;
-			margin-top: 4px;
-			background-color: var(--win-bg);
-			border: 2px solid var(--win-light);
-			border-right-color: var(--win-darker);
-			border-bottom-color: var(--win-darker);
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-			z-index: 999;
-		}
+        /* Win11 風格浮動抽屜面板 (Popovers) */
+        .ribbon-popover {
+            position: absolute;
+            top: 100%;
+            margin-top: 4px;
+            background-color: var(--win-bg);
+            border: 2px solid var(--win-light);
+            border-right-color: var(--win-darker);
+            border-bottom-color: var(--win-darker);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
 
-		/* 色彩面板靠右對齊，避免超出手機螢幕右側 */
-		#popover-colors {
-			right: 0;
-			left: auto;
-		}
+        /* 色彩面板靠右對齊，避免超出手機螢幕右側 */
+        #popover-colors {
+            right: 0;
+            left: auto;
+        }
+
+        #quick-size-bar {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+
+        #quick-size-bar.quick-bar-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: translateY(-50%) translateX(-20px) !important;
+        }
     </style>
 </head>
 
@@ -622,6 +639,8 @@
                             title="反向選取"><i class="fa-solid fa-square-minus text-indigo-600"></i></button>
                         <button class="retro-btn h-6 w-6 text-[10px]" onclick="WigglyTools.flipSelection('h')"
                             title="水平翻轉選區"><i class="fa-solid fa-arrows-left-right text-sky-600"></i></button>
+                        <button class="retro-btn h-6 w-6 text-[10px]" onclick="WigglyTools.flipSelection('h')"
+                            title="垂直翻轉選區"><i class="fa-solid fa-arrows-up-down text-sky-600"></i></button>
                         <button class="retro-btn h-6 w-6 text-[10px] text-red-600"
                             onclick="WigglyUI.promptClearCanvas()" title="清空畫布"><i
                                 class="fa-solid fa-bomb"></i></button>
@@ -636,7 +655,8 @@
                     <span
                         class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">影像</span>
 
-                    <div id="popover-image" class="ribbon-popover hidden left-0 p-2 w-[130px] grid grid-cols-3 gap-1.5 select-none">
+                    <div id="popover-image"
+                        class="ribbon-popover hidden left-0 p-2 w-[130px] grid grid-cols-3 gap-1.5 select-none">
                         <button class="retro-btn h-8 w-8 text-xs shrink-0"
                             onclick="WigglyUI.openCropModal(); WigglyUI.closeAllRibbonPopovers();" title="畫布尺寸與裁切"><i
                                 class="fa-solid fa-crop text-gray-700"></i></button>
@@ -668,9 +688,6 @@
                         <button class="retro-btn h-6 w-6 text-[10px]" data-tool="spray"
                             onclick="WigglyTools.selectTool('spray')" title="噴漆槍"><i
                                 class="fa-solid fa-spray-can text-indigo-600"></i></button>
-                        <button class="retro-btn h-6 w-6 text-[10px]" data-tool="bucket"
-                            onclick="WigglyTools.selectTool('bucket')" title="填滿油漆桶"><i
-                                class="fa-solid fa-fill-drip text-cyan-700"></i></button>
                         <button class="retro-btn h-6 w-6 text-[10px]" data-tool="pattern"
                             onclick="WigglyTools.selectTool('pattern'); WigglyUI.openPatternDrawer();" title="漫畫網點"><i
                                 class="fa-solid fa-border-none text-emerald-700"></i></button>
@@ -691,22 +708,20 @@
                     <span
                         class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">工具</span>
 
-                    <div id="popover-tools" class="ribbon-popover hidden left-0 p-2 w-[130px] grid grid-cols-3 gap-1.5 select-none">
+                    <div id="popover-tools"
+                        class="ribbon-popover hidden left-0 p-2 w-[130px] grid grid-cols-3 gap-1.5 select-none">
                         <button class="retro-btn h-8 w-8 text-xs shrink-0 active" data-tool="pen"
                             onclick="WigglyTools.selectTool('pen'); WigglyUI.closeAllRibbonPopovers();" title="鋼筆"><i
                                 class="fa-solid fa-pen text-amber-800"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs shrink-0" data-tool="spray"
                             onclick="WigglyTools.selectTool('spray'); WigglyUI.closeAllRibbonPopovers();" title="噴漆槍"><i
                                 class="fa-solid fa-spray-can text-indigo-600"></i></button>
-                        <button class="retro-btn h-8 w-8 text-xs shrink-0" data-tool="bucket"
-                            onclick="WigglyTools.selectTool('bucket'); WigglyUI.closeAllRibbonPopovers();" title="填滿油漆桶"><i
-                                class="fa-solid fa-fill-drip text-cyan-700"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs shrink-0" data-tool="pattern"
-                            onclick="WigglyTools.selectTool('pattern'); WigglyUI.openPatternDrawer(); WigglyUI.closeAllRibbonPopovers();" title="漫畫網點"><i
-                                class="fa-solid fa-border-none text-emerald-700"></i></button>
+                            onclick="WigglyTools.selectTool('pattern'); WigglyUI.openPatternDrawer(); WigglyUI.closeAllRibbonPopovers();"
+                            title="漫畫網點"><i class="fa-solid fa-border-none text-emerald-700"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs shrink-0" data-tool="eraser"
-                            onclick="WigglyTools.handleEraserButtonClick(); WigglyUI.closeAllRibbonPopovers();" title="橡皮擦"><i
-                                class="fa-solid fa-eraser text-red-600"></i></button>
+                            onclick="WigglyTools.handleEraserButtonClick(); WigglyUI.closeAllRibbonPopovers();"
+                            title="橡皮擦"><i class="fa-solid fa-eraser text-red-600"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs shrink-0" data-tool="hand"
                             onclick="WigglyTools.selectTool('hand'); WigglyUI.closeAllRibbonPopovers();" title="拖曳畫布"><i
                                 class="fa-solid fa-hand text-blue-600"></i></button>
@@ -778,53 +793,25 @@
                 </div>
 
                 <!-- 區塊 4.5: 影格 (Frames - 獨立專屬分區) -->
-                <div class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
+                <div
+                    class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
                     <div class="hidden lg:flex items-center gap-1">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
                             id="btn-toggle-anim" onclick="WigglyTimeline.toggleTimelineDrawer()" title="開啟/收合時間軸膠捲">
                             <i class="fa-solid fa-film text-purple-600 text-sm"></i>
                             <span class="text-[8px] leading-none opacity-75">時間軸</span>
                         </button>
-                        <div class="flex flex-col gap-1">
-                            <button class="retro-btn h-5 px-1.5 text-[9px] font-bold text-emerald-700" 
-                                onclick="WigglyTimeline.addFrame()" title="快速新增空白影格">
-                                <i class="fa-solid fa-plus text-[8px]"></i> 加格
-                            </button>
-                            <button class="retro-btn h-5 px-1.5 text-[9px] font-bold text-blue-700" 
-                                onclick="WigglyTimeline.duplicateFrame()" title="複製當前影格">
-                                <i class="fa-solid fa-copy text-[8px]"></i> 複製
-                            </button>
-                        </div>
+
                     </div>
                     <div class="lg:hidden flex items-center justify-center">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
-                            onclick="WigglyUI.toggleRibbonPopover('popover-frames', event)">
+                            onclick="WigglyTimeline.toggleTimelineDrawer();">
                             <i class="fa-solid fa-film text-purple-600 text-sm"></i>
-                            <span class="text-[8px] leading-none opacity-60">▼</span>
-                        </button>
-                    </div>
-                    <span class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">影格</span>
 
-                    <div id="popover-frames" class="ribbon-popover hidden left-0 p-2 w-[140px] flex flex-col gap-1.5 select-none">
-                        <button class="retro-btn h-7 w-full text-xs flex items-center justify-start px-2 gap-1.5"
-                            onclick="WigglyTimeline.toggleTimelineDrawer(); WigglyUI.closeAllRibbonPopovers();">
-                            <i class="fa-solid fa-film text-purple-600"></i> 時間軸面板
-                        </button>
-                        <div class="grid grid-cols-2 gap-1">
-                            <button class="retro-btn h-6 text-[10px] font-bold text-emerald-700"
-                                onclick="WigglyTimeline.addFrame(); WigglyUI.closeAllRibbonPopovers();">
-                                <i class="fa-solid fa-plus"></i> 加格
-                            </button>
-                            <button class="retro-btn h-6 text-[10px] font-bold text-blue-700"
-                                onclick="WigglyTimeline.duplicateFrame(); WigglyUI.closeAllRibbonPopovers();">
-                                <i class="fa-solid fa-copy"></i> 複製
-                            </button>
-                        </div>
-                        <button class="retro-btn h-6 text-[10px] font-bold text-red-600"
-                            onclick="WigglyTimeline.deleteFrame(); WigglyUI.closeAllRibbonPopovers();">
-                            <i class="fa-solid fa-trash-can"></i> 刪除當前格
                         </button>
                     </div>
+                    <span
+                        class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">影格</span>
                 </div>
 
                 <!-- 區塊 5: 色彩 (Colors) - 已完全同步設計 -->
@@ -1153,33 +1140,33 @@
                 <div id="canvas-container"
                     class="retro-box-inset p-1 relative checkerboard flex items-center justify-center overflow-hidden shadow-md flex-1 min-h-0 w-full select-none"
                     style="touch-action: none;">
-                    
+
                     <!-- 1. 畫布左側邊緣懸浮拉桿 (修正事件穿透與防跳動) -->
-                    <div id="quick-size-bar" 
-                        class="absolute left-2 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 p-1.5 retro-box bg-[var(--win-bg)] shadow-xl select-none"
-                        style="touch-action: none;"
-                        onpointerdown="event.stopPropagation()">
-                        <span id="quick-size-badge" class="retro-box-inset font-bold text-[10px] w-6 h-5 flex items-center justify-center text-black">3</span>
+                    <div id="quick-size-bar"
+                        class="quick-bar-hidden absolute left-2 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1.5 p-1.5 retro-box bg-[var(--win-bg)] shadow-xl select-none"
+                        style="touch-action: none;" onpointerdown="event.stopPropagation()">
+                        <span id="quick-size-badge"
+                            class="retro-box-inset font-bold text-[10px] w-6 h-5 flex items-center justify-center text-black">3</span>
                         <div class="relative h-36 sm:h-44 w-6 flex items-center justify-center py-1">
-                            <input type="range" id="quick-brush-slider" min="1" max="64" value="3" 
+                            <input type="range" id="quick-brush-slider" min="1" max="64" value="3"
                                 class="w-32 sm:w-40 h-4 -rotate-90 origin-center cursor-pointer"
                                 oninput="WigglyTools.handleSliderInput(this.value)"
-                                onchange="WigglyTools.handleSliderChange()"
-                                onpointerdown="event.stopPropagation()">
+                                onchange="WigglyTools.handleSliderChange()" onpointerdown="event.stopPropagation()">
                         </div>
                         <i class="fa-solid fa-paintbrush text-[10px] opacity-75"></i>
                     </div>
 
                     <!-- 2. 畫布正中央即時筆刷筆尖預覽 HUD -->
-                    <div id="brush-hud-preview" 
+                    <div id="brush-hud-preview"
                         class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-40 hidden flex-col items-center justify-center">
                         <canvas id="hud-preview-canvas" width="128" height="128" class="drop-shadow-lg"></canvas>
-                        <span id="hud-preview-text" class="retro-box px-1.5 py-0.5 text-[10px] font-bold mt-1 text-black font-mono">3 pt</span>
+                        <span id="hud-preview-text"
+                            class="retro-box px-1.5 py-0.5 text-[10px] font-bold mt-1 text-black font-mono">3 pt</span>
                     </div>
 
                     <!-- 實體繪圖畫布 -->
                     <canvas id="visibleCanvas" width="560" height="420"
-                        class="block cursor-crosshair max-w-none bg-white will-change-transform"></canvas>
+                        class="block cursor-crosshair max-w-none bg-white"></canvas>
                 </div>
 
                 <div id="timeline-container"
@@ -1506,7 +1493,7 @@
             </div>
         </div>
     </div>
-	<script>
+    <script>
         // =========================================================================
         // MODULE 1: Config, Patterns & i18n Dictionary
         // =========================================================================
@@ -2453,11 +2440,11 @@
                     const isActive = (i === WigglyEngine.activeEditIndex);
                     const isSelected = (!isTimeline || isActive);
 
-                    card.className = `tl-frame-card retro-btn p-1 flex flex-col items-center gap-0.5 shrink-0 w-14 select-none ${isSelected ? 'active bg-[#000080] text-white' : 'bg-[var(--win-bg)]'
+                    card.className = `tl-frame-card retro-btn p-1 flex flex-col items-center gap-0.5 shrink-0 w-14 select-none touch-none ${isSelected ? 'active bg-[#000080] text-white' : 'bg-[var(--win-bg)]'
                         } ${!isTimeline ? 'cursor-default' : 'cursor-pointer hover:brightness-105'}`;
 
-                    card.draggable = isTimeline;
-                    card.title = isTimeline ? `點選切換至第 ${i + 1} 幀` : `3 幀連動中 (作畫時自動同步寫入此格)`;
+                    card.setAttribute('data-frame-index', i);
+                    card.title = isTimeline ? `長按/拖曳可重新排序 (第 ${i + 1} 幀)` : `3 幀連動中`;
 
                     const label = document.createElement('span');
                     label.className = 'text-[9px] font-mono font-bold leading-none pointer-events-none flex items-center gap-0.5';
@@ -2471,39 +2458,56 @@
                     thumb.className = 'retro-box-inset bg-white shrink-0 pointer-events-none';
                     card.appendChild(thumb);
 
-                    card.onclick = () => {
-                        if (isTimeline) {
-                            this.selectFrame(i);
-                        } else {
-                            WigglyAudio.play('pop');
-                        }
-                    };
-
+                    // --- 觸控與滑鼠通用拖曳排序 (Pointer Events) ---
                     if (isTimeline) {
-                        card.addEventListener('dragstart', (e) => {
+                        let startX = 0, isDraggingCard = false;
+
+                        card.onpointerdown = (e) => {
+                            startX = e.clientX;
+                            isDraggingCard = false;
                             this.dragSrcIndex = i;
-                            card.classList.add('opacity-40', 'scale-90');
-                            e.dataTransfer.effectAllowed = 'move';
-                        });
-                        card.addEventListener('dragover', (e) => {
-                            e.preventDefault();
-                            e.dataTransfer.dropEffect = 'move';
-                            card.classList.add('border-blue-600');
-                        });
-                        card.addEventListener('dragleave', () => {
-                            card.classList.remove('border-blue-600');
-                        });
-                        card.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            card.classList.remove('border-blue-600');
-                            if (this.dragSrcIndex !== null && this.dragSrcIndex !== i) {
-                                this.reorderFrames(this.dragSrcIndex, i);
+                            card.setPointerCapture(e.pointerId);
+                        };
+
+                        card.onpointermove = (e) => {
+                            if (this.dragSrcIndex === null) return;
+                            if (Math.abs(e.clientX - startX) > 8) {
+                                isDraggingCard = true;
+                                card.classList.add('opacity-50', 'scale-95');
                             }
-                        });
-                        card.addEventListener('dragend', () => {
-                            card.classList.remove('opacity-40', 'scale-90');
+                        };
+
+                        card.onpointerup = (e) => {
+                            card.releasePointerCapture(e.pointerId);
+                            card.classList.remove('opacity-50', 'scale-95');
+
+                            if (isDraggingCard) {
+                                // 透過手指/游標放開時的實際座標找出落點卡片
+                                const elem = document.elementFromPoint(e.clientX, e.clientY);
+                                const targetCard = elem ? elem.closest('.tl-frame-card') : null;
+                                if (targetCard) {
+                                    const targetIdx = parseInt(targetCard.getAttribute('data-frame-index'), 10);
+                                    if (!isNaN(targetIdx) && targetIdx !== this.dragSrcIndex) {
+                                        this.reorderFrames(this.dragSrcIndex, targetIdx);
+                                    }
+                                }
+                            } else {
+                                // 短點擊切換影格
+                                this.selectFrame(i);
+                            }
+
                             this.dragSrcIndex = null;
-                        });
+                            isDraggingCard = false;
+                        };
+
+                        card.onpointercancel = (e) => {
+                            card.releasePointerCapture(e.pointerId);
+                            card.classList.remove('opacity-50', 'scale-95');
+                            this.dragSrcIndex = null;
+                            isDraggingCard = false;
+                        };
+                    } else {
+                        card.onclick = () => WigglyAudio.play('pop');
                     }
 
                     container.appendChild(card);
@@ -2617,8 +2621,8 @@
             bindEvents() {
                 const container = document.getElementById('canvas-container');
                 if (!container) return;
-				
-				// 按住 Space 暫時切換成抓手工具
+
+                // 按住 Space 暫時切換成抓手工具
                 window.addEventListener('keydown', e => {
                     if (e.code === 'Space' && !this.isSpaceDown && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
                         this.isSpaceDown = true;
@@ -2636,7 +2640,7 @@
                         }
                     }
                 });
-				
+
                 container.addEventListener('wheel', e => {
                     e.preventDefault();
                     this.setZoom(this.zoom * (e.deltaY < 0 ? 1.15 : 0.87), e.clientX, e.clientY);
@@ -2704,1118 +2708,1055 @@
         }
         const WigglyViewport = new ViewportModule();
 
-// =========================================================================
-// MODULE 6: WigglyTools.js (穩定基底 + 有機獨立微震 + 獨立尺寸與油漆桶完整修正版)
-// =========================================================================
-class ToolsModule {
-    constructor() {
-        this.currentTool = 'pen';
-        this.previousTool = 'pen';
-        this.activeEraserType = 'eraser';
-        this.selectedPatternIdx = 0;
-
-        // 各工具獨立記憶尺寸 (pt)
-        this.toolSizes = {
-            'pen': 3,
-            'spray': 6,
-            'pattern': 4,
-            'bucket': 1,
-            'eraser': 8,
-            'whiteout': 8,
-            'marker_eraser': 8
-        };
-
-        this.brushTipShape = 'round';
-        this.isPressureEnabled = true;
-        this.stabilizerLevel = 3;
-        this.isDrawing = false;
-        
-        // 筆觸獨立波動種子與累計距離
-        this.strokeSeed = 0;
-        this.strokeDist = 0;
-
-        this.markerColors = { ...WigglyConfig.defaultMarkerColors };
-
-        this.lastX = 0;
-        this.lastY = 0;
-        this.smoothedX = 0;
-        this.smoothedY = 0;
-        this.lastMidX = 0;
-        this.lastMidY = 0;
-        this.rawCursorX = 0;
-        this.rawCursorY = 0;
-        this.lastPressure = 1.0;
-        this.smoothedPressure = 1.0;
-
-        this.clipboard = null;
-        this.selectionTransparentMode = true;
-        this.selectionState = {
-            active: false,
-            isSelecting: false,
-            isMoving: false,
-            startX: 0,
-            startY: 0,
-            x: 0,
-            y: 0,
-            w: 0,
-            h: 0,
-            dragOffsetX: 0,
-            dragOffsetY: 0,
-            origX: 0,
-            origY: 0,
-            holeRect: null,
-            floatBaseCanvases: [],
-            floatMarkerSlices: []
-        };
-    }
-
-    get brushPt() {
-        return this.toolSizes[this.currentTool] || 3;
-    }
-
-    set brushPt(val) {
-        const parsed = Math.max(1, Math.min(64, parseInt(val, 10) || 3));
-        this.toolSizes[this.currentTool] = parsed;
-
-        const badge = document.getElementById('brush-pt-badge');
-        if (badge) badge.innerText = `${parsed}`;
-        const rEl = document.getElementById('brush-size-range');
-        if (rEl) rEl.value = parsed;
-
-        const quickBadge = document.getElementById('quick-size-badge');
-        if (quickBadge) quickBadge.innerText = `${parsed}`;
-        const quickSlider = document.getElementById('quick-brush-slider');
-        if (quickSlider) quickSlider.value = parsed;
-    }
-
-    init() {
-        this.renderPatternButtons();
-        this.bindCanvasEvents();
-        this.updatePressureUI();
-        this.updateShapeUI();
-        this.setEraserMode('eraser');
-        this.syncAllMarkerColorsUI();
-    }
-
-    setStabilizer(level) {
-        this.stabilizerLevel = Math.max(0, Math.min(10, parseInt(level, 10) || 0));
-        const badge = document.getElementById('stabilizer-value-badge');
-        if (badge) badge.innerText = this.stabilizerLevel === 0 ? '關閉' : `Lv. ${this.stabilizerLevel}`;
-    }
-
-    renderPatternButtons() {
-        const grid = document.getElementById('pattern-buttons-grid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        WigglyEngine.dynamicPatternCanvases = [];
-        WigglyConfig.patterns.forEach((patObj, idx) => {
-            const btn = document.createElement('button');
-            const isActive = (idx === this.selectedPatternIdx && this.currentTool === 'pattern');
-            btn.className = `retro-btn h-8 w-full p-0 flex items-center justify-center relative ${isActive ? 'active' : ''}`;
-            btn.title = `${patObj.isDynamic ? '[ANI] ' : ''}${patObj.name} (#${idx + 1})`;
-            btn.onclick = () => {
-                this.selectedPatternIdx = idx;
-                this.selectTool('pattern');
-                WigglyUI.closePatternDrawer();
-            };
-            const pCanvas = document.createElement('canvas');
-            pCanvas.width = 16;
-            pCanvas.height = 16;
-            pCanvas.className = 'shrink-0';
-            const pCtx = pCanvas.getContext('2d');
-            WigglyEngine.drawPatternThumbnail(pCtx, patObj, 0);
-
-            if (patObj.isDynamic) {
-                WigglyEngine.dynamicPatternCanvases.push({ canvas: pCanvas, ctx: pCtx, patObj: patObj });
-                const badge = document.createElement('span');
-                badge.className = "text-[7px] font-bold text-black bg-yellow-300 border border-black px-0.5 leading-none absolute top-0.5 right-0.5 pointer-events-none";
-                badge.innerText = '動';
-                btn.appendChild(badge);
-            }
-            btn.appendChild(pCanvas);
-            grid.appendChild(btn);
-        });
-    }
-
-    handleEraserButtonClick() {
-        this.selectTool(this.activeEraserType);
-    }
-
-    setEraserMode(type) {
-        this.activeEraserType = type;
-        this.selectTool(type);
-        const icon = document.getElementById('main-eraser-icon');
-        const mainBtn = document.getElementById('btn-main-eraser');
-        if (mainBtn) mainBtn.setAttribute('data-tool', type);
-
-        if (type === 'eraser') {
-            if (icon) icon.className = 'fa-solid fa-eraser text-red-600';
-        } else if (type === 'whiteout') {
-            if (icon) icon.className = 'fa-solid fa-wand-magic-sparkles text-sky-600';
-        } else if (type === 'marker_eraser') {
-            if (icon) icon.className = 'fa-solid fa-eraser text-amber-600';
-        }
-    }
-
-    togglePressureSensitivity() {
-        this.isPressureEnabled = !this.isPressureEnabled;
-        this.updatePressureUI();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    updatePressureUI() {
-        const btn = document.getElementById('btn-pressure-mode');
-        if (btn) btn.classList.toggle('active', this.isPressureEnabled);
-    }
-
-    setBrushTipShape(shape) {
-        this.brushTipShape = shape;
-        this.updateShapeUI();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    updateShapeUI() {
-        ['round', 'square', 'chisel'].forEach(s => {
-            const btn = document.getElementById(`btn-shape-${s}`);
-            if (btn) btn.classList.toggle('active', s === this.brushTipShape);
-        });
-    }
-
-    getEffectivePressure(e) {
-        if (!this.isPressureEnabled || !e) return 1.0;
-        if (e.pointerType === 'pen' || (typeof e.pressure === 'number' && e.pressure > 0 && e.pressure !== 0.5)) {
-            const rawP = Math.max(0.05, Math.min(1.0, e.pressure));
-            return 0.35 + 0.9 * rawP;
-        }
-        return 1.0;
-    }
-
-    selectTool(toolName) {
-        if (this.selectionState.active && toolName !== 'select') {
-            this.commitSelection();
-        }
-        if (this.currentTool !== 'hand') this.previousTool = this.currentTool;
-        this.currentTool = toolName;
-        WigglyAudio.play('pop');
-
-        document.querySelectorAll('[data-tool]').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll(`[data-tool="${toolName}"]`).forEach(b => b.classList.add('active'));
-		if (WigglyConfig.markerKeys.includes(toolName)) {
-    this.activeBucketMarkerKey = toolName;
-}
-        const rEl = document.getElementById('brush-size-range');
-        if (rEl) rEl.value = this.brushPt;
-        const badge = document.getElementById('brush-pt-badge');
-        if (badge) badge.innerText = `${this.brushPt}`;
-
-        const quickSlider = document.getElementById('quick-brush-slider');
-        if (quickSlider) quickSlider.value = this.brushPt;
-        const quickBadge = document.getElementById('quick-size-badge');
-        if (quickBadge) quickBadge.innerText = `${this.brushPt}`;
-
-        const activeSwatch = document.getElementById('color-active-swatch');
-        if (activeSwatch) {
-            if (WigglyConfig.markerKeys.includes(toolName)) {
-                activeSwatch.style.backgroundColor = this.markerColors[toolName] || WigglyConfig.defaultMarkerColors[toolName];
-            } else if (['pen', 'spray', 'pattern', 'bucket'].includes(toolName)) {
-                activeSwatch.style.backgroundColor = WigglyEngine.foregroundColor;
-            }
-        }
-
-        const canvas = document.getElementById('visibleCanvas');
-        if (canvas) {
-            if (toolName === 'hand' || WigglyViewport.isSpaceDown) canvas.style.cursor = 'grab';
-            else if (toolName === 'select') canvas.style.cursor = 'crosshair';
-            else canvas.style.cursor = 'crosshair';
-        }
-    }
-
-    getToolProps(tool, pressureRatio = 1.0) {
-        const baseSize = Math.max(1, Math.round(this.brushPt * pressureRatio));
-        if (WigglyConfig.markerKeys.includes(tool)) {
-            return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 1.0, type: 'pixel' };
-        }
-        switch (tool) {
-            case 'pen': return { color: '#000000', size: Math.max(1, baseSize), composite: 'source-over', jitter: 1.2, type: 'pixel' };
-            case 'spray': return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 2.0, type: 'spray' };
-            case 'pattern': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'source-over', jitter: 0.3, type: 'pattern' };
-            case 'bucket': return { color: '#000000', size: 1, composite: 'source-over', jitter: 0, type: 'bucket' };
-            case 'eraser': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'destination-out', jitter: 0.5, type: 'pixel' };
-            case 'whiteout': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'destination-out', jitter: 0.5, type: 'pixel' };
-            case 'marker_eraser': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'source-over', jitter: 0.5, type: 'pixel' };
-            default: return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 1.2, type: 'pixel' };
-        }
-    }
-
-    setBrushSize(val) {
-        this.brushPt = val;
-    }
-
-    handleSliderInput(val) {
-        this.brushPt = parseInt(val, 10) || 1;
-        this.renderBrushHUD();
-    }
-
-    handleSliderChange() {
-        this.hideBrushHUD();
-        WigglyStorage.triggerAutoSave();
-    }
-
-    renderBrushHUD() {
-        const hud = document.getElementById('brush-hud-preview');
-        const canvas = document.getElementById('hud-preview-canvas');
-        const text = document.getElementById('hud-preview-text');
-        if (!hud || !canvas) return;
-
-        if (text) text.innerText = `${this.currentTool.toUpperCase()}: ${this.brushPt} pt`;
-
-        hud.classList.remove('hidden');
-        hud.classList.add('flex');
-
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const props = this.getToolProps(this.currentTool, 1.0);
-        const size = props.size;
-        const half = Math.ceil(size / 2);
-
-        let color = WigglyEngine.foregroundColor;
-        if (WigglyConfig.markerKeys.includes(this.currentTool)) {
-            color = this.markerColors[this.currentTool] || '#FF5588';
-        } else if (['eraser', 'whiteout', 'marker_eraser'].includes(this.currentTool)) {
-            color = 'rgba(255, 50, 50, 0.75)';
-        }
-
-        ctx.fillStyle = color;
-
-        const isInside = (dx, dy) => {
-            if (this.brushTipShape === 'square') {
-                const hs = Math.floor(size / 2);
-                return Math.abs(dx) <= hs && Math.abs(dy) <= hs;
-            } else if (this.brushTipShape === 'chisel') {
-                const thick = Math.max(1, Math.floor(size / 3));
-                return Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick;
-            } else {
-                if (size <= 2) {
-                    const hs = Math.floor(size / 2);
-                    return Math.abs(dx) <= hs && Math.abs(dy) <= hs;
-                }
-                const r = size / 2;
-                return (dx * dx + dy * dy) <= (r * r + 0.25);
-            }
-        };
-
-        for (let dy = -half; dy <= half; dy++) {
-            for (let dx = -half; dx <= half; dx++) {
-                if (isInside(dx, dy)) {
-                    ctx.fillRect(Math.floor(cx + dx), Math.floor(cy + dy), 1, 1);
-                }
-            }
-        }
-
-        ctx.strokeStyle = 'rgba(0,0,0,0.45)';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(cx - half - 1.5, cy - half - 1.5, size + 3, size + 3);
-    }
-
-    hideBrushHUD() {
-        const hud = document.getElementById('brush-hud-preview');
-        if (hud) {
-            hud.classList.add('hidden');
-            hud.classList.remove('flex');
-        }
-    }
-
-    updateMarkerColor(markerKey, hexColor) {
-        this.markerColors[markerKey] = hexColor;
-        this.syncSingleMarkerColorUI(markerKey, hexColor);
-        this.selectTool(markerKey);
-        WigglyEngine.renderMainCanvas();
-        WigglyStorage.triggerAutoSave();
-    }
-
-    // --- 完整修復：即時同步所有 UI 色塊 (Ribbon、浮動 Popover、設定抽屜) ---
-    syncSingleMarkerColorUI(markerKey, hexColor) {
-        if (!markerKey || !hexColor) return;
-
-        // 1. 同時更新 Ribbon 工作列、左側色彩浮動面板、設定視窗內的所有對應色塊
-        document.querySelectorAll(`[data-tool="${markerKey}"] span, #drawer-swatch-${markerKey}`).forEach(el => {
-            el.style.backgroundColor = hexColor;
-        });
-
-        // 2. 同步設定抽屜裡的顏色選擇器 (input[type=color])
-        const dPicker = document.getElementById(`drawer-picker-${markerKey}`);
-        if (dPicker) dPicker.value = hexColor;
-
-        // 3. 同步文字代碼 (若有)
-        const dHex = document.getElementById(`drawer-hex-${markerKey}`);
-        if (dHex) dHex.innerText = hexColor.toUpperCase();
-    }
-
-    syncAllMarkerColorsUI() {
-        WigglyConfig.markerKeys.forEach(mKey => {
-            const hex = this.markerColors[mKey] || WigglyConfig.defaultMarkerColors[mKey];
-            this.syncSingleMarkerColorUI(mKey, hex);
-        });
-    }
-
-    // --- 有機獨立筆劃微震 (基於筆劃空間位置 + 筆劃獨立種子 + 影格相位) ---
-    getOrganicWiggleOffset(x, y, sDist, frameIndex, jitterAmp = 1.0) {
-        if (WigglyEngine.animMode !== 'wiggle') return { x: 0, y: 0 };
-
-        const amp = (jitterAmp || 1.2) * 0.95;
-        const phase = this.strokeSeed + (frameIndex * 2.094395); // 2π/3
-        const freq = 0.05;
-
-        // 沿著筆劃軌跡與空間產生有機擾動
-        const wx = Math.sin(sDist * freq + phase) * 0.75 + Math.cos((y * 0.03) + phase * 1.2) * 0.45;
-        const wy = Math.cos(sDist * freq + phase * 0.9) * 0.75 + Math.sin((x * 0.03) + phase * 1.4) * 0.45;
-
-        return { x: wx * amp, y: wy * amp };
-    }
-
-    drawPoint(x, y, pressureRatio = 1.0) {
-        const props = this.getToolProps(this.currentTool, pressureRatio);
-        const targetFrames = (WigglyEngine.animMode === 'wiggle')
-            ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i)
-            : [WigglyEngine.activeEditIndex];
-
-        if (this.currentTool === 'bucket') {
-            targetFrames.forEach(f => this.floodFill(Math.floor(x), Math.floor(y), f));
-            return;
-        }
-
-        targetFrames.forEach(f => {
-            const jx = (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 1.5 : 0;
-            const jy = (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 1.5 : 0;
-
-            if (this.currentTool === 'eraser') {
-                WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
-                WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, 0);
-            } else if (this.currentTool === 'whiteout') {
-                WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
-            } else if (this.currentTool === 'marker_eraser') {
-                WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, 0);
-            } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
-                const markerId = WigglyConfig.markerIdMap[this.currentTool];
-                WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, markerId);
-            } else {
-                WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
-            }
-        });
-    }
-
-    drawSmoothSegment(p0x, p0y, p1x, p1y, p2x, p2y, startPressure = 1.0, endPressure = 1.0) {
-        if (this.currentTool === 'bucket') return;
-
-        const targetFrames = (WigglyEngine.animMode === 'wiggle')
-            ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i)
-            : [WigglyEngine.activeEditIndex];
-
-        const maxP = Math.max(startPressure, endPressure);
-        const maxProps = this.getToolProps(this.currentTool, maxP);
-        const dist = Math.hypot(p1x - p0x, p1y - p0y) + Math.hypot(p2x - p1x, p2y - p1y);
-        const stepSize = Math.max(0.75, Math.floor(maxProps.size / 3));
-        const steps = Math.max(1, Math.ceil(dist / stepSize));
-
-        // 核心原版：每一段由各幀單獨取樣一次獨立隨機抖動，維持線段平滑且各幀微跳動
-        const frameJitters = Array.from({ length: WigglyEngine.totalFrames }, () => ({
-            jx: (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * maxProps.jitter * 0.8 : 0,
-            jy: (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * maxProps.jitter * 0.8 : 0
-        }));
-
-        for (let s = 1; s <= steps; s++) {
-            const t = s / steps, invT = 1 - t;
-            const cx = invT * invT * p0x + 2 * invT * t * p1x + t * t * p2x;
-            const cy = invT * invT * p0y + 2 * invT * t * p1y + t * t * p2y;
-            const curPressure = startPressure + (endPressure - startPressure) * t;
-            const props = this.getToolProps(this.currentTool, curPressure);
-
-            targetFrames.forEach(f => {
-                const j = frameJitters[f];
-                if (this.currentTool === 'eraser') {
-                    WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
-                    WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, 0);
-                } else if (this.currentTool === 'whiteout') {
-                    WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
-                } else if (this.currentTool === 'marker_eraser') {
-                    WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, 0);
-                } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
-                    const markerId = WigglyConfig.markerIdMap[this.currentTool];
-                    WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, markerId);
-                } else {
-                    WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
-                }
-            });
-        }
-    }
-
-    floodFill(startX, startY, fIdx) {
-        const W = WigglyEngine.width, H = WigglyEngine.height;
-        if (startX < 0 || startX >= W || startY < 0 || startY >= H) return;
-        
-        const map = WigglyEngine.markerPaletteMaps[fIdx];
-        const targetVal = map[startY * W + startX];
-
-        // 優先讀取當前麥克筆或油漆桶記憶的顏色 ID
-        const activeKey = WigglyConfig.markerKeys.includes(this.currentTool) 
-            ? this.currentTool 
-            : (this.activeBucketMarkerKey || 'marker1');
-            
-        const replaceVal = WigglyConfig.markerIdMap[activeKey] || 1;
-
-        if (targetVal === replaceVal) return;
-
-        WigglyHistory.saveState();
-        const queue = [[startX, startY]];
-        const visited = new Uint8Array(W * H);
-
-        while (queue.length > 0) {
-            const [x, y] = queue.pop();
-            const idx = y * W + x;
-
-            if (x < 0 || x >= W || y < 0 || y >= H) continue;
-            if (visited[idx] === 1) continue;
-            visited[idx] = 1;
-
-            if (map[idx] === targetVal) {
-                map[idx] = replaceVal;
-                queue.push([x + 1, y]);
-                queue.push([x - 1, y]);
-                queue.push([x, y + 1]);
-                queue.push([x, y - 1]);
-            }
-        }
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    isInsideSelection(x, y) {
-        const s = this.selectionState;
-        return s.active && x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
-    }
-
-    liftSelection(rx, ry, rw, rh) {
-        const W = WigglyEngine.width, H = WigglyEngine.height;
-        const x1 = Math.max(0, Math.min(W, Math.floor(rx)));
-        const y1 = Math.max(0, Math.min(H, Math.floor(ry)));
-        const x2 = Math.max(0, Math.min(W, Math.floor(rx + rw)));
-        const y2 = Math.max(0, Math.min(H, Math.floor(ry + rh)));
-        const finalW = x2 - x1, finalH = y2 - y1;
-
-        if (finalW <= 0 || finalH <= 0) {
-            this.selectionState.active = false;
-            this.selectionState.isSelecting = false;
-            WigglyEngine.renderMainCanvas();
-            return;
-        }
-
-        const s = this.selectionState;
-        s.active = true;
-        s.x = x1; s.y = y1; s.w = finalW; s.h = finalH;
-        s.origX = x1; s.origY = y1;
-        s.floatBaseCanvases = [];
-        s.floatMarkerSlices = [];
-
-        const isWiggle = (WigglyEngine.animMode === 'wiggle');
-        const targetFrames = isWiggle ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i) : [WigglyEngine.activeEditIndex];
-
-        targetFrames.forEach(f => {
-            const sc = document.createElement('canvas');
-            sc.width = finalW; sc.height = finalH;
-            const sctx = sc.getContext('2d');
-            sctx.imageSmoothingEnabled = false;
-            sctx.drawImage(WigglyEngine.baseFrameCanvases[f], x1, y1, finalW, finalH, 0, 0, finalW, finalH);
-            s.floatBaseCanvases.push(sc);
-
-            const mSlice = new Uint8Array(finalW * finalH);
-            const origMap = WigglyEngine.markerPaletteMaps[f];
-            for (let row = 0; row < finalH; row++) {
-                for (let col = 0; col < finalW; col++) {
-                    mSlice[row * finalW + col] = origMap[(y1 + row) * W + (x1 + col)];
-                }
-            }
-            s.floatMarkerSlices.push(mSlice);
-
-            WigglyEngine.baseFrameCtxs[f].clearRect(x1, y1, finalW, finalH);
-            for (let row = 0; row < finalH; row++) {
-                for (let col = 0; col < finalW; col++) {
-                    origMap[(y1 + row) * W + (x1 + col)] = 0;
-                }
-            }
-        });
-        WigglyEngine.renderMainCanvas();
-    }
-
-    commitSelection() {
-        const s = this.selectionState;
-        if (!s.active) return;
-        const tx = Math.floor(s.x), ty = Math.floor(s.y), tw = Math.floor(s.w), th = Math.floor(s.h);
-        const W = WigglyEngine.width, H = WigglyEngine.height;
-        const isWiggle = (WigglyEngine.animMode === 'wiggle');
-        const targetFrames = isWiggle ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i) : [WigglyEngine.activeEditIndex];
-
-        targetFrames.forEach((f, idx) => {
-            const sliceIdx = isWiggle ? (idx % s.floatBaseCanvases.length) : 0;
-            const lineCtx = WigglyEngine.baseFrameCtxs[f];
-            const floatCanvas = s.floatBaseCanvases ? s.floatBaseCanvases[sliceIdx] : null;
-            if (lineCtx && floatCanvas) {
-                lineCtx.save();
-                lineCtx.imageSmoothingEnabled = false;
-                if (!this.selectionTransparentMode) lineCtx.clearRect(tx, ty, tw, th);
-                lineCtx.drawImage(floatCanvas, tx, ty);
-                lineCtx.restore();
-            }
-
-            const origMap = WigglyEngine.markerPaletteMaps[f];
-            const mSlice = s.floatMarkerSlices ? s.floatMarkerSlices[sliceIdx] : null;
-            if (origMap && mSlice) {
-                for (let row = 0; row < th; row++) {
-                    const targetY = ty + row;
-                    if (targetY < 0 || targetY >= H) continue;
-                    for (let col = 0; col < tw; col++) {
-                        const targetX = tx + col;
-                        if (targetX < 0 || targetX >= W) continue;
-                        const mVal = mSlice[row * tw + col];
-                        if (this.selectionTransparentMode) {
-                            if (mVal > 0) origMap[targetY * W + targetX] = mVal;
-                        } else {
-                            origMap[targetY * W + targetX] = mVal;
-                        }
-                    }
-                }
-            }
-        });
-
-        s.active = false;
-        s.isMoving = false;
-        s.isSelecting = false;
-        s.holeRect = null;
-        s.floatBaseCanvases = [];
-        s.floatMarkerSlices = [];
-        WigglyEngine.renderMainCanvas();
-        WigglyStorage.triggerAutoSave();
-    }
-
-    cancelSelection() {
-        const s = this.selectionState;
-        if (!s.active) return;
-        s.x = s.origX;
-        s.y = s.origY;
-        this.commitSelection();
-    }
-
-    renderSelectionOverlay(ctx, fIdx) {
-        const s = this.selectionState;
-        const tx = Math.floor(s.x), ty = Math.floor(s.y), tw = Math.floor(s.w), th = Math.floor(s.h);
-        if (tw <= 0 || th <= 0) return;
-
-        ctx.save();
-
-        if (s.isSelecting) {
-            ctx.fillStyle = 'rgba(0, 102, 255, 0.18)';
-            ctx.fillRect(tx, ty, tw, th);
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = '#000000';
-            ctx.strokeRect(tx - 0.5, ty - 0.5, tw + 1, th + 1);
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineDashOffset = 4;
-            ctx.strokeRect(tx - 0.5, ty - 0.5, tw + 1, th + 1);
-            ctx.restore();
-            return;
-        }
-
-        if (s.active) {
-            const isWiggle = (WigglyEngine.animMode === 'wiggle');
-            const sliceIdx = isWiggle ? (fIdx % (s.floatMarkerSlices.length || 1)) : 0;
-
-            if (!this.selectionTransparentMode) {
-                ctx.fillStyle = WigglyEngine.canvasBgColor || '#FFFFFF';
-                ctx.fillRect(tx, ty, tw, th);
-            }
-
-            const mSlice = s.floatMarkerSlices[sliceIdx];
-            if (mSlice) {
-                const tempMC = document.createElement('canvas');
-                tempMC.width = tw;
-                tempMC.height = th;
-                const tempMtx = tempMC.getContext('2d');
-                const imgD = tempMtx.createImageData(tw, th);
-                const d32 = new Uint32Array(imgD.data.buffer);
-                const lookup = new Uint32Array(15);
-                lookup[0] = 0x00000000;
-
-                WigglyConfig.markerKeys.forEach(k => {
-                    const id = WigglyConfig.markerIdMap[k];
-                    const hex = WigglyTools.markerColors[k] || WigglyConfig.defaultMarkerColors[k];
-                    const r = parseInt(hex.slice(1, 3), 16) || 0;
-                    const g = parseInt(hex.slice(3, 5), 16) || 0;
-                    const b = parseInt(hex.slice(5, 7), 16) || 0;
-                    lookup[id] = (0xFF << 24) | (b << 16) | (g << 8) | r;
-                });
-
-                for (let i = 0; i < tw * th; i++) {
-                    if (mSlice[i] > 0) d32[i] = lookup[mSlice[i]];
-                }
-                tempMtx.putImageData(imgD, 0, 0);
-                ctx.drawImage(tempMC, tx, ty);
-            }
-
-            const floatCanvas = s.floatBaseCanvases[sliceIdx];
-            if (floatCanvas) {
-                const tempTC = document.createElement('canvas');
-                tempTC.width = tw;
-                tempTC.height = th;
-                const tempTtx = tempTC.getContext('2d');
-                tempTtx.fillStyle = WigglyEngine.foregroundColor;
-                tempTtx.fillRect(0, 0, tw, th);
-                tempTtx.globalCompositeOperation = 'destination-in';
-                tempTtx.drawImage(floatCanvas, 0, 0);
-                ctx.drawImage(tempTC, tx, ty);
-            }
-
-            ctx.lineWidth = 1;
-            ctx.setLineDash([4, 4]);
-
-            const drawAntsRect = (rx, ry, rw, rh) => {
-                ctx.strokeStyle = '#000000';
-                ctx.lineDashOffset = 0;
-                ctx.strokeRect(rx - 0.5, ry - 0.5, rw + 1, rh + 1);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineDashOffset = 4;
-                ctx.strokeRect(rx - 0.5, ry - 0.5, rw + 1, rh + 1);
-            };
-
-            drawAntsRect(tx, ty, tw, th);
-        }
-
-        ctx.restore();
-    }
-
-    flipSelection(axis = 'h') {
-        const s = this.selectionState;
-        if (!s.active) return;
-        WigglyHistory.saveState();
-        const tw = Math.floor(s.w), th = Math.floor(s.h);
-
-        for (let f = 0; f < s.floatBaseCanvases.length; f++) {
-            const tc = document.createElement('canvas');
-            tc.width = tw; tc.height = th;
-            const tctx = tc.getContext('2d');
-            tctx.imageSmoothingEnabled = false;
-            tctx.save();
-            if (axis === 'h') {
-                tctx.scale(-1, 1);
-                tctx.drawImage(s.floatBaseCanvases[f], -tw, 0);
-            } else {
-                tctx.scale(1, -1);
-                tctx.drawImage(s.floatBaseCanvases[f], 0, -th);
-            }
-            tctx.restore();
-            s.floatBaseCanvases[f] = tc;
-
-            const srcM = s.floatMarkerSlices[f];
-            const newM = new Uint8Array(tw * th);
-            for (let r = 0; r < th; r++) {
-                for (let c = 0; c < tw; c++) {
-                    const tr = (axis === 'v') ? (th - 1 - r) : r;
-                    const tcCol = (axis === 'h') ? (tw - 1 - c) : c;
-                    newM[tr * tw + tcCol] = srcM[r * tw + c];
-                }
-            }
-            s.floatMarkerSlices[f] = newM;
-        }
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    rotateSelection(deg = 90) {
-        const s = this.selectionState;
-        if (!s.active) return;
-        WigglyHistory.saveState();
-        const oldW = Math.floor(s.w), oldH = Math.floor(s.h);
-        const newW = oldH, newH = oldW;
-
-        for (let f = 0; f < s.floatBaseCanvases.length; f++) {
-            const tc = document.createElement('canvas');
-            tc.width = newW; tc.height = newH;
-            const tctx = tc.getContext('2d');
-            tctx.imageSmoothingEnabled = false;
-            tctx.save();
-            tctx.translate(newW / 2, newH / 2);
-            tctx.rotate((deg * Math.PI) / 180);
-            tctx.drawImage(s.floatBaseCanvases[f], -oldW / 2, -oldH / 2);
-            tctx.restore();
-            s.floatBaseCanvases[f] = tc;
-
-            const srcM = s.floatMarkerSlices[f];
-            const newM = new Uint8Array(newW * newH);
-            for (let r = 0; r < oldH; r++) {
-                for (let c = 0; c < oldW; c++) {
-                    newM[c * newW + (oldH - 1 - r)] = srcM[r * oldW + c];
-                }
-            }
-            s.floatMarkerSlices[f] = newM;
-        }
-        s.w = newW;
-        s.h = newH;
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    copySelection() {
-        const s = this.selectionState;
-        if (!s.active) return;
-        this.clipboard = {
-            w: s.w,
-            h: s.h,
-            baseCanvases: s.floatBaseCanvases.map(c => WigglyHistory.cloneCanvas(c)),
-            markerSlices: s.floatMarkerSlices.map(m => new Uint8Array(m))
-        };
-        WigglyAudio.play('pop');
-    }
-
-    cutSelection() {
-        const s = this.selectionState;
-        if (!s.active) return;
-        this.copySelection();
-        s.active = false;
-        s.floatBaseCanvases = [];
-        s.floatMarkerSlices = [];
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('obliterate');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    pasteClipboard() {
-        if (!this.clipboard) return;
-        if (this.selectionState.active) this.commitSelection();
-        WigglyHistory.saveState();
-        this.selectTool('select');
-        const s = this.selectionState;
-        s.active = true;
-        s.w = this.clipboard.w;
-        s.h = this.clipboard.h;
-        s.x = Math.max(0, Math.floor((WigglyEngine.width - s.w) / 2));
-        s.y = Math.max(0, Math.floor((WigglyEngine.height - s.h) / 2));
-        s.origX = s.x;
-        s.origY = s.y;
-        s.floatBaseCanvases = this.clipboard.baseCanvases.map(c => WigglyHistory.cloneCanvas(c));
-        s.floatMarkerSlices = this.clipboard.markerSlices.map(m => new Uint8Array(m));
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    invertSelection() {
-        const s = this.selectionState;
-        const W = WigglyEngine.width, H = WigglyEngine.height;
-        this.selectTool('select');
-
-        if (!s.active) {
-            WigglyHistory.saveState();
-            s.holeRect = null;
-            this.liftSelection(0, 0, W, H);
-            WigglyAudio.play('pop');
-            return;
-        }
-
-        WigglyHistory.saveState();
-        const sx = Math.max(0, Math.floor(s.x)), sy = Math.max(0, Math.floor(s.y));
-        const sw = Math.min(W - sx, Math.floor(s.w)), sh = Math.min(H - sy, Math.floor(s.h));
-
-        this.commitSelection();
-
-        s.active = true;
-        s.x = 0; s.y = 0; s.w = W; s.h = H;
-        s.origX = 0; s.origY = 0;
-        s.holeRect = { x: sx, y: sy, w: sw, h: sh };
-        s.floatBaseCanvases = [];
-        s.floatMarkerSlices = [];
-
-        for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
-            const invLineCanvas = document.createElement('canvas');
-            invLineCanvas.width = W; invLineCanvas.height = H;
-            const invLineCtx = invLineCanvas.getContext('2d');
-            invLineCtx.imageSmoothingEnabled = false;
-            invLineCtx.drawImage(WigglyEngine.baseFrameCanvases[f], 0, 0);
-            invLineCtx.clearRect(sx, sy, sw, sh);
-            s.floatBaseCanvases.push(invLineCanvas);
-
-            const invMarkerSlice = new Uint8Array(WigglyEngine.markerPaletteMaps[f]);
-            for (let r = 0; r < sh; r++) {
-                for (let c = 0; c < sw; c++) {
-                    invMarkerSlice[(sy + r) * W + (sx + c)] = 0;
-                }
-            }
-            s.floatMarkerSlices.push(invMarkerSlice);
-        }
-
-        WigglyEngine.renderMainCanvas();
-        WigglyAudio.play('pop');
-        WigglyStorage.triggerAutoSave();
-    }
-
-    getCanvasCoordinates(e) {
-        const rect = WigglyEngine.visibleCanvas.getBoundingClientRect();
-        const scaleX = WigglyEngine.width / rect.width;
-        const scaleY = WigglyEngine.height / rect.height;
-        let clientX = e.clientX, clientY = e.clientY;
-        if (e.touches && e.touches.length > 0) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        }
-        return {
-            x: (clientX - rect.left) * scaleX,
-            y: (clientY - rect.top) * scaleY
-        };
-    }
-
-    updateCoordinates(e) {
-        const coordsEl = document.getElementById('canvas-coords-indicator');
-        if (!coordsEl) return;
-        const c = this.getCanvasCoordinates(e);
-        const x = Math.max(0, Math.min(WigglyEngine.width, Math.floor(c.x)));
-        const y = Math.max(0, Math.min(WigglyEngine.height, Math.floor(c.y)));
-        coordsEl.innerText = `X: ${x}, Y: ${y}`;
-    }
-
-    resetCoordinates() {
-        const coordsEl = document.getElementById('canvas-coords-indicator');
-        if (coordsEl) coordsEl.innerText = 'X: --, Y: --';
-    }
-
-    bindCanvasEvents() {
-        const canvas = WigglyEngine.visibleCanvas;
-        const container = document.getElementById('canvas-container');
-
-        const handlePointerDown = (e) => {
-            if (WigglyViewport.isPinching || (e.touches && e.touches.length > 1)) return;
-            this.updateCoordinates(e);
-            const coords = this.getCanvasCoordinates(e);
-
-            if (e.button === 1 || this.currentTool === 'hand' || WigglyViewport.isSpaceDown) {
-                e.preventDefault();
-                WigglyViewport.isPanning = true;
-                WigglyViewport.startX = e.clientX || (e.touches && e.touches[0].clientX);
-                WigglyViewport.startY = e.clientY || (e.touches && e.touches[0].clientY);
-                WigglyViewport.startPanX = WigglyViewport.panX;
-                WigglyViewport.startPanY = WigglyViewport.panY;
-                canvas.style.cursor = 'grabbing';
-                return;
-            }
-
-            if (e.button !== 0 && e.pointerType === 'mouse') return;
-
-            if (this.currentTool === 'select') {
-                e.preventDefault();
-                if (this.selectionState.active && this.isInsideSelection(coords.x, coords.y)) {
-                    this.selectionState.isMoving = true;
-                    this.selectionState.dragOffsetX = coords.x - this.selectionState.x;
-                    this.selectionState.dragOffsetY = coords.y - this.selectionState.y;
-                    canvas.style.cursor = 'move';
-                } else {
-                    if (this.selectionState.active) this.commitSelection();
-                    this.selectionState.isSelecting = true;
-                    this.selectionState.startX = coords.x;
-                    this.selectionState.startY = coords.y;
-                    this.selectionState.x = coords.x;
-                    this.selectionState.y = coords.y;
-                    this.selectionState.w = 0;
-                    this.selectionState.h = 0;
-                }
-                return;
-            }
-
-            if (e.target === canvas) {
-                e.preventDefault();
-                if (this.selectionState.active) this.commitSelection();
-                WigglyHistory.saveState();
-                this.isDrawing = true;
-
-                // 每筆下筆生成專屬空間種子
-                this.strokeSeed = Math.random() * 1000;
+        // =========================================================================
+        // MODULE 6: WigglyTools.js (移除油漆桶與壓感、3秒淡出拉桿、完整停筆與選區)
+        // =========================================================================
+        class ToolsModule {
+            constructor() {
+                this.currentTool = 'pen';
+                this.previousTool = 'pen';
+                this.activeEraserType = 'eraser';
+                this.selectedPatternIdx = 0;
+                this.quickBarTimer = null;
+
+                // 各工具獨立記憶筆刷尺寸 (pt)
+                this.toolSizes = {
+                    'pen': 3,
+                    'spray': 6,
+                    'pattern': 4,
+                    'eraser': 8,
+                    'whiteout': 8,
+                    'marker_eraser': 8
+                };
+
+                this.brushTipShape = 'round';
+                this.stabilizerLevel = 3;
+                this.isDrawing = false;
+
+                this.strokeSeed = 0;
                 this.strokeDist = 0;
 
-                if (e.target.setPointerCapture && e.pointerId !== undefined) {
-                    try { e.target.setPointerCapture(e.pointerId); } catch (err) { }
-                }
+                this.markerColors = { ...WigglyConfig.defaultMarkerColors };
 
-                const p = this.getEffectivePressure(e);
-                this.lastPressure = p;
-                this.smoothedPressure = p;
-                this.rawCursorX = coords.x;
-                this.rawCursorY = coords.y;
-                this.lastX = coords.x;
-                this.lastY = coords.y;
-                this.smoothedX = coords.x;
-                this.smoothedY = coords.y;
-                this.lastMidX = coords.x;
-                this.lastMidY = coords.y;
+                this.lastX = 0;
+                this.lastY = 0;
+                this.smoothedX = 0;
+                this.smoothedY = 0;
+                this.lastMidX = 0;
+                this.lastMidY = 0;
+                this.rawCursorX = 0;
+                this.rawCursorY = 0;
 
-                this.drawPoint(coords.x, coords.y, p);
-                WigglyAudio.play('squeak');
-            }
-        };
-
-        canvas.addEventListener('pointerdown', handlePointerDown);
-        if (container) {
-            container.addEventListener('pointerdown', e => {
-                if (e.target === container) handlePointerDown(e);
-            });
-        }
-
-        window.addEventListener('pointermove', e => {
-            this.updateCoordinates(e);
-            const coords = this.getCanvasCoordinates(e);
-
-            if (WigglyViewport.isPanning) {
-                e.preventDefault();
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                WigglyViewport.panX = WigglyViewport.startPanX + (clientX - WigglyViewport.startX);
-                WigglyViewport.panY = WigglyViewport.startPanY + (clientY - WigglyViewport.startY);
-                WigglyViewport.updateTransform();
-                return;
+                this.clipboard = null;
+                this.selectionTransparentMode = true;
+                this.selectionState = {
+                    active: false,
+                    isSelecting: false,
+                    isMoving: false,
+                    startX: 0,
+                    startY: 0,
+                    x: 0,
+                    y: 0,
+                    w: 0,
+                    h: 0,
+                    dragOffsetX: 0,
+                    dragOffsetY: 0,
+                    origX: 0,
+                    origY: 0,
+                    holeRect: null,
+                    floatBaseCanvases: [],
+                    floatMarkerSlices: []
+                };
             }
 
-            if (this.currentTool === 'select') {
-                const s = this.selectionState;
-                if (s.isSelecting) {
-                    e.preventDefault();
-                    const x1 = Math.min(s.startX, coords.x);
-                    const y1 = Math.min(s.startY, coords.y);
-                    const x2 = Math.max(s.startX, coords.x);
-                    const y2 = Math.max(s.startY, coords.y);
-                    s.x = x1;
-                    s.y = y1;
-                    s.w = Math.max(1, x2 - x1);
-                    s.h = Math.max(1, y2 - y1);
-                    WigglyEngine.renderMainCanvas();
-                    return;
-                }
-                if (s.isMoving) {
-                    e.preventDefault();
-                    s.x = coords.x - s.dragOffsetX;
-                    s.y = coords.y - s.dragOffsetY;
-                    WigglyEngine.renderMainCanvas();
-                    return;
-                }
-                if (s.active) {
-                    canvas.style.cursor = this.isInsideSelection(coords.x, coords.y) ? 'move' : 'crosshair';
-                }
-                return;
+            get brushPt() {
+                return this.toolSizes[this.currentTool] || 3;
             }
 
-            if (!this.isDrawing || this.currentTool === 'bucket') return;
-            e.preventDefault();
+            set brushPt(val) {
+                const parsed = Math.max(1, Math.min(64, parseInt(val, 10) || 3));
+                this.toolSizes[this.currentTool] = parsed;
 
-            const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
-            for (let i = 0; i < events.length; i++) {
-                const curEvent = events[i];
-                const curCoords = this.getCanvasCoordinates(curEvent);
-                const targetP = this.getEffectivePressure(curEvent);
-                this.rawCursorX = curCoords.x;
-                this.rawCursorY = curCoords.y;
+                const badge = document.getElementById('brush-pt-badge');
+                if (badge) badge.innerText = `${parsed}`;
+                const rEl = document.getElementById('brush-size-range');
+                if (rEl) rEl.value = parsed;
 
-                let targetX = curCoords.x, targetY = curCoords.y;
-                let nextPressure = targetP;
+                const quickBadge = document.getElementById('quick-size-badge');
+                if (quickBadge) quickBadge.innerText = `${parsed}`;
+                const quickSlider = document.getElementById('quick-brush-slider');
+                if (quickSlider) quickSlider.value = parsed;
+            }
 
-                if (this.stabilizerLevel > 0) {
-                    const weight = Math.max(0.08, 0.75 * Math.pow(0.72, this.stabilizerLevel * 0.6));
-                    this.smoothedX += (curCoords.x - this.smoothedX) * weight;
-                    this.smoothedY += (curCoords.y - this.smoothedY) * weight;
-                    this.smoothedPressure += (targetP - this.smoothedPressure) * weight;
+            init() {
+                this.renderPatternButtons();
+                this.bindCanvasEvents();
+                this.updateShapeUI();
+                this.setEraserMode('eraser');
+                this.syncAllMarkerColorsUI();
+            }
 
-                    targetX = this.smoothedX;
-                    targetY = this.smoothedY;
-                    nextPressure = this.smoothedPressure;
+            showQuickSizeBar(autoHideAfter = 3000) {
+                const bar = document.getElementById('quick-size-bar');
+                if (!bar) return;
+
+                bar.classList.remove('quick-bar-hidden');
+                clearTimeout(this.quickBarTimer);
+
+                if (autoHideAfter > 0) {
+                    this.quickBarTimer = setTimeout(() => {
+                        this.hideQuickSizeBar();
+                    }, autoHideAfter);
                 }
-
-                const midX = (this.lastX + targetX) / 2;
-                const midY = (this.lastY + targetY) / 2;
-
-                this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, this.lastPressure, nextPressure);
-                this.lastX = targetX;
-                this.lastY = targetY;
-                this.lastMidX = midX;
-                this.lastMidY = midY;
-                this.lastPressure = nextPressure;
-            }
-            WigglyAudio.play('squeak');
-        });
-
-        window.addEventListener('pointerup', e => {
-            if (WigglyViewport.isPanning) {
-                WigglyViewport.isPanning = false;
-                canvas.style.cursor = (this.currentTool === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
             }
 
-            if (this.currentTool === 'select') {
-                if (this.selectionState.isSelecting) {
-                    this.selectionState.isSelecting = false;
-                    if (this.selectionState.w > 3 && this.selectionState.h > 3) {
-                        WigglyHistory.saveState();
-                        this.liftSelection(this.selectionState.x, this.selectionState.y, this.selectionState.w, this.selectionState.h);
-                        WigglyAudio.play('pop');
-                    } else {
-                        this.selectionState.active = false;
-                        WigglyEngine.renderMainCanvas();
+            hideQuickSizeBar() {
+                const bar = document.getElementById('quick-size-bar');
+                if (bar) {
+                    bar.classList.add('quick-bar-hidden');
+                }
+                clearTimeout(this.quickBarTimer);
+            }
+
+            setStabilizer(level) {
+                this.stabilizerLevel = Math.max(0, Math.min(10, parseInt(level, 10) || 0));
+                const badge = document.getElementById('stabilizer-value-badge');
+                if (badge) badge.innerText = this.stabilizerLevel === 0 ? '關閉' : `Lv. ${this.stabilizerLevel}`;
+            }
+
+            renderPatternButtons() {
+                const grid = document.getElementById('pattern-buttons-grid');
+                if (!grid) return;
+                grid.innerHTML = '';
+                WigglyEngine.dynamicPatternCanvases = [];
+                WigglyConfig.patterns.forEach((patObj, idx) => {
+                    const btn = document.createElement('button');
+                    const isActive = (idx === this.selectedPatternIdx && this.currentTool === 'pattern');
+                    btn.className = `retro-btn h-8 w-full p-0 flex items-center justify-center relative ${isActive ? 'active' : ''}`;
+                    btn.title = `${patObj.isDynamic ? '[ANI] ' : ''}${patObj.name} (#${idx + 1})`;
+                    btn.onclick = () => {
+                        this.selectedPatternIdx = idx;
+                        this.selectTool('pattern');
+                        WigglyUI.closePatternDrawer();
+                    };
+                    const pCanvas = document.createElement('canvas');
+                    pCanvas.width = 16;
+                    pCanvas.height = 16;
+                    pCanvas.className = 'shrink-0';
+                    const pCtx = pCanvas.getContext('2d');
+                    WigglyEngine.drawPatternThumbnail(pCtx, patObj, 0);
+
+                    if (patObj.isDynamic) {
+                        WigglyEngine.dynamicPatternCanvases.push({ canvas: pCanvas, ctx: pCtx, patObj: patObj });
+                        const badge = document.createElement('span');
+                        badge.className = "text-[7px] font-bold text-black bg-yellow-300 border border-black px-0.5 leading-none absolute top-0.5 right-0.5 pointer-events-none";
+                        badge.innerText = '動';
+                        btn.appendChild(badge);
                     }
-                }
-                if (this.selectionState.isMoving) {
-                    this.selectionState.isMoving = false;
-                    WigglyAudio.play('pop');
-                }
-                return;
+                    btn.appendChild(pCanvas);
+                    grid.appendChild(btn);
+                });
             }
 
-            if (this.isDrawing) {
-                if (this.currentTool !== 'bucket') {
-                    if (this.stabilizerLevel > 0) {
-                        const curCoords = this.getCanvasCoordinates(e);
-                        const finalP = this.isPressureEnabled ? this.lastPressure * 0.5 : 1.0;
-                        const endP = this.isPressureEnabled ? 0.2 : 1.0;
-                        const midX = (this.lastX + curCoords.x) / 2;
-                        const midY = (this.lastY + curCoords.y) / 2;
-                        this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY, this.lastPressure, finalP);
-                        this.drawSmoothSegment(midX, midY, curCoords.x, curCoords.y, curCoords.x, curCoords.y, finalP, endP);
-                    }
+            cycleEraserMode() {
+                const modes = ['eraser', 'whiteout', 'marker_eraser'];
+                let nextIndex = 0;
+                if (modes.includes(this.currentTool)) {
+                    const curIndex = modes.indexOf(this.activeEraserType);
+                    nextIndex = (curIndex + 1) % modes.length;
+                } else {
+                    nextIndex = modes.indexOf(this.activeEraserType);
                 }
+                this.setEraserMode(modes[nextIndex]);
+            }
 
-                this.isDrawing = false;
-                if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
-                    try { e.target.releasePointerCapture(e.pointerId); } catch (err) { }
-                }
+            handleEraserButtonClick() {
+                this.cycleEraserMode();
+            }
 
-                if (window.WigglyTimeline) {
-                    if (WigglyEngine.animMode === 'wiggle') {
-                        for (let f = 0; f < WigglyEngine.totalFrames; f++) {
-                            WigglyTimeline.updateSingleThumbnail(f);
-                        }
-                    } else {
-                        WigglyTimeline.updateSingleThumbnail(WigglyEngine.activeEditIndex);
-                    }
+            setEraserMode(type) {
+                this.activeEraserType = type;
+                this.selectTool(type);
+                const icon = document.getElementById('main-eraser-icon');
+                const mainBtn = document.getElementById('btn-main-eraser');
+                if (mainBtn) mainBtn.setAttribute('data-tool', type);
+
+                if (type === 'eraser') {
+                    if (icon) icon.className = 'fa-solid fa-eraser text-red-600';
+                    if (mainBtn) mainBtn.title = '全域橡皮擦 (4)';
+                } else if (type === 'whiteout') {
+                    if (icon) icon.className = 'fa-solid fa-wand-magic-sparkles text-sky-600';
+                    if (mainBtn) mainBtn.title = '修正液 (5)';
+                } else if (type === 'marker_eraser') {
+                    if (icon) icon.className = 'fa-solid fa-eraser text-amber-600';
+                    if (mainBtn) mainBtn.title = '去色擦 (6)';
                 }
+            }
+
+            setBrushTipShape(shape) {
+                this.brushTipShape = shape;
+                this.updateShapeUI();
+                WigglyAudio.play('pop');
                 WigglyStorage.triggerAutoSave();
             }
-        });
 
-        canvas.addEventListener('pointerleave', () => this.resetCoordinates());
-    }
-}
-const WigglyTools = new ToolsModule();
+            updateShapeUI() {
+                ['round', 'square', 'chisel'].forEach(s => {
+                    const btn = document.getElementById(`btn-shape-${s}`);
+                    if (btn) btn.classList.toggle('active', s === this.brushTipShape);
+                });
+            }
+
+            setColorFromSwatch(markerKey) {
+                this.selectTool(markerKey);
+            }
+
+            selectTool(toolName) {
+                if (this.selectionState.active && toolName !== 'select') {
+                    this.commitSelection();
+                }
+                if (this.currentTool !== 'hand') this.previousTool = this.currentTool;
+                this.currentTool = toolName;
+                WigglyAudio.play('pop');
+
+                document.querySelectorAll('[data-tool]').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll(`[data-tool="${toolName}"]`).forEach(b => b.classList.add('active'));
+
+                const rEl = document.getElementById('brush-size-range');
+                if (rEl) rEl.value = this.brushPt;
+                const badge = document.getElementById('brush-pt-badge');
+                if (badge) badge.innerText = `${this.brushPt}`;
+
+                const quickSlider = document.getElementById('quick-brush-slider');
+                if (quickSlider) quickSlider.value = this.brushPt;
+                const quickBadge = document.getElementById('quick-size-badge');
+                if (quickBadge) quickBadge.innerText = `${this.brushPt}`;
+
+                const activeSwatch = document.getElementById('color-active-swatch');
+                if (activeSwatch) {
+                    if (WigglyConfig.markerKeys.includes(toolName)) {
+                        activeSwatch.style.backgroundColor = this.markerColors[toolName] || WigglyConfig.defaultMarkerColors[toolName];
+                    } else if (['pen', 'spray', 'pattern'].includes(toolName)) {
+                        activeSwatch.style.backgroundColor = WigglyEngine.foregroundColor;
+                    }
+                }
+
+                const scalableTools = ['pen', 'spray', 'pattern', 'eraser', 'whiteout', 'marker_eraser', ...WigglyConfig.markerKeys];
+                if (scalableTools.includes(toolName)) {
+                    this.showQuickSizeBar(3000);
+                } else {
+                    this.hideQuickSizeBar();
+                }
+
+                const canvas = document.getElementById('visibleCanvas');
+                if (canvas) {
+                    if (toolName === 'hand' || WigglyViewport.isSpaceDown) canvas.style.cursor = 'grab';
+                    else if (toolName === 'select') canvas.style.cursor = 'crosshair';
+                    else canvas.style.cursor = 'crosshair';
+                }
+            }
+
+            getToolProps(tool) {
+                const baseSize = this.brushPt;
+                if (WigglyConfig.markerKeys.includes(tool)) {
+                    return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 1.0, type: 'pixel' };
+                }
+                switch (tool) {
+                    case 'pen': return { color: '#000000', size: Math.max(1, baseSize), composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                    case 'spray': return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 2.0, type: 'spray' };
+                    case 'pattern': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'source-over', jitter: 0.3, type: 'pattern' };
+                    case 'eraser': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'destination-out', jitter: 0.5, type: 'pixel' };
+                    case 'whiteout': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'destination-out', jitter: 0.5, type: 'pixel' };
+                    case 'marker_eraser': return { color: '#000000', size: Math.max(3, baseSize * 2), composite: 'source-over', jitter: 0.5, type: 'pixel' };
+                    default: return { color: '#000000', size: Math.max(2, baseSize * 2), composite: 'source-over', jitter: 1.2, type: 'pixel' };
+                }
+            }
+
+            setBrushSize(val) {
+                this.brushPt = val;
+            }
+
+            handleSliderInput(val) {
+                this.brushPt = parseInt(val, 10) || 1;
+                this.renderBrushHUD();
+                this.showQuickSizeBar(3000);
+            }
+
+            handleSliderChange() {
+                this.hideBrushHUD();
+                this.showQuickSizeBar(3000);
+                WigglyStorage.triggerAutoSave();
+            }
+
+            renderBrushHUD() {
+                const hud = document.getElementById('brush-hud-preview');
+                const canvas = document.getElementById('hud-preview-canvas');
+                const text = document.getElementById('hud-preview-text');
+                if (!hud || !canvas) return;
+
+                if (text) text.innerText = `${this.currentTool.toUpperCase()}: ${this.brushPt} pt`;
+
+                hud.classList.remove('hidden');
+                hud.classList.add('flex');
+
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = false;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const props = this.getToolProps(this.currentTool);
+                const size = props.size;
+                const half = Math.ceil(size / 2);
+
+                let color = WigglyEngine.foregroundColor;
+                if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                    color = this.markerColors[this.currentTool] || '#FF5588';
+                } else if (['eraser', 'whiteout', 'marker_eraser'].includes(this.currentTool)) {
+                    color = 'rgba(255, 50, 50, 0.75)';
+                }
+
+                ctx.fillStyle = color;
+
+                const isInside = (dx, dy) => {
+                    if (this.brushTipShape === 'square') {
+                        const hs = Math.floor(size / 2);
+                        return Math.abs(dx) <= hs && Math.abs(dy) <= hs;
+                    } else if (this.brushTipShape === 'chisel') {
+                        const thick = Math.max(1, Math.floor(size / 3));
+                        return Math.abs(dx + dy) <= size / 1.2 && Math.abs(-dx + dy) <= thick;
+                    } else {
+                        if (size <= 2) {
+                            const hs = Math.floor(size / 2);
+                            return Math.abs(dx) <= hs && Math.abs(dy) <= hs;
+                        }
+                        const r = size / 2;
+                        return (dx * dx + dy * dy) <= (r * r + 0.25);
+                    }
+                };
+
+                for (let dy = -half; dy <= half; dy++) {
+                    for (let dx = -half; dx <= half; dx++) {
+                        if (isInside(dx, dy)) {
+                            ctx.fillRect(Math.floor(cx + dx), Math.floor(cy + dy), 1, 1);
+                        }
+                    }
+                }
+
+                ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(cx - half - 1.5, cy - half - 1.5, size + 3, size + 3);
+            }
+
+            hideBrushHUD() {
+                const hud = document.getElementById('brush-hud-preview');
+                if (hud) {
+                    hud.classList.add('hidden');
+                    hud.classList.remove('flex');
+                }
+            }
+
+            updateMarkerColor(markerKey, hexColor) {
+                this.markerColors[markerKey] = hexColor;
+                this.syncSingleMarkerColorUI(markerKey, hexColor);
+                this.selectTool(markerKey);
+                WigglyEngine.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            syncSingleMarkerColorUI(markerKey, hexColor) {
+                if (!markerKey || !hexColor) return;
+
+                document.querySelectorAll(`[data-tool="${markerKey}"] span, #drawer-swatch-${markerKey}`).forEach(el => {
+                    el.style.backgroundColor = hexColor;
+                });
+
+                const dPicker = document.getElementById(`drawer-picker-${markerKey}`);
+                if (dPicker) dPicker.value = hexColor;
+
+                const dHex = document.getElementById(`drawer-hex-${markerKey}`);
+                if (dHex) dHex.innerText = hexColor.toUpperCase();
+            }
+
+            syncAllMarkerColorsUI() {
+                WigglyConfig.markerKeys.forEach(mKey => {
+                    const hex = this.markerColors[mKey] || WigglyConfig.defaultMarkerColors[mKey];
+                    this.syncSingleMarkerColorUI(mKey, hex);
+                });
+            }
+
+            drawPoint(x, y) {
+                const props = this.getToolProps(this.currentTool);
+                const targetFrames = (WigglyEngine.animMode === 'wiggle')
+                    ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i)
+                    : [WigglyEngine.activeEditIndex];
+
+                targetFrames.forEach(f => {
+                    const jx = (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 1.5 : 0;
+                    const jy = (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 1.5 : 0;
+
+                    if (this.currentTool === 'eraser') {
+                        WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
+                        WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, 0);
+                    } else if (this.currentTool === 'whiteout') {
+                        WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
+                    } else if (this.currentTool === 'marker_eraser') {
+                        WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, 0);
+                    } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                        const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                        WigglyEngine.drawMarkerStamp(f, x + jx, y + jy, props.size, this.brushTipShape, markerId);
+                    } else {
+                        WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], x, y, props, jx, jy, f);
+                    }
+                });
+            }
+
+            drawSmoothSegment(p0x, p0y, p1x, p1y, p2x, p2y) {
+                const targetFrames = (WigglyEngine.animMode === 'wiggle')
+                    ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i)
+                    : [WigglyEngine.activeEditIndex];
+
+                const props = this.getToolProps(this.currentTool);
+                const dist = Math.hypot(p1x - p0x, p1y - p0y) + Math.hypot(p2x - p1x, p2y - p1y);
+                const stepSize = Math.max(0.75, Math.floor(props.size / 3));
+                const steps = Math.max(1, Math.ceil(dist / stepSize));
+
+                const frameJitters = Array.from({ length: WigglyEngine.totalFrames }, () => ({
+                    jx: (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 0.8 : 0,
+                    jy: (WigglyEngine.animMode === 'wiggle') ? (Math.random() - 0.5) * props.jitter * 0.8 : 0
+                }));
+
+                for (let s = 1; s <= steps; s++) {
+                    const t = s / steps, invT = 1 - t;
+                    const cx = invT * invT * p0x + 2 * invT * t * p1x + t * t * p2x;
+                    const cy = invT * invT * p0y + 2 * invT * t * p1y + t * t * p2y;
+
+                    targetFrames.forEach(f => {
+                        const j = frameJitters[f];
+                        if (this.currentTool === 'eraser') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
+                            WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, 0);
+                        } else if (this.currentTool === 'whiteout') {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
+                        } else if (this.currentTool === 'marker_eraser') {
+                            WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, 0);
+                        } else if (WigglyConfig.markerKeys.includes(this.currentTool)) {
+                            const markerId = WigglyConfig.markerIdMap[this.currentTool];
+                            WigglyEngine.drawMarkerStamp(f, cx + j.jx, cy + j.jy, props.size, this.brushTipShape, markerId);
+                        } else {
+                            WigglyEngine.drawPixelStamp(WigglyEngine.baseFrameCtxs[f], cx, cy, props, j.jx, j.jy, f);
+                        }
+                    });
+                }
+            }
+
+            isInsideSelection(x, y) {
+                const s = this.selectionState;
+                return s.active && x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
+            }
+
+            liftSelection(rx, ry, rw, rh) {
+                const W = WigglyEngine.width, H = WigglyEngine.height;
+                const x1 = Math.max(0, Math.min(W, Math.floor(rx)));
+                const y1 = Math.max(0, Math.min(H, Math.floor(ry)));
+                const x2 = Math.max(0, Math.min(W, Math.floor(rx + rw)));
+                const y2 = Math.max(0, Math.min(H, Math.floor(ry + rh)));
+                const finalW = x2 - x1, finalH = y2 - y1;
+
+                if (finalW <= 0 || finalH <= 0) {
+                    this.selectionState.active = false;
+                    this.selectionState.isSelecting = false;
+                    WigglyEngine.renderMainCanvas();
+                    return;
+                }
+
+                const s = this.selectionState;
+                s.active = true;
+                s.x = x1; s.y = y1; s.w = finalW; s.h = finalH;
+                s.origX = x1; s.origY = y1;
+                s.floatBaseCanvases = [];
+                s.floatMarkerSlices = [];
+
+                const isWiggle = (WigglyEngine.animMode === 'wiggle');
+                const targetFrames = isWiggle ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i) : [WigglyEngine.activeEditIndex];
+
+                targetFrames.forEach(f => {
+                    const sc = document.createElement('canvas');
+                    sc.width = finalW; sc.height = finalH;
+                    const sctx = sc.getContext('2d');
+                    sctx.imageSmoothingEnabled = false;
+                    sctx.drawImage(WigglyEngine.baseFrameCanvases[f], x1, y1, finalW, finalH, 0, 0, finalW, finalH);
+                    s.floatBaseCanvases.push(sc);
+
+                    const mSlice = new Uint8Array(finalW * finalH);
+                    const origMap = WigglyEngine.markerPaletteMaps[f];
+                    for (let row = 0; row < finalH; row++) {
+                        for (let col = 0; col < finalW; col++) {
+                            mSlice[row * finalW + col] = origMap[(y1 + row) * W + (x1 + col)];
+                        }
+                    }
+                    s.floatMarkerSlices.push(mSlice);
+
+                    WigglyEngine.baseFrameCtxs[f].clearRect(x1, y1, finalW, finalH);
+                    for (let row = 0; row < finalH; row++) {
+                        for (let col = 0; col < finalW; col++) {
+                            origMap[(y1 + row) * W + (x1 + col)] = 0;
+                        }
+                    }
+                });
+                WigglyEngine.renderMainCanvas();
+            }
+
+            commitSelection() {
+                const s = this.selectionState;
+                if (!s.active) return;
+                const tx = Math.floor(s.x), ty = Math.floor(s.y), tw = Math.floor(s.w), th = Math.floor(s.h);
+                const W = WigglyEngine.width, H = WigglyEngine.height;
+                const isWiggle = (WigglyEngine.animMode === 'wiggle');
+                const targetFrames = isWiggle ? Array.from({ length: WigglyEngine.totalFrames }, (_, i) => i) : [WigglyEngine.activeEditIndex];
+
+                targetFrames.forEach((f, idx) => {
+                    const sliceIdx = isWiggle ? (idx % s.floatBaseCanvases.length) : 0;
+                    const lineCtx = WigglyEngine.baseFrameCtxs[f];
+                    const floatCanvas = s.floatBaseCanvases ? s.floatBaseCanvases[sliceIdx] : null;
+                    if (lineCtx && floatCanvas) {
+                        lineCtx.save();
+                        lineCtx.imageSmoothingEnabled = false;
+                        if (!this.selectionTransparentMode) lineCtx.clearRect(tx, ty, tw, th);
+                        lineCtx.drawImage(floatCanvas, tx, ty);
+                        lineCtx.restore();
+                    }
+
+                    const origMap = WigglyEngine.markerPaletteMaps[f];
+                    const mSlice = s.floatMarkerSlices ? s.floatMarkerSlices[sliceIdx] : null;
+                    if (origMap && mSlice) {
+                        for (let row = 0; row < th; row++) {
+                            const targetY = ty + row;
+                            if (targetY < 0 || targetY >= H) continue;
+                            for (let col = 0; col < tw; col++) {
+                                const targetX = tx + col;
+                                if (targetX < 0 || targetX >= W) continue;
+                                const mVal = mSlice[row * tw + col];
+                                if (this.selectionTransparentMode) {
+                                    if (mVal > 0) origMap[targetY * W + targetX] = mVal;
+                                } else {
+                                    origMap[targetY * W + targetX] = mVal;
+                                }
+                            }
+                        }
+                    }
+                });
+
+                s.active = false;
+                s.isMoving = false;
+                s.isSelecting = false;
+                s.holeRect = null;
+                s.floatBaseCanvases = [];
+                s.floatMarkerSlices = [];
+                WigglyEngine.renderMainCanvas();
+                WigglyStorage.triggerAutoSave();
+            }
+
+            cancelSelection() {
+                const s = this.selectionState;
+                if (!s.active) return;
+                s.x = s.origX;
+                s.y = s.origY;
+                this.commitSelection();
+            }
+
+            renderSelectionOverlay(ctx, fIdx) {
+                const s = this.selectionState;
+                const tx = Math.floor(s.x), ty = Math.floor(s.y), tw = Math.floor(s.w), th = Math.floor(s.h);
+                if (tw <= 0 || th <= 0) return;
+
+                ctx.save();
+
+                if (s.isSelecting) {
+                    ctx.fillStyle = 'rgba(0, 102, 255, 0.18)';
+                    ctx.fillRect(tx, ty, tw, th);
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]);
+                    ctx.strokeStyle = '#000000';
+                    ctx.strokeRect(tx - 0.5, ty - 0.5, tw + 1, th + 1);
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineDashOffset = 4;
+                    ctx.strokeRect(tx - 0.5, ty - 0.5, tw + 1, th + 1);
+                    ctx.restore();
+                    return;
+                }
+
+                if (s.active) {
+                    const isWiggle = (WigglyEngine.animMode === 'wiggle');
+                    const sliceIdx = isWiggle ? (fIdx % (s.floatMarkerSlices.length || 1)) : 0;
+
+                    if (!this.selectionTransparentMode) {
+                        ctx.fillStyle = WigglyEngine.canvasBgColor || '#FFFFFF';
+                        ctx.fillRect(tx, ty, tw, th);
+                    }
+
+                    const mSlice = s.floatMarkerSlices[sliceIdx];
+                    if (mSlice) {
+                        const tempMC = document.createElement('canvas');
+                        tempMC.width = tw;
+                        tempMC.height = th;
+                        const tempMtx = tempMC.getContext('2d');
+                        const imgD = tempMtx.createImageData(tw, th);
+                        const d32 = new Uint32Array(imgD.data.buffer);
+                        const lookup = new Uint32Array(15);
+                        lookup[0] = 0x00000000;
+
+                        WigglyConfig.markerKeys.forEach(k => {
+                            const id = WigglyConfig.markerIdMap[k];
+                            const hex = WigglyTools.markerColors[k] || WigglyConfig.defaultMarkerColors[k];
+                            const r = parseInt(hex.slice(1, 3), 16) || 0;
+                            const g = parseInt(hex.slice(3, 5), 16) || 0;
+                            const b = parseInt(hex.slice(5, 7), 16) || 0;
+                            lookup[id] = (0xFF << 24) | (b << 16) | (g << 8) | r;
+                        });
+
+                        for (let i = 0; i < tw * th; i++) {
+                            if (mSlice[i] > 0) d32[i] = lookup[mSlice[i]];
+                        }
+                        tempMtx.putImageData(imgD, 0, 0);
+                        ctx.drawImage(tempMC, tx, ty);
+                    }
+
+                    const floatCanvas = s.floatBaseCanvases[sliceIdx];
+                    if (floatCanvas) {
+                        const tempTC = document.createElement('canvas');
+                        tempTC.width = tw;
+                        tempTC.height = th;
+                        const tempTtx = tempTC.getContext('2d');
+                        tempTtx.fillStyle = WigglyEngine.foregroundColor;
+                        tempTtx.fillRect(0, 0, tw, th);
+                        tempTtx.globalCompositeOperation = 'destination-in';
+                        tempTtx.drawImage(floatCanvas, 0, 0);
+                        ctx.drawImage(tempTC, tx, ty);
+                    }
+
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]);
+
+                    const drawAntsRect = (rx, ry, rw, rh) => {
+                        ctx.strokeStyle = '#000000';
+                        ctx.lineDashOffset = 0;
+                        ctx.strokeRect(rx - 0.5, ry - 0.5, rw + 1, rh + 1);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineDashOffset = 4;
+                        ctx.strokeRect(rx - 0.5, ry - 0.5, rw + 1, rh + 1);
+                    };
+
+                    drawAntsRect(tx, ty, tw, th);
+                }
+
+                ctx.restore();
+            }
+
+            flipSelection(axis = 'h') {
+                const s = this.selectionState;
+                if (!s.active) return;
+                WigglyHistory.saveState();
+                const tw = Math.floor(s.w), th = Math.floor(s.h);
+
+                for (let f = 0; f < s.floatBaseCanvases.length; f++) {
+                    const tc = document.createElement('canvas');
+                    tc.width = tw; tc.height = th;
+                    const tctx = tc.getContext('2d');
+                    tctx.imageSmoothingEnabled = false;
+                    tctx.save();
+                    if (axis === 'h') {
+                        tctx.scale(-1, 1);
+                        tctx.drawImage(s.floatBaseCanvases[f], -tw, 0);
+                    } else {
+                        tctx.scale(1, -1);
+                        tctx.drawImage(s.floatBaseCanvases[f], 0, -th);
+                    }
+                    tctx.restore();
+                    s.floatBaseCanvases[f] = tc;
+
+                    const srcM = s.floatMarkerSlices[f];
+                    const newM = new Uint8Array(tw * th);
+                    for (let r = 0; r < th; r++) {
+                        for (let c = 0; c < tw; c++) {
+                            const tr = (axis === 'v') ? (th - 1 - r) : r;
+                            const tcCol = (axis === 'h') ? (tw - 1 - c) : c;
+                            newM[tr * tw + tcCol] = srcM[r * tw + c];
+                        }
+                    }
+                    s.floatMarkerSlices[f] = newM;
+                }
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            rotateSelection(deg = 90) {
+                const s = this.selectionState;
+                if (!s.active) return;
+                WigglyHistory.saveState();
+                const oldW = Math.floor(s.w), oldH = Math.floor(s.h);
+                const newW = oldH, newH = oldW;
+
+                for (let f = 0; f < s.floatBaseCanvases.length; f++) {
+                    const tc = document.createElement('canvas');
+                    tc.width = newW; tc.height = newH;
+                    const tctx = tc.getContext('2d');
+                    tctx.imageSmoothingEnabled = false;
+                    tctx.save();
+                    tctx.translate(newW / 2, newH / 2);
+                    tctx.rotate((deg * Math.PI) / 180);
+                    tctx.drawImage(s.floatBaseCanvases[f], -oldW / 2, -oldH / 2);
+                    tctx.restore();
+                    s.floatBaseCanvases[f] = tc;
+
+                    const srcM = s.floatMarkerSlices[f];
+                    const newM = new Uint8Array(newW * newH);
+                    for (let r = 0; r < oldH; r++) {
+                        for (let c = 0; c < oldW; c++) {
+                            newM[c * newW + (oldH - 1 - r)] = srcM[r * oldW + c];
+                        }
+                    }
+                    s.floatMarkerSlices[f] = newM;
+                }
+                s.w = newW;
+                s.h = newH;
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            copySelection() {
+                const s = this.selectionState;
+                if (!s.active) return;
+                this.clipboard = {
+                    w: s.w,
+                    h: s.h,
+                    baseCanvases: s.floatBaseCanvases.map(c => WigglyHistory.cloneCanvas(c)),
+                    markerSlices: s.floatMarkerSlices.map(m => new Uint8Array(m))
+                };
+                WigglyAudio.play('pop');
+            }
+
+            cutSelection() {
+                const s = this.selectionState;
+                if (!s.active) return;
+                this.copySelection();
+                s.active = false;
+                s.floatBaseCanvases = [];
+                s.floatMarkerSlices = [];
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('obliterate');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            pasteClipboard() {
+                if (!this.clipboard) return;
+                if (this.selectionState.active) this.commitSelection();
+                WigglyHistory.saveState();
+                this.selectTool('select');
+                const s = this.selectionState;
+                s.active = true;
+                s.w = this.clipboard.w;
+                s.h = this.clipboard.h;
+                s.x = Math.max(0, Math.floor((WigglyEngine.width - s.w) / 2));
+                s.y = Math.max(0, Math.floor((WigglyEngine.height - s.h) / 2));
+                s.origX = s.x;
+                s.origY = s.y;
+                s.floatBaseCanvases = this.clipboard.baseCanvases.map(c => WigglyHistory.cloneCanvas(c));
+                s.floatMarkerSlices = this.clipboard.markerSlices.map(m => new Uint8Array(m));
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            invertSelection() {
+                const s = this.selectionState;
+                const W = WigglyEngine.width, H = WigglyEngine.height;
+                this.selectTool('select');
+
+                if (!s.active) {
+                    WigglyHistory.saveState();
+                    s.holeRect = null;
+                    this.liftSelection(0, 0, W, H);
+                    WigglyAudio.play('pop');
+                    return;
+                }
+
+                WigglyHistory.saveState();
+                const sx = Math.max(0, Math.floor(s.x)), sy = Math.max(0, Math.floor(s.y));
+                const sw = Math.min(W - sx, Math.floor(s.w)), sh = Math.min(H - sy, Math.floor(s.h));
+
+                this.commitSelection();
+
+                s.active = true;
+                s.x = 0; s.y = 0; s.w = W; s.h = H;
+                s.origX = 0; s.origY = 0;
+                s.holeRect = { x: sx, y: sy, w: sw, h: sh };
+                s.floatBaseCanvases = [];
+                s.floatMarkerSlices = [];
+
+                for (let f = 0; f < WigglyConfig.NUM_FRAMES; f++) {
+                    const invLineCanvas = document.createElement('canvas');
+                    invLineCanvas.width = W; invLineCanvas.height = H;
+                    const invLineCtx = invLineCanvas.getContext('2d');
+                    invLineCtx.imageSmoothingEnabled = false;
+                    invLineCtx.drawImage(WigglyEngine.baseFrameCanvases[f], 0, 0);
+                    invLineCtx.clearRect(sx, sy, sw, sh);
+                    s.floatBaseCanvases.push(invLineCanvas);
+
+                    const invMarkerSlice = new Uint8Array(WigglyEngine.markerPaletteMaps[f]);
+                    for (let r = 0; r < sh; r++) {
+                        for (let c = 0; c < sw; c++) {
+                            invMarkerSlice[(sy + r) * W + (sx + c)] = 0;
+                        }
+                    }
+                    s.floatMarkerSlices.push(invMarkerSlice);
+                }
+
+                WigglyEngine.renderMainCanvas();
+                WigglyAudio.play('pop');
+                WigglyStorage.triggerAutoSave();
+            }
+
+            getCanvasCoordinates(e) {
+                const rect = WigglyEngine.visibleCanvas.getBoundingClientRect();
+                const scaleX = WigglyEngine.width / rect.width;
+                const scaleY = WigglyEngine.height / rect.height;
+                let clientX = e.clientX, clientY = e.clientY;
+                if (e.touches && e.touches.length > 0) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY
+                };
+            }
+
+            updateCoordinates(e) {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (!coordsEl) return;
+                const c = this.getCanvasCoordinates(e);
+                const x = Math.max(0, Math.min(WigglyEngine.width, Math.floor(c.x)));
+                const y = Math.max(0, Math.min(WigglyEngine.height, Math.floor(c.y)));
+                coordsEl.innerText = `X: ${x}, Y: ${y}`;
+            }
+
+            resetCoordinates() {
+                const coordsEl = document.getElementById('canvas-coords-indicator');
+                if (coordsEl) coordsEl.innerText = 'X: --, Y: --';
+            }
+
+            bindCanvasEvents() {
+                const canvas = WigglyEngine.visibleCanvas;
+                const container = document.getElementById('canvas-container');
+
+                const handlePointerDown = (e) => {
+                    if (WigglyViewport.isPinching || (e.touches && e.touches.length > 1)) return;
+                    this.updateCoordinates(e);
+                    const coords = this.getCanvasCoordinates(e);
+
+                    if (e.button === 1 || this.currentTool === 'hand' || WigglyViewport.isSpaceDown) {
+                        e.preventDefault();
+                        WigglyViewport.isPanning = true;
+                        WigglyViewport.startX = e.clientX || (e.touches && e.touches[0].clientX);
+                        WigglyViewport.startY = e.clientY || (e.touches && e.touches[0].clientY);
+                        WigglyViewport.startPanX = WigglyViewport.panX;
+                        WigglyViewport.startPanY = WigglyViewport.panY;
+                        canvas.style.cursor = 'grabbing';
+                        return;
+                    }
+
+                    if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+                    if (this.currentTool === 'select') {
+                        e.preventDefault();
+                        if (this.selectionState.active && this.isInsideSelection(coords.x, coords.y)) {
+                            this.selectionState.isMoving = true;
+                            this.selectionState.dragOffsetX = coords.x - this.selectionState.x;
+                            this.selectionState.dragOffsetY = coords.y - this.selectionState.y;
+                            canvas.style.cursor = 'move';
+                        } else {
+                            if (this.selectionState.active) this.commitSelection();
+                            this.selectionState.isSelecting = true;
+                            this.selectionState.startX = coords.x;
+                            this.selectionState.startY = coords.y;
+                            this.selectionState.x = coords.x;
+                            this.selectionState.y = coords.y;
+                            this.selectionState.w = 0;
+                            this.selectionState.h = 0;
+                        }
+                        return;
+                    }
+
+                    if (e.target === canvas) {
+                        e.preventDefault();
+                        if (this.selectionState.active) this.commitSelection();
+                        WigglyHistory.saveState();
+                        this.isDrawing = true;
+
+                        this.strokeSeed = Math.random() * 1000;
+                        this.strokeDist = 0;
+
+                        if (e.target.setPointerCapture && e.pointerId !== undefined) {
+                            try { e.target.setPointerCapture(e.pointerId); } catch (err) { }
+                        }
+
+                        this.rawCursorX = coords.x;
+                        this.rawCursorY = coords.y;
+                        this.lastX = coords.x;
+                        this.lastY = coords.y;
+                        this.smoothedX = coords.x;
+                        this.smoothedY = coords.y;
+                        this.lastMidX = coords.x;
+                        this.lastMidY = coords.y;
+
+                        this.drawPoint(coords.x, coords.y);
+                        WigglyAudio.play('squeak');
+                    }
+                };
+
+                canvas.addEventListener('pointerdown', handlePointerDown);
+                if (container) {
+                    container.addEventListener('pointerdown', e => {
+                        if (e.target === container) handlePointerDown(e);
+                    });
+                }
+
+                window.addEventListener('pointermove', e => {
+                    this.updateCoordinates(e);
+                    const coords = this.getCanvasCoordinates(e);
+
+                    if (WigglyViewport.isPanning) {
+                        e.preventDefault();
+                        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                        WigglyViewport.panX = WigglyViewport.startPanX + (clientX - WigglyViewport.startX);
+                        WigglyViewport.panY = WigglyViewport.startPanY + (clientY - WigglyViewport.startY);
+                        WigglyViewport.updateTransform();
+                        return;
+                    }
+
+                    if (this.currentTool === 'select') {
+                        const s = this.selectionState;
+                        if (s.isSelecting) {
+                            e.preventDefault();
+                            const x1 = Math.min(s.startX, coords.x);
+                            const y1 = Math.min(s.startY, coords.y);
+                            const x2 = Math.max(s.startX, coords.x);
+                            const y2 = Math.max(s.startY, coords.y);
+                            s.x = x1;
+                            s.y = y1;
+                            s.w = Math.max(1, x2 - x1);
+                            s.h = Math.max(1, y2 - y1);
+                            WigglyEngine.renderMainCanvas();
+                            return;
+                        }
+                        if (s.isMoving) {
+                            e.preventDefault();
+                            s.x = coords.x - s.dragOffsetX;
+                            s.y = coords.y - s.dragOffsetY;
+                            WigglyEngine.renderMainCanvas();
+                            return;
+                        }
+                        if (s.active) {
+                            canvas.style.cursor = this.isInsideSelection(coords.x, coords.y) ? 'move' : 'crosshair';
+                        }
+                        return;
+                    }
+
+                    if (!this.isDrawing) return;
+                    e.preventDefault();
+
+                    const events = (e.getCoalescedEvents && e.getCoalescedEvents().length > 0) ? e.getCoalescedEvents() : [e];
+                    for (let i = 0; i < events.length; i++) {
+                        const curEvent = events[i];
+                        const curCoords = this.getCanvasCoordinates(curEvent);
+                        this.rawCursorX = curCoords.x;
+                        this.rawCursorY = curCoords.y;
+
+                        let targetX = curCoords.x, targetY = curCoords.y;
+
+                        if (this.stabilizerLevel > 0) {
+                            const weight = Math.max(0.08, 0.75 * Math.pow(0.72, this.stabilizerLevel * 0.6));
+                            this.smoothedX += (curCoords.x - this.smoothedX) * weight;
+                            this.smoothedY += (curCoords.y - this.smoothedY) * weight;
+                            targetX = this.smoothedX;
+                            targetY = this.smoothedY;
+                        }
+
+                        const midX = (this.lastX + targetX) / 2;
+                        const midY = (this.lastY + targetY) / 2;
+
+                        this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY);
+                        this.lastX = targetX;
+                        this.lastY = targetY;
+                        this.lastMidX = midX;
+                        this.lastMidY = midY;
+                    }
+                    WigglyAudio.play('squeak');
+                });
+
+                window.addEventListener('pointerup', e => {
+                    if (WigglyViewport.isPanning) {
+                        WigglyViewport.isPanning = false;
+                        canvas.style.cursor = (this.currentTool === 'hand' || WigglyViewport.isSpaceDown) ? 'grab' : 'crosshair';
+                    }
+
+                    if (this.currentTool === 'select') {
+                        if (this.selectionState.isSelecting) {
+                            this.selectionState.isSelecting = false;
+                            if (this.selectionState.w > 3 && this.selectionState.h > 3) {
+                                WigglyHistory.saveState();
+                                this.liftSelection(this.selectionState.x, this.selectionState.y, this.selectionState.w, this.selectionState.h);
+                                WigglyAudio.play('pop');
+                            } else {
+                                this.selectionState.active = false;
+                                WigglyEngine.renderMainCanvas();
+                            }
+                        }
+                        if (this.selectionState.isMoving) {
+                            this.selectionState.isMoving = false;
+                            WigglyAudio.play('pop');
+                        }
+                        return;
+                    }
+
+                    if (this.isDrawing) {
+                        if (this.stabilizerLevel > 0) {
+                            const curCoords = this.getCanvasCoordinates(e);
+                            const midX = (this.lastX + curCoords.x) / 2;
+                            const midY = (this.lastY + curCoords.y) / 2;
+                            this.drawSmoothSegment(this.lastMidX, this.lastMidY, this.lastX, this.lastY, midX, midY);
+                            this.drawSmoothSegment(midX, midY, curCoords.x, curCoords.y, curCoords.x, curCoords.y);
+                        }
+
+                        this.isDrawing = false;
+                        if (e.target && e.target.releasePointerCapture && e.pointerId !== undefined) {
+                            try { e.target.releasePointerCapture(e.pointerId); } catch (err) { }
+                        }
+
+                        if (window.WigglyTimeline) {
+                            if (WigglyEngine.animMode === 'wiggle') {
+                                for (let f = 0; f < WigglyEngine.totalFrames; f++) {
+                                    WigglyTimeline.updateSingleThumbnail(f);
+                                }
+                            } else {
+                                WigglyTimeline.updateSingleThumbnail(WigglyEngine.activeEditIndex);
+                            }
+                        }
+                        WigglyStorage.triggerAutoSave();
+                    }
+                });
+
+                canvas.addEventListener('pointerleave', () => this.resetCoordinates());
+            }
+        }
+        const WigglyTools = new ToolsModule();
+
         // =========================================================================
-        // MODULE 7: WigglyStorage.js (純 IndexedDB 儲存)
+        // MODULE 7: WigglyStorage.js (純 IndexedDB 儲存，移除壓感存檔殘留)
         // =========================================================================
         const WigglyStorage = {
             DB_NAME: 'PIKODOO_DB',
@@ -3895,7 +3836,6 @@ const WigglyTools = new ToolsModule();
                         brushPt: WigglyTools.brushPt,
                         brushTipShape: WigglyTools.brushTipShape,
                         stabilizerLevel: WigglyTools.stabilizerLevel,
-                        isPressureEnabled: WigglyTools.isPressureEnabled,
                         activeEraserType: WigglyTools.activeEraserType,
                         theme: WigglyUI.currentTheme,
                         animMode: WigglyEngine.animMode,
@@ -3958,7 +3898,6 @@ const WigglyTools = new ToolsModule();
                     if (data.brushPt) WigglyTools.setBrushSize(data.brushPt);
                     if (data.brushTipShape) WigglyTools.setBrushTipShape(data.brushTipShape);
                     if (typeof data.stabilizerLevel === 'number') WigglyTools.setStabilizer(data.stabilizerLevel);
-                    if (typeof data.isPressureEnabled === 'boolean') { WigglyTools.isPressureEnabled = data.isPressureEnabled; WigglyTools.updatePressureUI(); }
                     if (data.activeEraserType) WigglyTools.setEraserMode(data.activeEraserType);
                     if (data.theme) WigglyUI.setTheme(data.theme);
 
@@ -4019,12 +3958,10 @@ const WigglyTools = new ToolsModule();
                     localStorage.removeItem(this.STORAGE_KEY);
                 } catch (e) { }
 
-                // 1. 取消浮動選取區
                 if (WigglyTools.selectionState && WigglyTools.selectionState.active) {
                     WigglyTools.cancelSelection();
                 }
 
-                // 2. 完整初始化影格緩存與模式 (回歸預設 3 幀抖動模式)
                 WigglyEngine.animMode = 'wiggle';
                 WigglyEngine.onionSkinEnabled = false;
                 WigglyEngine.isPlaying = false;
@@ -4034,7 +3971,6 @@ const WigglyTools = new ToolsModule();
                 WigglyEngine.initBuffers(WigglyConfig.NUM_FRAMES);
                 WigglyEngine.resizeDimensions(WigglyConfig.DEFAULT_WIDTH, WigglyConfig.DEFAULT_HEIGHT, 0, 0, true);
 
-                // 3. 重設時間軸面板狀態與 UI 元件
                 if (window.WigglyTimeline) {
                     WigglyTimeline.isOpen = false;
                     const tlContainer = document.getElementById('timeline-container');
@@ -4050,7 +3986,6 @@ const WigglyTools = new ToolsModule();
                     WigglyTimeline.updateFrameIndicator();
                 }
 
-                // 4. 重設工具、顏色與主題
                 WigglyUI.applyPresetPalette('classic');
                 WigglyTools.currentTool = 'pen';
                 WigglyTools.previousTool = 'pen';
@@ -4059,20 +3994,16 @@ const WigglyTools = new ToolsModule();
                     'pen': 3,
                     'spray': 6,
                     'pattern': 4,
-                    'bucket': 1,
                     'eraser': 8,
                     'whiteout': 8,
                     'marker_eraser': 8
                 };
                 WigglyTools.setBrushTipShape('round');
                 WigglyTools.setStabilizer(3);
-                WigglyTools.isPressureEnabled = true;
-                WigglyTools.updatePressureUI();
                 WigglyTools.setEraserMode('eraser');
                 WigglyTools.selectTool('pen');
                 WigglyViewport.resetZoom();
 
-                // 5. 清空歷史紀錄並渲染
                 WigglyHistory.undoStack = [];
                 WigglyHistory.redoStack = [];
                 WigglyEngine.renderMainCanvas();
@@ -4081,7 +4012,7 @@ const WigglyTools = new ToolsModule();
             }
         };
 
-// =========================================================================
+        // =========================================================================
         // MODULE 8: WigglyUI.js (含原生 GIF 多影格解碼 + 畫布裁切 + 選單滑動展開)
         // =========================================================================
         const WigglyUI = {
@@ -4266,7 +4197,7 @@ const WigglyTools = new ToolsModule();
                 }
                 const popover = document.getElementById(popoverId);
                 if (!popover) return;
-                
+
                 const isOpen = !popover.classList.contains('hidden');
                 this.closeAllRibbonPopovers();
 
@@ -4292,14 +4223,14 @@ const WigglyTools = new ToolsModule();
                 if (drawer) { drawer.classList.add('hidden'); drawer.classList.remove('active'); }
             },
             openMarkerDrawer() {
-        const drawer = document.getElementById('marker-palette-drawer');
-        if (drawer) { 
-            WigglyTools.syncAllMarkerColorsUI(); // 強制同步 14 色
-            drawer.classList.remove('hidden'); 
-            drawer.classList.add('active'); 
-            WigglyAudio.play('pop'); 
-        }
-    },
+                const drawer = document.getElementById('marker-palette-drawer');
+                if (drawer) {
+                    WigglyTools.syncAllMarkerColorsUI(); // 強制同步 14 色
+                    drawer.classList.remove('hidden');
+                    drawer.classList.add('active');
+                    WigglyAudio.play('pop');
+                }
+            },
             closeMarkerDrawer() {
                 const drawer = document.getElementById('marker-palette-drawer');
                 if (drawer) { drawer.classList.add('hidden'); drawer.classList.remove('active'); }
@@ -4335,10 +4266,10 @@ const WigglyTools = new ToolsModule();
             applyDirectResize() {
                 const newW = parseInt(document.getElementById('resize-width').value, 10) || WigglyEngine.width;
                 const newH = parseInt(document.getElementById('resize-height').value, 10) || WigglyEngine.height;
-                if (newW >= 16 && newH >= 16) { 
-                    WigglyEngine.resizeDimensions(newW, newH, 0, 0); 
-                    this.closeModal('crop-modal'); 
-                    WigglyAudio.play('pop'); 
+                if (newW >= 16 && newH >= 16) {
+                    WigglyEngine.resizeDimensions(newW, newH, 0, 0);
+                    this.closeModal('crop-modal');
+                    WigglyAudio.play('pop');
                 }
             },
             swapDimensions() {
@@ -4928,19 +4859,17 @@ const WigglyTools = new ToolsModule();
                     } else if (key === '2') {
                         WigglyTools.selectTool('spray');
                     } else if (key === '3') {
-                        WigglyTools.selectTool('bucket');
-                    } else if (key === '4') {
                         WigglyTools.selectTool('pattern');
                         this.openPatternDrawer();
-                    } else if (key === '5') {
+                    } else if (key === '4') {
                         WigglyTools.setEraserMode('eraser');
-                    } else if (key === '6') {
+                    } else if (key === '5') {
                         WigglyTools.setEraserMode('whiteout');
-                    } else if (key === '7') {
+                    } else if (key === '6') {
                         WigglyTools.setEraserMode('marker_eraser');
-                    } else if (key === '8' || e.code === 'Space') {
+                    } else if (key === '7' || e.code === 'Space') {
                         WigglyTools.selectTool('hand');
-                    } else if (key === '9' || key === 'm') {
+                    } else if (key === '8' || key === 'm') {
                         WigglyTools.selectTool('select');
                     } else if (WigglyConfig.markerKeyBindings && WigglyConfig.markerKeyBindings[key]) {
                         WigglyTools.setColorFromSwatch(WigglyConfig.markerKeyBindings[key]);
@@ -4955,51 +4884,51 @@ const WigglyTools = new ToolsModule();
             }
         };
 
-// =========================================================================
-// MODULE 9: Application Bootstrap (完整健全初始化版)
-// =========================================================================
-class ApplicationModule {
-    async init() {
-        WigglyEngine.init();
-        WigglyViewport.init();
-        WigglyTools.init();
-        WigglyUI.init();
-        WigglyTimeline.init();
+        // =========================================================================
+        // MODULE 9: Application Bootstrap (完整健全初始化版)
+        // =========================================================================
+        class ApplicationModule {
+            async init() {
+                WigglyEngine.init();
+                WigglyViewport.init();
+                WigglyTools.init();
+                WigglyUI.init();
+                WigglyTimeline.init();
 
-        const hasSavedState = await WigglyStorage.init();
+                const hasSavedState = await WigglyStorage.init();
 
-        // 確保儲存載入後同步時間軸狀態與模式
-        if (window.WigglyTimeline) {
-            WigglyTimeline.updateControlStates();
-            WigglyTimeline.renderFilmstrip();
-            WigglyTimeline.updateFrameIndicator();
+                // 確保儲存載入後同步時間軸狀態與模式
+                if (window.WigglyTimeline) {
+                    WigglyTimeline.updateControlStates();
+                    WigglyTimeline.renderFilmstrip();
+                    WigglyTimeline.updateFrameIndicator();
+                }
+
+                // 載入預設工具與側邊拉桿數值同步
+                WigglyTools.selectTool('pen');
+                requestAnimationFrame(t => WigglyEngine.gameLoop(t));
+
+                if (!hasSavedState) {
+                    WigglyUI.openModal('help-modal');
+                }
+            }
         }
+        const WigglyApp = new ApplicationModule();
 
-        // 載入預設工具與側邊拉桿數值同步
-        WigglyTools.selectTool('pen');
-        requestAnimationFrame(t => WigglyEngine.gameLoop(t));
+        window.WigglyConfig = WigglyConfig;
+        window.WigglyAudio = WigglyAudio;
+        window.WigglyHistory = WigglyHistory;
+        window.WigglyEngine = WigglyEngine;
+        window.WigglyTimeline = WigglyTimeline;
+        window.WigglyViewport = WigglyViewport;
+        window.WigglyTools = WigglyTools;
+        window.WigglyStorage = WigglyStorage;
+        window.WigglyUI = WigglyUI;
+        window.WigglyApp = WigglyApp;
 
-        if (!hasSavedState) {
-            WigglyUI.openModal('help-modal');
-        }
-    }
-}
-const WigglyApp = new ApplicationModule();
-
-window.WigglyConfig = WigglyConfig;
-window.WigglyAudio = WigglyAudio;
-window.WigglyHistory = WigglyHistory;
-window.WigglyEngine = WigglyEngine;
-window.WigglyTimeline = WigglyTimeline;
-window.WigglyViewport = WigglyViewport;
-window.WigglyTools = WigglyTools;
-window.WigglyStorage = WigglyStorage;
-window.WigglyUI = WigglyUI;
-window.WigglyApp = WigglyApp;
-
-window.onload = function () {
-    WigglyApp.init();
-};
+        window.onload = function () {
+            WigglyApp.init();
+        };
     </script>
 </body>
 

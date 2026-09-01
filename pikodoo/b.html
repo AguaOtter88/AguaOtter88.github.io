@@ -423,11 +423,56 @@
 <body class="w-full h-full select-none overflow-hidden">
 
     <div id="app-scaler">
+        <div id="consent-modal" class="modal-backdrop z-[10000]" onpointerdown="event.stopPropagation()">
+            <div class="retro-box w-full max-w-md flex flex-col shadow-2xl overflow-hidden select-none"
+                onpointerdown="event.stopPropagation()">
+                <div class="retro-titlebar px-3 py-1.5 flex justify-between items-center select-none text-sm">
+                    <span class="font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-cookie-bite text-yellow-300"></i>
+                        <span>注意：本地儲存與隱私政策</span>
+                    </span>
+                </div>
+                <div class="p-4 bg-[var(--win-bg)] text-sm flex flex-col gap-3">
+                    <fieldset class="win98-fieldset p-3">
+                        <legend class="win98-legend text-xs px-1 font-bold">💾 隱私與資料儲存說明</legend>
+                        <p class="text-[13px] leading-relaxed text-[var(--win-text)] font-sans">
+                            我們尊重您的隱私，您是否同意本應用程式使用瀏覽器的 <strong class="font-bold">IndexedDB / LocalStorage</strong>
+                            於您的本機端自動保存繪圖進度、畫布尺寸與調色盤偏好設定。
+                        </p>
+                        <div
+                            class="mt-2.5 p-2.5 bg-[var(--win-dark)] text-white text-xs border border-gray-600 space-y-1.5 font-sans leading-normal">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-emerald-400 font-bold">✔</span>
+                                <span>創作內容僅保存在您的本機，不主動上傳伺服器。</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-amber-300 font-bold">⚠</span>
+                                <span>若選擇「不同意」，關閉或重整分頁後將<strong>不保留任何繪圖與設定</strong>。</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="flex items-center justify-end gap-2.5 pt-1.5 border-t border-gray-400">
+                        <button class="retro-btn h-9 px-4 text-xs sm:text-sm font-bold gap-1.5 text-red-700"
+                            onclick="WigglyStorage.declineStorageConsent()">
+                            <i class="fa-solid fa-xmark text-red-600 text-sm"></i>
+                            <span>不同意 (不保存)</span>
+                        </button>
+                        <button class="retro-btn h-9 px-5 text-xs sm:text-sm font-bold gap-1.5 text-emerald-800"
+                            onclick="WigglyStorage.acceptStorageConsent()">
+                            <i class="fa-solid fa-check text-green-600 text-sm"></i>
+                            <span>同意並啟用保存</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="app-window" class="retro-box w-full h-full shadow-2xl flex flex-col overflow-hidden relative">
 
             <!-- 頂部容器 (標題列 + 選單列 + 右上跨行快捷按鈕) -->
             <div class="relative shrink-0 border-b border-gray-400 select-none bg-[var(--win-bg)] z-40">
-                
+
                 <!-- 1. 藍色標題列 (右側保留按鈕空間) -->
                 <div class="retro-titlebar px-2 py-1 flex justify-between items-center w-full border-b border-gray-700">
                     <div class="flex items-center gap-1.5">
@@ -443,60 +488,79 @@
                 <div class="menu-bar-container flex items-center justify-start px-2 py-0.5 text-xs font-sans">
                     <div class="flex items-center gap-0.5">
                         <div class="relative inline-block menu-dropdown-container">
-                            <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
-                                onclick="WigglyUI.toggleMenu('menu-file', event)"><span data-i18n="menu_file">檔案(<u>F</u>)</span></button>
+                            <button
+                                class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
+                                onclick="WigglyUI.toggleMenu('menu-file', event)"><span
+                                    data-i18n="menu_file">檔案(<u>F</u>)</span></button>
                             <div id="menu-file"
                                 class="hidden absolute left-0 top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-50 text-[var(--win-text)] text-xs">
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyUI.promptClearCanvas(); WigglyUI.closeAllMenus();">
-                                    <span><i class="fa-solid fa-file-circle-plus w-4"></i><span data-i18n="menu_new_canvas">開新畫布</span></span>
+                                    <span><i class="fa-solid fa-file-circle-plus w-4"></i><span
+                                            data-i18n="menu_new_canvas">開新畫布</span></span>
                                     <span class="text-[10px] opacity-75">Ctrl+N</span>
                                 </button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyUI.triggerOpenImage(); WigglyUI.closeAllMenus();">
-                                    <span><i class="fa-solid fa-folder-open w-4"></i><span data-i18n="menu_open_file">開啟圖檔...</span></span>
+                                    <span><i class="fa-solid fa-folder-open w-4"></i><span
+                                            data-i18n="menu_open_file">開啟圖檔...</span></span>
                                     <span class="text-[10px] opacity-75">Ctrl+O</span>
                                 </button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyUI.openModal('export-modal'); WigglyUI.closeAllMenus();">
-                                    <span><i class="fa-solid fa-file-export w-4"></i><span data-i18n="menu_export_gif">匯出 GIF 動畫...</span></span>
+                                    <span><i class="fa-solid fa-file-export w-4"></i><span
+                                            data-i18n="menu_export_gif">匯出 GIF 動畫...</span></span>
                                     <span class="text-[10px] opacity-75">Ctrl+E</span>
                                 </button>
                                 <div class="border-t border-gray-400 my-1"></div>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
                                     onclick="WigglyUI.openCropModal(); WigglyUI.closeAllMenus();">
-                                    <i class="fa-solid fa-expand-arrows-alt w-4"></i><span data-i18n="menu_canvas_size">畫布尺寸與裁切...</span>
+                                    <i class="fa-solid fa-expand-arrows-alt w-4"></i><span
+                                        data-i18n="menu_canvas_size">畫布尺寸與裁切...</span>
                                 </button>
                             </div>
                         </div>
 
                         <div class="relative inline-block menu-dropdown-container">
-                            <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
-                                onclick="WigglyUI.toggleMenu('menu-edit', event)"><span data-i18n="menu_edit">編輯(<u>E</u>)</span></button>
+                            <button
+                                class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
+                                onclick="WigglyUI.toggleMenu('menu-edit', event)"><span
+                                    data-i18n="menu_edit">編輯(<u>E</u>)</span></button>
                             <div id="menu-edit"
                                 class="hidden absolute left-0 top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-50 text-[var(--win-text)] text-xs">
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyHistory.undo(); WigglyUI.closeAllMenus();">
-                                    <span><i class="fa-solid fa-rotate-left w-4"></i><span data-i18n="menu_undo">復原 (Undo)</span></span>
+                                    <span><i class="fa-solid fa-rotate-left w-4"></i><span data-i18n="menu_undo">復原
+                                            (Undo)</span></span>
                                     <span class="text-[10px] opacity-75">Ctrl+Z</span>
                                 </button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyHistory.redo(); WigglyUI.closeAllMenus();">
-                                    <span><i class="fa-solid fa-rotate-right w-4"></i><span data-i18n="menu_redo">重做 (Redo)</span></span>
+                                    <span><i class="fa-solid fa-rotate-right w-4"></i><span data-i18n="menu_redo">重做
+                                            (Redo)</span></span>
                                     <span class="text-[10px] opacity-75">Ctrl+Y</span>
                                 </button>
                                 <div class="border-t border-gray-400 my-1"></div>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyTools.cutSelection(); WigglyUI.closeAllMenus();">
                                     <span><i class="fa-solid fa-scissors w-4"></i>剪下 (Cut)</span>
                                     <span class="text-[10px] opacity-75">Ctrl+X</span>
                                 </button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyTools.copySelection(); WigglyUI.closeAllMenus();">
                                     <span><i class="fa-solid fa-copy w-4"></i>複製 (Copy)</span>
                                     <span class="text-[10px] opacity-75">Ctrl+C</span>
                                 </button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex justify-between items-center"
                                     onclick="WigglyTools.pasteClipboard(); WigglyUI.closeAllMenus();">
                                     <span><i class="fa-solid fa-paste w-4"></i>貼上 (Paste)</span>
                                     <span class="text-[10px] opacity-75">Ctrl+V</span>
@@ -505,39 +569,61 @@
                         </div>
 
                         <div class="relative inline-block menu-dropdown-container">
-                            <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
-                                onclick="WigglyUI.toggleMenu('menu-view', event)"><span data-i18n="menu_view">檢視(<u>V</u>)</span></button>
+                            <button
+                                class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
+                                onclick="WigglyUI.toggleMenu('menu-view', event)"><span
+                                    data-i18n="menu_view">檢視(<u>V</u>)</span></button>
                             <div id="menu-view"
                                 class="hidden absolute left-0 top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-50 text-[var(--win-text)] text-xs">
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-magnifying-glass-plus w-4"></i>放大</button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-magnifying-glass-minus w-4"></i>縮小</button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-compress w-4"></i>重設 100%</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyViewport.zoomIn(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-magnifying-glass-plus w-4"></i>放大</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyViewport.zoomOut(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-magnifying-glass-minus w-4"></i>縮小</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyViewport.resetZoom(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-compress w-4"></i>重設 100%</button>
                                 <div class="border-t border-gray-400 my-1"></div>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyUI.openPatternDrawer(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-border-none w-4"></i>漫畫網點視窗...</button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyUI.openMarkerDrawer(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-palette w-4"></i>調色盤視窗...</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyUI.openPatternDrawer(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-border-none w-4"></i>漫畫網點視窗...</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyUI.openMarkerDrawer(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-palette w-4"></i>調色盤視窗...</button>
                             </div>
                         </div>
 
                         <div class="relative inline-block menu-dropdown-container">
-                            <button class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
-                                onclick="WigglyUI.toggleMenu('menu-help', event)"><span data-i18n="menu_help">說明(<u>H</u>)</span></button>
+                            <button
+                                class="retro-menu-btn px-2 py-0.5 hover:bg-[#000080] hover:text-white cursor-pointer whitespace-nowrap"
+                                onclick="WigglyUI.toggleMenu('menu-help', event)"><span
+                                    data-i18n="menu_help">說明(<u>H</u>)</span></button>
                             <div id="menu-help"
                                 class="hidden absolute right-0 left-auto top-full bg-[var(--win-bg)] border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow-md py-1 w-56 z-50 text-[var(--win-text)] text-xs">
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();"><i class="fa-solid fa-circle-question w-4"></i>說明指南</button>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();"><i class="fa-solid fa-list-check w-4"></i>更新紀錄</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyUI.openModal('help-modal'); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-circle-question w-4"></i>說明指南</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyUI.openModal('changelog-modal'); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-list-check w-4"></i>更新紀錄</button>
                                 <div class="border-t border-gray-400 my-1"></div>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
-                                    onclick="WigglyUI.setTheme(WigglyUI.currentTheme === 'dark' ? 'classic' : 'dark'); WigglyUI.closeAllMenus();"><i class="fa-solid fa-circle-half-stroke w-4"></i>切換深/淺色主題</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2"
+                                    onclick="WigglyUI.setTheme(WigglyUI.currentTheme === 'dark' ? 'classic' : 'dark'); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-circle-half-stroke w-4"></i>切換深/淺色主題</button>
                                 <div class="border-t border-gray-400 my-1"></div>
-                                <button class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 text-red-600"
-                                    onclick="WigglyStorage.clearAllStorage(); WigglyUI.closeAllMenus();"><i class="fa-solid fa-trash-can w-4"></i>清除快取並重設...</button>
+                                <button
+                                    class="w-full text-left px-3 py-1 hover:bg-[#000080] hover:text-white flex items-center gap-2 text-red-600"
+                                    onclick="WigglyStorage.clearAllStorage(); WigglyUI.closeAllMenus();"><i
+                                        class="fa-solid fa-trash-can w-4"></i>清除快取並重設...</button>
                             </div>
                         </div>
                     </div>
@@ -547,38 +633,46 @@
                 <div class="absolute right-2 top-1 bottom-1 flex items-center gap-2 z-50">
                     <!-- 開啟圖檔 -->
                     <div class="flex flex-col items-center justify-between h-full">
-                        <button class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
+                        <button
+                            class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
                             onclick="WigglyUI.triggerOpenImage()" title="開啟圖檔 (Ctrl+O)">
                             <i class="fa-solid fa-folder-open text-amber-600 text-base sm:text-lg"></i>
                         </button>
-                        <span class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">開啟..</span>
+                        <span
+                            class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">開啟..</span>
                     </div>
 
                     <!-- 匯出 GIF -->
                     <div class="flex flex-col items-center justify-between h-full">
-                        <button class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
+                        <button
+                            class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
                             onclick="WigglyUI.openModal('export-modal')" title="匯出 GIF (Ctrl+E)">
                             <i class="fa-solid fa-share-from-square text-blue-600 text-base sm:text-lg"></i>
                         </button>
-                        <span class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">匯出..</span>
+                        <span
+                            class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">匯出..</span>
                     </div>
 
                     <!-- 復原 (Undo) -->
                     <div class="flex flex-col items-center justify-between h-full">
-                        <button class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
+                        <button
+                            class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
                             onclick="WigglyHistory.undo()" title="復原 (Ctrl+Z)">
                             <i class="fa-solid fa-rotate-left text-emerald-600 text-base sm:text-lg"></i>
                         </button>
-                        <span class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">復原</span>
+                        <span
+                            class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">復原</span>
                     </div>
 
                     <!-- 重作 (Redo) -->
                     <div class="flex flex-col items-center justify-between h-full">
-                        <button class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
+                        <button
+                            class="retro-btn h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center p-0 shadow-sm"
                             onclick="WigglyHistory.redo()" title="重作 (Ctrl+Y)">
                             <i class="fa-solid fa-rotate-right text-blue-600 text-base sm:text-lg"></i>
                         </button>
-                        <span class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">重作</span>
+                        <span
+                            class="text-[10px] font-bold text-[var(--win-text)] opacity-80 font-sans leading-none mt-1">重作</span>
                     </div>
                 </div>
             </div>
@@ -3730,17 +3824,49 @@
         const WigglyTools = new ToolsModule();
 
         // =========================================================================
-        // MODULE 7: WigglyStorage.js (純 IndexedDB 儲存，移除壓感存檔殘留)
+        // MODULE 7: WigglyStorage.js (純 IndexedDB 儲存 + 支援同意/不同意本地儲存政策)
         // =========================================================================
         const WigglyStorage = {
             DB_NAME: 'PIKODOO_DB',
             DB_VERSION: 1,
             STORE_NAME: 'project_store',
             STORAGE_KEY: 'PIKODOO_V31',
+            CONSENT_KEY: 'PIKODOO_STORAGE_CONSENT',
             db: null,
             saveTimer: null,
             isSaving: false,
 
+            // --- 授權狀態檢查與處理 ---
+            hasAnsweredConsent() {
+                return localStorage.getItem(this.CONSENT_KEY) !== null;
+            },
+
+            hasGivenConsent() {
+                return localStorage.getItem(this.CONSENT_KEY) === 'true';
+            },
+
+            acceptStorageConsent() {
+                localStorage.setItem(this.CONSENT_KEY, 'true');
+                const modal = document.getElementById('consent-modal');
+                if (modal) modal.classList.remove('active');
+                WigglyAudio.play('pop');
+                this.triggerAutoSave();
+            },
+
+            declineStorageConsent() {
+                localStorage.setItem(this.CONSENT_KEY, 'false');
+                const modal = document.getElementById('consent-modal');
+                if (modal) modal.classList.remove('active');
+                WigglyAudio.play('pop');
+
+                // 更新狀態列為「未啟用保存」
+                const textEl = document.getElementById('autosave-text');
+                const ind = document.getElementById('autosave-indicator');
+                if (textEl) textEl.innerText = '未啟用保存';
+                if (ind) ind.className = 'win98-inset px-1.5 py-0.5 text-center font-bold truncate flex items-center justify-center gap-1 text-gray-500';
+            },
+
+            // --- IndexedDB 核心資料庫初始化 ---
             async initDB() {
                 if (this.db) return this.db;
                 return new Promise((resolve) => {
@@ -3769,6 +3895,8 @@
             },
 
             triggerAutoSave() {
+                // 未同意前不執行任何自動儲存
+                if (!this.hasGivenConsent()) return;
                 clearTimeout(this.saveTimer);
                 this.setIndicatorStatus('saving');
                 this.saveTimer = setTimeout(() => this.performSave(), 500);
@@ -3778,6 +3906,13 @@
                 const textEl = document.getElementById('autosave-text');
                 const ind = document.getElementById('autosave-indicator');
                 if (!ind) return;
+
+                if (!this.hasGivenConsent()) {
+                    if (textEl) textEl.innerText = '未啟用保存';
+                    ind.className = 'win98-inset px-1.5 py-0.5 text-center font-bold truncate flex items-center justify-center gap-1 text-gray-500';
+                    return;
+                }
+
                 if (state === 'saving') {
                     if (textEl) textEl.innerText = WigglyUI.t('status_saving');
                     ind.className = 'win98-inset px-1.5 py-0.5 text-center font-bold truncate flex items-center justify-center gap-1 text-amber-500';
@@ -3791,7 +3926,8 @@
             },
 
             async performSave() {
-                if (this.isSaving) return;
+                // 嚴格阻斷：未同意隱私政策或正在寫入中不執行儲存
+                if (!this.hasGivenConsent() || this.isSaving) return;
                 try {
                     const db = await this.initDB();
                     if (!db) return;
@@ -3839,6 +3975,9 @@
             },
 
             async restoreFromStorage() {
+                // 若使用者曾選擇不同意，則不載入任何歷史存檔
+                if (!this.hasGivenConsent()) return false;
+
                 try {
                     const db = await this.initDB();
                     let data = null;
@@ -4882,7 +5021,11 @@
                 WigglyTools.selectTool('pen');
                 requestAnimationFrame(t => WigglyEngine.gameLoop(t));
 
-                if (!hasSavedState) {
+                // 首次進入跳出遮罩，同意過就不再出現
+                if (!WigglyStorage.hasGivenConsent()) {
+                    const consentModal = document.getElementById('consent-modal');
+                    if (consentModal) consentModal.classList.add('active');
+                } else if (!hasSavedState) {
                     WigglyUI.openModal('help-modal');
                 }
             }

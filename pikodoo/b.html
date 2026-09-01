@@ -370,25 +370,25 @@
             z-index: 2;
         }
 
-        /* Win11 風格浮動抽屜面板 (Popovers) - 響應式優化版 */
-        .ribbon-popover {
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            background-color: var(--win-bg);
-            border: 2px solid var(--win-light);
-            border-right-color: var(--win-darker);
-            border-bottom-color: var(--win-darker);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-            z-index: 999;
-            border-radius: 4px;
-        }
 
-        /* 當按鈕靠右時（如色彩面板），讓浮動面板自動靠右對齊，避免超出螢幕 */
-        .ribbon-bar>div:last-child .ribbon-popover {
-            left: auto;
-            right: 0;
-        }
+		/* Win11 風格浮動抽屜面板 (Popovers) */
+		.ribbon-popover {
+			position: absolute;
+			top: 100%;
+			margin-top: 4px;
+			background-color: var(--win-bg);
+			border: 2px solid var(--win-light);
+			border-right-color: var(--win-darker);
+			border-bottom-color: var(--win-darker);
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+			z-index: 999;
+		}
+
+		/* 色彩面板靠右對齊，避免超出手機螢幕右側 */
+		#popover-colors {
+			right: 0;
+			left: auto;
+		}
     </style>
 </head>
 
@@ -582,12 +582,13 @@
                 class="hidden" onchange="WigglyUI.handleOpenImage(event)">
 
             <!-- 3. 響應式 Ribbon 工作列 (大螢幕展開 / 手機平板自動轉為大圖示按鈕抽屜) -->
+            <!-- 3. 響應式 Ribbon 工作列 (修正定位與溢位問題) -->
             <div
-                class="ribbon-bar flex items-center bg-[var(--win-bg)] px-2 py-1.5 border-b border-gray-400 select-none overflow-x-auto no-scrollbar shrink-0 text-xs gap-1 sm:gap-2">
+                class="ribbon-bar flex items-center bg-[var(--win-bg)] px-2 py-1.5 border-b border-gray-400 select-none overflow-visible shrink-0 text-xs gap-1 sm:gap-2">
 
                 <!-- 區塊 1: 選取項目 (Selection) -->
                 <div
-                    class="flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
+                    class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
                     <button
                         class="retro-btn h-11 w-10 sm:h-12 sm:w-11 flex flex-col items-center justify-center p-0.5 gap-0.5"
                         data-tool="select" onclick="WigglyTools.selectTool('select')" title="矩形選取 (8 / M)">
@@ -599,7 +600,7 @@
 
                 <!-- 區塊 2: 影像 (Image) -->
                 <div
-                    class="flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
+                    class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
                     <!-- 大螢幕時顯示 6 格完整網格 -->
                     <div class="hidden lg:grid grid-cols-3 gap-1">
                         <button class="retro-btn h-6 w-6 text-[10px]" onclick="WigglyUI.openCropModal()"
@@ -616,8 +617,8 @@
                             onclick="WigglyUI.promptClearCanvas()" title="清空畫布"><i
                                 class="fa-solid fa-bomb"></i></button>
                     </div>
-                    <!-- 手機/平板過窄時自動變身「大圖示按鈕」點擊開面板 -->
-                    <div class="lg:hidden relative flex items-center justify-center">
+                    <!-- 手機/平板大圖示按鈕 -->
+                    <div class="lg:hidden flex items-center justify-center">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
                             onclick="WigglyUI.toggleRibbonPopover('popover-image', event)">
                             <i class="fa-solid fa-image text-blue-700 text-sm"></i>
@@ -627,8 +628,8 @@
                     <span
                         class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">影像</span>
 
-                    <!-- 浮動面板：影像工具 (手機/平板點擊大圖示彈出) -->
-                    <div id="popover-image" class="ribbon-popover hidden left-0 p-2 grid grid-cols-3 gap-1.5">
+                    <!-- 浮動面板：影像工具 -->
+                    <div id="popover-image" class="ribbon-popover hidden left-0 p-2 grid grid-cols-3 gap-1.5 w-[130px]">
                         <button class="retro-btn h-8 w-8 text-xs"
                             onclick="WigglyUI.openCropModal(); WigglyUI.closeAllRibbonPopovers();" title="畫布尺寸與裁切"><i
                                 class="fa-solid fa-crop text-gray-700"></i></button>
@@ -652,7 +653,7 @@
 
                 <!-- 區塊 3: 工具 (Tools) -->
                 <div
-                    class="flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
+                    class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
                     <div class="hidden lg:grid grid-cols-3 gap-1">
                         <button class="retro-btn h-6 w-6 text-[10px] active" data-tool="pen"
                             onclick="WigglyTools.selectTool('pen')" title="鋼筆"><i
@@ -673,7 +674,7 @@
                             onclick="WigglyTools.selectTool('hand')" title="拖曳畫布"><i
                                 class="fa-solid fa-hand text-blue-600"></i></button>
                     </div>
-                    <div class="lg:hidden relative flex items-center justify-center">
+                    <div class="lg:hidden flex items-center justify-center">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
                             onclick="WigglyUI.toggleRibbonPopover('popover-tools', event)">
                             <i class="fa-solid fa-pen-ruler text-gray-800 text-sm"></i>
@@ -691,7 +692,7 @@
                             onclick="WigglyTools.selectTool('spray'); WigglyUI.closeAllRibbonPopovers();"><i
                                 class="fa-solid fa-spray-can text-indigo-600"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs" data-tool="pattern"
-                            onclick="WigglyTools.selectTool('pattern'); WigglyUI.openPatternDrawer(); WigglyUI.closeAllRibbonPopovers();"><i
+                            onclick="WigglyTools.selectTool('pattern'); WigglyUI.openPatternDrawer();"><i
                                 class="fa-solid fa-border-none text-emerald-700"></i></button>
                         <button class="retro-btn h-8 w-8 text-xs" data-tool="eraser"
                             onclick="WigglyTools.handleEraserButtonClick(); WigglyUI.closeAllRibbonPopovers();"><i
@@ -707,7 +708,7 @@
 
                 <!-- 區塊 4: 筆刷 (Brushes) -->
                 <div
-                    class="flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
+                    class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 border-r border-gray-400 h-full">
                     <div class="hidden lg:flex flex-col items-center gap-1">
                         <div class="flex items-center gap-1">
                             <button id="btn-shape-round" class="retro-btn h-5 w-5 text-[9px] p-0 active"
@@ -730,7 +731,7 @@
                                 class="retro-box-inset text-[10px] font-bold px-1 text-center w-6">3</span>
                         </div>
                     </div>
-                    <div class="lg:hidden relative flex items-center justify-center">
+                    <div class="lg:hidden flex items-center justify-center">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
                             onclick="WigglyUI.toggleRibbonPopover('popover-brush', event)">
                             <i class="fa-solid fa-paint-brush text-purple-700 text-sm"></i>
@@ -768,7 +769,7 @@
                 </div>
 
                 <!-- 區塊 5: 色彩 (Colors) -->
-                <div class="flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 h-full">
+                <div class="relative flex flex-col items-center justify-between px-1.5 sm:px-2.5 shrink-0 h-full">
                     <!-- 大螢幕時直接展開調色盤 -->
                     <div class="hidden lg:flex flex-1 items-center gap-2">
                         <div class="grid grid-cols-7 gap-1" id="ribbon-marker-palette">
@@ -829,13 +830,16 @@
                                 data-tool="marker14" onclick="WigglyTools.selectTool('marker14')"><span
                                     id="swatch-marker14" class="w-full h-full block bg-[#CC99FF]"></span></button>
                         </div>
-                        <button class="retro-btn h-7 w-7 text-xs text-amber-700 shrink-0"
-                            onclick="WigglyUI.openMarkerDrawer()" title="自訂調色盤顏色"><i
-                                class="fa-solid fa-palette"></i></button>
+                        <button
+                            class="h-7 w-7 rounded-full p-0 overflow-hidden border border-black shadow-sm flex items-center justify-center shrink-0"
+                            onclick="WigglyUI.openMarkerDrawer(); WigglyUI.closeAllRibbonPopovers();" title="自訂調色盤"
+                            style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);">
+                            <i class="fa-solid fa-plus text-white text-[10px]"></i>
+                        </button>
                     </div>
 
-                    <!-- 手機/平板過窄時變身為大圖示按鈕 -->
-                    <div class="lg:hidden relative flex items-center justify-center">
+                    <!-- 手機/平板大圖示按鈕 -->
+                    <div class="lg:hidden flex items-center justify-center">
                         <button class="retro-btn h-11 w-10 flex flex-col items-center justify-center p-0.5 gap-0.5"
                             onclick="WigglyUI.toggleRibbonPopover('popover-colors', event)">
                             <i class="fa-solid fa-palette text-amber-700 text-sm"></i>
@@ -845,86 +849,89 @@
                     <span
                         class="text-[10px] sm:text-[11px] font-bold text-[var(--win-text)] opacity-80 font-sans mt-0.5">色彩</span>
 
-                    <!-- 浮動面板：色彩 (對應你截圖中的圓形色票彈出視窗) -->
+                    <!-- 浮動面板：色彩 (修正重疊問題，舒適間距展開版) -->
                     <div id="popover-colors"
-                        class="ribbon-popover hidden right-0 sm:left-0 p-2.5 flex items-center gap-3">
-                        <div class="grid grid-cols-7 gap-1.5">
+                        class="ribbon-popover hidden p-2.5 flex items-center gap-2.5 w-[240px] select-none">
+                        <!-- 7x2 雙排色票網格 -->
+                        <div class="grid grid-cols-7 gap-1.5 shrink-0">
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker1"
                                 onclick="WigglyTools.selectTool('marker1'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker1" class="w-full h-full block bg-[#FF3366]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker2"
                                 onclick="WigglyTools.selectTool('marker2'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker2" class="w-full h-full block bg-[#FF6600]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker3"
                                 onclick="WigglyTools.selectTool('marker3'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker3" class="w-full h-full block bg-[#FFCC00]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker4"
                                 onclick="WigglyTools.selectTool('marker4'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker4" class="w-full h-full block bg-[#33CC33]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker5"
                                 onclick="WigglyTools.selectTool('marker5'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker5" class="w-full h-full block bg-[#00CCCC]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker6"
                                 onclick="WigglyTools.selectTool('marker6'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker6" class="w-full h-full block bg-[#3366FF]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker7"
                                 onclick="WigglyTools.selectTool('marker7'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker7" class="w-full h-full block bg-[#9933FF]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker8"
                                 onclick="WigglyTools.selectTool('marker8'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker8" class="w-full h-full block bg-[#FF66B2]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker9"
                                 onclick="WigglyTools.selectTool('marker9'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker9" class="w-full h-full block bg-[#FF9966]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker10"
                                 onclick="WigglyTools.selectTool('marker10'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker10" class="w-full h-full block bg-[#FFFF66]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker11"
                                 onclick="WigglyTools.selectTool('marker11'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker11" class="w-full h-full block bg-[#99FF99]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker12"
                                 onclick="WigglyTools.selectTool('marker12'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker12" class="w-full h-full block bg-[#66FFFF]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker13"
                                 onclick="WigglyTools.selectTool('marker13'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker13" class="w-full h-full block bg-[#99CCFF]"></span></button>
                             <button
-                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black"
+                                class="palette-swatch-btn relative h-5 w-5 rounded-full p-0 overflow-hidden border border-black hover:scale-110 active:scale-95 transition-transform"
                                 data-tool="marker14"
                                 onclick="WigglyTools.selectTool('marker14'); WigglyUI.closeAllRibbonPopovers();"><span
                                     id="swatch-marker14" class="w-full h-full block bg-[#CC99FF]"></span></button>
                         </div>
+                        
+                        <!-- 彩虹色輪自訂按鈕 -->
                         <button
-                            class="h-7 w-7 rounded-full p-0 overflow-hidden border border-black shadow-sm flex items-center justify-center shrink-0"
+                            class="h-8 w-8 rounded-full p-0 overflow-hidden border border-black shadow-sm flex items-center justify-center shrink-0 hover:scale-105 active:scale-95 transition-transform"
                             onclick="WigglyUI.openMarkerDrawer(); WigglyUI.closeAllRibbonPopovers();" title="自訂調色盤"
                             style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);">
-                            <i class="fa-solid fa-plus text-white text-[10px]"></i>
+                            <i class="fa-solid fa-plus text-white text-[11px] drop-shadow-md"></i>
                         </button>
                     </div>
                 </div>
@@ -953,7 +960,7 @@
                     </div>
                 </div>
 
-                <!-- 浮動抽屜 2: 畫布與色彩主題設定 (乾淨單一背景色版本) -->
+                <!-- 浮動抽屜 2: 畫布與色彩主題設定 -->
                 <div id="marker-palette-drawer"
                     class="mobile-drawer retro-box p-0 top-12 left-4 sm:left-36 w-84 sm:w-96 max-h-[92%] flex-col shadow-2xl z-50 overflow-hidden hidden">
                     <div class="retro-titlebar px-2 py-1 flex justify-between items-center drag-handle">
@@ -966,7 +973,7 @@
                         <fieldset class="win98-fieldset flex flex-col gap-1.5">
                             <legend class="win98-legend" data-i18n="options_group_colors">畫布色彩與音效</legend>
 
-                            <!-- 1. 背景底色 (單一插槽) -->
+                            <!-- 1. 背景底色 -->
                             <div class="flex items-center justify-between pb-1 border-b border-gray-400">
                                 <div class="flex items-center gap-2">
                                     <span id="canvas-bg-swatch"
@@ -1053,7 +1060,6 @@
                                     <span class="w-3 h-3 border border-black inline-block bg-[#8BAC0F] shrink-0"></span>
                                     <span data-i18n="preset_gameboy">復古掌機 (DMG)</span>
                                 </button>
-
                                 <button class="retro-btn h-6 px-1.5 text-[11px] flex items-center justify-start gap-1.5"
                                     onclick="WigglyUI.applyPresetPalette('retro')">
                                     <span class="w-3 h-3 border border-black inline-block bg-[#E88D8D] shrink-0"></span>
@@ -1351,7 +1357,7 @@
                             class="bg-[var(--win-dark)] border border-gray-600 p-2 font-mono text-[10px] space-y-0.5 text-white">
                             <div><strong>1. 前景線稿層</strong>：鋼筆、噴槍、30 款漫畫與動態網點。</div>
                             <div><strong>2. 麥克筆填色層</strong>：14 色單層麥克筆，塗抹不覆蓋線稿。</div>
-                            <div><strong>3. 畫布背景層</strong>：自訂底色與 15 款復古預設調色盤。</div>
+                            <div><strong>3. 畫布背景層</strong>：自訂底色與 11 款復古預設調色盤。</div>
                         </div>
                     </fieldset>
 
@@ -1405,6 +1411,7 @@
                             <li><strong>IndexedDB 防爆存檔</strong>：徹底解決大解析度存檔超出容量問題。</li>
                             <li><strong>矩形選取工具升級</strong>：支援色塊完整提取與實心/透明雙重覆蓋模式。</li>
                             <li><strong>觸控手勢防誤觸</strong>：雙指平移旋轉時不再誤畫筆觸。</li>
+                            <li><strong>11 種主題專屬獨立音色</strong>：每套調色盤具備專屬合成聲效。</li>
                         </ul>
                     </fieldset>
                     <div class="flex justify-end pt-1 border-t border-gray-400">
@@ -1415,20 +1422,18 @@
             </div>
         </div>
     </div>
-    <script>
+	<script>
         // =========================================================================
-        // MODULE 1: Config, Patterns & i18n Dictionary (純繁體中文精簡版)
+        // MODULE 1: Config, Patterns & i18n Dictionary
         // =========================================================================
         const WigglyConfig = {
             DEFAULT_WIDTH: 560, DEFAULT_HEIGHT: 420, MAX_UNDO: 15, NUM_FRAMES: 3,
 
-            // 14 色麥克筆 Keys
             markerKeys: [
                 'marker1', 'marker2', 'marker3', 'marker4', 'marker5', 'marker6', 'marker7',
                 'marker8', 'marker9', 'marker10', 'marker11', 'marker12', 'marker13', 'marker14'
             ],
 
-            // 14 色對應 ID (1 ~ 14)
             markerIdMap: {
                 'marker1': 1, 'marker2': 2, 'marker3': 3, 'marker4': 4,
                 'marker5': 5, 'marker6': 6, 'marker7': 7, 'marker8': 8,
@@ -1436,13 +1441,11 @@
                 'marker13': 13, 'marker14': 14
             },
 
-            // 14 色鍵盤快捷鍵 (Q~U 第一排，A~J 第二排)
             markerKeyBindings: {
                 'q': 'marker1', 'w': 'marker2', 'e': 'marker3', 'r': 'marker4', 't': 'marker5', 'y': 'marker6', 'u': 'marker7',
                 'a': 'marker8', 's': 'marker9', 'd': 'marker10', 'f': 'marker11', 'g': 'marker12', 'h': 'marker13', 'j': 'marker14'
             },
 
-            // 14 色預設繽紛經典調色盤
             defaultMarkerColors: {
                 'marker1': '#FF3366', 'marker2': '#FF6600', 'marker3': '#FFCC00', 'marker4': '#33CC33',
                 'marker5': '#00CCCC', 'marker6': '#3366FF', 'marker7': '#9933FF', 'marker8': '#FF66B2',
@@ -1517,8 +1520,7 @@
                 crop_title: "設定畫布尺寸與裁切", crop_btn_swap: "交換", crop_group_resolution: "畫布解析度設定 (像素)", crop_lbl_width: "寬度 (Width):", crop_lbl_height: "高度 (Height):", crop_lbl_presets: "常用尺寸:", crop_btn_apply_resolution: "套用指定寬高", crop_group_tight: "智慧一鍵去邊", crop_desc_tight: "自動切除畫布四周多餘的空白範圍。", crop_btn_tight: "自動緊密去邊裁切", crop_group_manual: "手動修剪四邊邊界 (px)", crop_top: "上方裁切:", crop_bottom: "下方裁切:", crop_left: "左側裁切:", crop_right: "右側裁切:", crop_btn_apply_manual: "套用邊緣裁切", btn_close: "關閉", btn_confirm: "確定",
                 options_title: "畫布與色彩主題設定", options_group_colors: "畫布色彩與音效", options_lbl_bg: "背景顏色 (底色):", options_lbl_fg: "前景顏色 (線稿):", options_lbl_sound: "音效回饋 (Sound FX):", options_group_presets: "預設調色盤主題",
                 preset_classic: "經典 Y2K", preset_woh_default: "鹽川怪談", preset_crimson_cult: "古神祭儀", preset_midnight_fog: "午夜迷霧",
-                preset_dark_manga: "恐怖黑白漫", preset_pc98: "PC-98 冒險", preset_gameboy: "復古掌機", preset_virtual_boy: "Virtual Boy",
-                preset_amber_crt: "琥珀單色終端", preset_green_phosphor: "綠色螢光螢幕", preset_cga_mode: "CGA 洋紅青藍", preset_retro: "復古奶油",
+                preset_dark_manga: "恐怖黑白漫", preset_pc98: "PC-98 冒險", preset_gameboy: "復古掌機", preset_retro: "復古奶油",
                 preset_cyber: "賽博霓虹", preset_blueprint: "工程藍圖", preset_sepia_parchment: "羊皮紙古籍",
                 export_title: "匯出 GIF 動畫", export_encoding: "編碼 GIF 中...", export_download: "下載 GIF 圖檔", help_title: "PikoDoo 使用說明指南",
                 eraser_type_all: "全域橡皮擦", eraser_type_whiteout: "修正液", eraser_type_marker: "調色盤橡皮擦"
@@ -1527,21 +1529,21 @@
         WigglyConfig.initPatterns();
 
         // =========================================================================
-        // MODULE 2: WigglyAudio.js (支援 怪談恐怖 / 復古晶片硬體 / 經典 三重音效彩蛋)
+        // MODULE 2: WigglyAudio.js (11 種主題專屬獨立音色引擎)
         // =========================================================================
         class AudioModule {
             constructor() {
                 this.ctx = null;
                 this.lastS = 0;
-                this.soundMode = 'classic'; // 'classic' | 'horror' | 'retro_hardware'
+                this.soundTheme = 'classic';
             }
             init() {
                 if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 }
             }
-            setSoundMode(mode) {
-                this.soundMode = mode;
+            setSoundTheme(themeName) {
+                this.soundTheme = themeName;
             }
             play(type) {
                 const tg = document.getElementById('sound-toggle');
@@ -1549,7 +1551,7 @@
 
                 if (type === 'squeak') {
                     const n = performance.now();
-                    if (n - this.lastS < 70) return;
+                    if (n - this.lastS < 60) return;
                     this.lastS = n;
                 }
 
@@ -1558,166 +1560,99 @@
 
                 try {
                     const now = this.ctx.currentTime;
-
-                    // ==========================================
-                    // 👾 1. 復古硬體與終端機彩蛋 (8-Bit / CRT / Chiptune)
-                    // ==========================================
-                    if (this.soundMode === 'retro_hardware') {
-                        if (type === 'pop') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'square';
-                            osc.frequency.setValueAtTime(880, now); // A5
-                            osc.frequency.setValueAtTime(1760, now + 0.025); // A6
-                            osc.connect(g);
-                            g.connect(this.ctx.destination);
-
-                            g.gain.setValueAtTime(0.08, now);
-                            g.gain.linearRampToValueAtTime(0.001, now + 0.05);
-                            osc.start(now);
-                            osc.stop(now + 0.05);
-
-                        } else if (type === 'squeak') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'square';
-                            const freqs = [523.25, 659.25, 783.99, 1046.50];
-                            const f = freqs[Math.floor(Math.random() * freqs.length)];
-                            osc.frequency.setValueAtTime(f, now);
-                            osc.connect(g);
-                            g.connect(this.ctx.destination);
-
-                            g.gain.setValueAtTime(0.03, now);
-                            g.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
-                            osc.start(now);
-                            osc.stop(now + 0.025);
-
-                        } else if (type === 'obliterate') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'square';
-                            osc.frequency.setValueAtTime(440, now);
-                            osc.frequency.exponentialRampToValueAtTime(30, now + 0.35);
-                            osc.connect(g);
-                            g.connect(this.ctx.destination);
-
-                            g.gain.setValueAtTime(0.2, now);
-                            g.gain.linearRampToValueAtTime(0.001, now + 0.35);
-                            osc.start(now);
-                            osc.stop(now + 0.35);
-
-                        } else if (type === 'undo') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'square';
-                            osc.frequency.setValueAtTime(987.77, now); // B5
-                            osc.frequency.setValueAtTime(1318.51, now + 0.06); // E6
-                            osc.connect(g);
-                            g.connect(this.ctx.destination);
-
-                            g.gain.setValueAtTime(0.09, now);
-                            g.gain.linearRampToValueAtTime(0.001, now + 0.14);
-                            osc.start(now);
-                            osc.stop(now + 0.14);
-                        }
-                        return;
-                    }
-
-                    // ==========================================
-                    // 🎃 2. 恐怖怪談音效彩蛋 (Horror SFX Mode)
-                    // ==========================================
-                    if (this.soundMode === 'horror') {
-                        if (type === 'pop') {
-                            const osc1 = this.ctx.createOscillator(), osc2 = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc1.type = 'triangle';
-                            osc1.frequency.setValueAtTime(110, now);
-                            osc1.frequency.exponentialRampToValueAtTime(35, now + 0.12);
-                            osc2.type = 'sawtooth';
-                            osc2.frequency.setValueAtTime(65.4, now);
-                            osc2.frequency.linearRampToValueAtTime(58, now + 0.12);
-                            osc1.connect(g); osc2.connect(g); g.connect(this.ctx.destination);
-                            g.gain.setValueAtTime(0.25, now);
-                            g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-                            osc1.start(now); osc2.start(now);
-                            osc1.stop(now + 0.12); osc2.stop(now + 0.12);
-
-                        } else if (type === 'squeak') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'sawtooth';
-                            const baseFreq = 800 + Math.random() * 600;
-                            osc.frequency.setValueAtTime(baseFreq, now);
-                            osc.frequency.linearRampToValueAtTime(baseFreq - 300, now + 0.04);
-                            osc.connect(g); g.connect(this.ctx.destination);
-                            g.gain.setValueAtTime(0.04, now);
-                            g.gain.linearRampToValueAtTime(0.001, now + 0.04);
-                            osc.start(now); osc.stop(now + 0.04);
-
-                        } else if (type === 'obliterate') {
-                            const osc1 = this.ctx.createOscillator(), osc2 = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc1.type = 'sawtooth';
-                            osc1.frequency.setValueAtTime(180, now);
-                            osc1.frequency.exponentialRampToValueAtTime(20, now + 0.6);
-                            osc2.type = 'square';
-                            osc2.frequency.setValueAtTime(90, now);
-                            osc2.frequency.exponentialRampToValueAtTime(15, now + 0.6);
-                            osc1.connect(g); osc2.connect(g); g.connect(this.ctx.destination);
-                            g.gain.setValueAtTime(0.4, now);
-                            g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-                            osc1.start(now); osc2.start(now);
-                            osc1.stop(now + 0.6); osc2.stop(now + 0.6);
-
-                        } else if (type === 'undo') {
-                            const osc = this.ctx.createOscillator();
-                            const g = this.ctx.createGain();
-                            osc.type = 'sine';
-                            osc.frequency.setValueAtTime(90, now);
-                            osc.frequency.exponentialRampToValueAtTime(450, now + 0.15);
-                            osc.connect(g); g.connect(this.ctx.destination);
-                            g.gain.setValueAtTime(0.2, now);
-                            g.gain.linearRampToValueAtTime(0.01, now + 0.15);
-                            osc.start(now); osc.stop(now + 0.15);
-                        }
-                        return;
-                    }
-
-                    // ==========================================
-                    // 🌟 3. 原版經典音效 (Classic Mode)
-                    // ==========================================
                     const osc = this.ctx.createOscillator();
                     const g = this.ctx.createGain();
-                    osc.connect(g); g.connect(this.ctx.destination);
+                    osc.connect(g);
+                    g.connect(this.ctx.destination);
 
-                    if (type === 'pop') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(400, now);
-                        osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
-                        g.gain.setValueAtTime(0.15, now);
-                        g.gain.linearRampToValueAtTime(0.01, now + 0.05);
-                        osc.start(now); osc.stop(now + 0.05);
-                    } else if (type === 'squeak') {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(600 + Math.random() * 200, now);
-                        g.gain.setValueAtTime(0.03, now);
-                        g.gain.linearRampToValueAtTime(0.001, now + 0.03);
-                        osc.start(now); osc.stop(now + 0.03);
-                    } else if (type === 'obliterate') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(300, now);
-                        osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-                        g.gain.setValueAtTime(0.3, now);
-                        g.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                        osc.start(now); osc.stop(now + 0.3);
-                    } else if (type === 'undo') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(600, now);
-                        osc.frequency.exponentialRampToValueAtTime(250, now + 0.08);
-                        g.gain.setValueAtTime(0.15, now);
-                        g.gain.linearRampToValueAtTime(0.01, now + 0.08);
-                        osc.start(now); osc.stop(now + 0.08);
+                    switch (this.soundTheme) {
+                        case 'classic':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(type === 'pop' ? 523 : (type === 'undo' ? 659 : 440), now);
+                            if (type === 'pop') osc.frequency.exponentialRampToValueAtTime(1046, now + 0.06);
+                            g.gain.setValueAtTime(0.12, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.06);
+                            break;
+                        case 'woh_default':
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(type === 'pop' ? 85 : 110, now);
+                            osc.frequency.exponentialRampToValueAtTime(25, now + 0.18);
+                            g.gain.setValueAtTime(0.3, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.18);
+                            break;
+                        case 'crimson_cult':
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(type === 'pop' ? 130 : 70, now);
+                            osc.frequency.exponentialRampToValueAtTime(18, now + 0.35);
+                            g.gain.setValueAtTime(0.35, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.35);
+                            break;
+                        case 'midnight_fog':
+                            osc.type = 'sawtooth';
+                            const fogFreq = 900 + Math.random() * 300;
+                            osc.frequency.setValueAtTime(fogFreq, now);
+                            osc.frequency.linearRampToValueAtTime(fogFreq - 400, now + 0.05);
+                            g.gain.setValueAtTime(0.05, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.05);
+                            break;
+                        case 'dark_manga':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(1400 + Math.random() * 200, now);
+                            g.gain.setValueAtTime(0.03, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.025);
+                            break;
+                        case 'pc98':
+                            osc.type = 'square';
+                            const pc98Freqs = type === 'pop' ? [880, 1760] : [523, 659, 783];
+                            osc.frequency.setValueAtTime(pc98Freqs[0], now);
+                            if (pc98Freqs[1]) osc.frequency.setValueAtTime(pc98Freqs[1], now + 0.03);
+                            g.gain.setValueAtTime(0.07, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.06);
+                            break;
+                        case 'gameboy':
+                            osc.type = 'square';
+                            osc.frequency.setValueAtTime(330 + Math.floor(Math.random() * 4) * 110, now);
+                            g.gain.setValueAtTime(0.06, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.035);
+                            break;
+                        case 'retro':
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(340, now);
+                            osc.frequency.linearRampToValueAtTime(260, now + 0.05);
+                            g.gain.setValueAtTime(0.06, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.05);
+                            break;
+                        case 'cyber':
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(1500, now);
+                            osc.frequency.exponentialRampToValueAtTime(3000, now + 0.04);
+                            g.gain.setValueAtTime(0.06, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                            break;
+                        case 'blueprint':
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(920, now);
+                            osc.frequency.setValueAtTime(1318, now + 0.02);
+                            g.gain.setValueAtTime(0.06, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.04);
+                            break;
+                        case 'sepia_parchment':
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(246, now);
+                            osc.frequency.linearRampToValueAtTime(220, now + 0.07);
+                            g.gain.setValueAtTime(0.08, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.07);
+                            break;
+                        default:
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(440, now);
+                            g.gain.setValueAtTime(0.1, now);
+                            g.gain.linearRampToValueAtTime(0.001, now + 0.05);
+                            break;
                     }
+
+                    osc.start(now);
+                    osc.stop(now + 0.15);
                 } catch (e) { }
             }
             toggleSoundMenu() {
@@ -1728,7 +1663,7 @@
         const WigglyAudio = new AudioModule();
 
         // =========================================================================
-        // MODULE 3: WigglyHistory.js (支援多幀與 14 色色盤快照復原系統)
+        // MODULE 3: WigglyHistory.js (快照復原系統)
         // =========================================================================
         class HistoryModule {
             constructor() {
@@ -1813,14 +1748,13 @@
         const WigglyHistory = new HistoryModule();
 
         // =========================================================================
-        // MODULE 4: WigglyEngine.js (多幀動態時間軸 + 單一底色 + 洋蔥皮渲染引擎)
+        // MODULE 4: WigglyEngine.js (多幀時間軸 + 渲染核心引擎)
         // =========================================================================
         class EngineModule {
             constructor() {
                 this.width = WigglyConfig.DEFAULT_WIDTH;
                 this.height = WigglyConfig.DEFAULT_HEIGHT;
 
-                // 動態時間軸核心狀態
                 this.animMode = 'wiggle';
                 this.activeEditIndex = 0;
                 this.currentFrameIndex = 0;
@@ -1829,11 +1763,9 @@
                 this.lastFrameTime = performance.now();
                 this.onionSkinEnabled = false;
 
-                // ★ 單一背景色與前景色配置
                 this.canvasBgColor = '#FFFFFF';
                 this.foregroundColor = '#000000';
 
-                // 動態影格陣列 (可自由增減 1 ~ 32 幀)
                 this.baseFrameCanvases = [];
                 this.baseFrameCtxs = [];
                 this.markerPaletteMaps = [];
@@ -1916,24 +1848,18 @@
                 WigglyStorage.triggerAutoSave();
             }
 
-            // ★ 簡化後的單一背景色設定
             setCanvasBackground(c) {
                 if (!c) return;
                 this.canvasBgColor = c;
                 const p = document.getElementById('bg-color-picker'); if (p) p.value = this.canvasBgColor;
                 const txt = document.getElementById('bg-hex-text'); if (txt) txt.innerText = this.canvasBgColor.toUpperCase();
                 const sw = document.getElementById('canvas-bg-swatch'); if (sw) sw.style.backgroundColor = this.canvasBgColor;
-                const swPrimary = document.getElementById('canvas-bg-swatch-primary'); if (swPrimary) swPrimary.style.backgroundColor = this.canvasBgColor;
 
                 this.renderMainCanvas();
                 if (window.WigglyTimeline) WigglyTimeline.renderFilmstrip();
                 WigglyStorage.triggerAutoSave();
             }
 
-            // 相容性安全空函式 (避免舊按鈕點擊時報錯)
-            switchBackgroundSlot(slot) { }
-
-            // 前景線稿顏色設定
             setCanvasForeground(c) {
                 if (!c) return;
                 this.foregroundColor = c;
@@ -1941,7 +1867,6 @@
                 const txt = document.getElementById('fg-hex-text'); if (txt) txt.innerText = c.toUpperCase();
                 const sw = document.getElementById('canvas-fg-swatch'); if (sw) sw.style.backgroundColor = c;
 
-                // 同步更新 Ribbon 上的作用中展示色（若非麥克筆狀態）
                 const activeSwatch = document.getElementById('color-active-swatch');
                 if (activeSwatch && window.WigglyTools && !WigglyConfig.markerKeys.includes(WigglyTools.currentTool)) {
                     activeSwatch.style.backgroundColor = c;
@@ -1977,7 +1902,6 @@
                 this.markerRenderCtx.putImageData(imgD, 0, 0);
             }
 
-            // 洋蔥皮透視殘影渲染
             renderOnionSkinLayer(targetFrameIdx, tintColor, opacity) {
                 if (targetFrameIdx < 0 || targetFrameIdx >= this.totalFrames) return;
                 const lineCanvas = this.baseFrameCanvases[targetFrameIdx];
@@ -2005,7 +1929,6 @@
                 this.visibleCtx.fillStyle = this.canvasBgColor;
                 this.visibleCtx.fillRect(0, 0, this.width, this.height);
 
-                // 1. 若非播放中且開啟洋蔥皮，先疊加前一格 (淡藍) 與後一格 (淡綠) 殘影
                 if (!this.isPlaying && this.onionSkinEnabled && this.animMode === 'timeline') {
                     if (this.activeEditIndex > 0) {
                         this.renderOnionSkinLayer(this.activeEditIndex - 1, '#0088FF', 0.35);
@@ -2015,11 +1938,9 @@
                     }
                 }
 
-                // 2. 渲染當前影格的調色盤層
                 this.renderMarkerLayer(renderIdx);
                 this.visibleCtx.drawImage(this.markerRenderCanvas, 0, 0);
 
-                // 3. 渲染當前影格的前景線稿層
                 const lineMaskCanvas = this.baseFrameCanvases[renderIdx];
                 if (lineMaskCanvas) {
                     this.tintCtx.save();
@@ -2034,7 +1955,6 @@
                     this.visibleCtx.drawImage(this.tintCanvas, 0, 0);
                 }
 
-                // 4. 選取中邊界動態指示線
                 if (WigglyTools.selectionState && (WigglyTools.selectionState.active || WigglyTools.selectionState.isSelecting)) {
                     WigglyTools.renderSelectionOverlay(this.visibleCtx, renderIdx);
                 }
@@ -2166,7 +2086,7 @@
         const WigglyEngine = new EngineModule();
 
         // =========================================================================
-        // MODULE 4.5: WigglyTimeline.js (膠捲時間軸面板與影格排序控制器)
+        // MODULE 4.5: WigglyTimeline.js (膠捲時間軸面板控制器)
         // =========================================================================
         class TimelineModule {
             constructor() {
@@ -2292,14 +2212,8 @@
 
             setFPS(fpsVal) {
                 WigglyEngine.fps = parseInt(fpsVal, 10) || 10;
-                this.syncFPSRadioUI(WigglyEngine.fps);
                 WigglyAudio.play('pop');
                 WigglyStorage.triggerAutoSave();
-            }
-
-            syncFPSRadioUI(fpsVal) {
-                const radio = document.querySelector(`input[name="tl_fps"][value="${fpsVal}"]`);
-                if (radio) radio.checked = true;
             }
 
             toggleOnionSkin() {
@@ -2536,7 +2450,7 @@
         const WigglyTimeline = new TimelineModule();
 
         // =========================================================================
-        // MODULE 5: WigglyViewport.js (Pinch-to-zoom & Pan 防跳動與誤觸優化版)
+        // MODULE 5: WigglyViewport.js (Pinch-to-zoom & Pan 模組)
         // =========================================================================
         class ViewportModule {
             constructor() {
@@ -2629,13 +2543,11 @@
                     if (WigglyTools.currentTool === 'hand' || this.isSpaceDown) this.resetZoom();
                 });
 
-                // 雙指觸控縮放與平移
                 container.addEventListener('touchstart', e => {
                     if (e.touches.length === 2) {
                         e.preventDefault();
                         this.isPinching = true;
 
-                        // 雙指手勢觸發時，自動抹除第一指可能產生的誤觸下筆
                         if (WigglyTools.isDrawing) {
                             WigglyTools.isDrawing = false;
                             WigglyHistory.undo();
@@ -2690,7 +2602,7 @@
         const WigglyViewport = new ViewportModule();
 
         // =========================================================================
-        // MODULE 6: WigglyTools.js (Drawing, Selection & Ribbon Color Sync)
+        // MODULE 6: WigglyTools.js (繪圖與選取工具模組)
         // =========================================================================
         class ToolsModule {
             constructor() {
@@ -2933,7 +2845,6 @@
                 });
             }
 
-            // 選取與繪圖核心邏輯 (保持原有實作)
             isInsideSelection(x, y) {
                 const s = this.selectionState;
                 return s.active && x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
@@ -3328,7 +3239,7 @@
         const WigglyTools = new ToolsModule();
 
         // =========================================================================
-        // MODULE 7: WigglyStorage.js (純 IndexedDB 大容量儲存)
+        // MODULE 7: WigglyStorage.js (純 IndexedDB 儲存)
         // =========================================================================
         const WigglyStorage = {
             DB_NAME: 'PIKODOO_DB',
@@ -3562,7 +3473,7 @@
         };
 
         // =========================================================================
-        // MODULE 8: WigglyUI.js (DOM, Dialogs, Themes & Ribbon Popovers)
+        // MODULE 8: WigglyUI.js (DOM, Popovers & 11 主題獨立音色對應)
         // =========================================================================
         const WigglyUI = {
             currentTheme: 'classic',
@@ -3686,7 +3597,7 @@
                 this.isMenuActive = false; this.currentMenuId = null; this.closeAllMenusOnly();
             },
 
-            // ★ 響應式 Ribbon 浮動面板控制
+            // 響應式 Ribbon 浮動面板控制
             toggleRibbonPopover(popoverId, event) {
                 if (event) {
                     event.stopPropagation();
@@ -3694,11 +3605,13 @@
                 }
                 const popover = document.getElementById(popoverId);
                 if (!popover) return;
+                
                 const isOpen = !popover.classList.contains('hidden');
                 this.closeAllRibbonPopovers();
+
                 if (!isOpen) {
                     popover.classList.remove('hidden');
-                    const btn = popover.parentElement.querySelector('.retro-btn');
+                    const btn = event ? event.currentTarget : null;
                     if (btn) btn.classList.add('active');
                     WigglyAudio.play('pop');
                 }
@@ -3768,47 +3681,47 @@
             applyPresetPalette(presetKey) {
                 const presets = {
                     classic: {
-                        bg: '#FFFFFF', fg: '#000000',
+                        bg: '#FFFFFF', fg: '#000000', sound: 'classic',
                         m: ['#FF3366', '#FF6600', '#FFCC00', '#33CC33', '#00CCCC', '#3366FF', '#9933FF', '#FF66B2', '#FF9966', '#FFFF66', '#99FF99', '#66FFFF', '#99CCFF', '#CC99FF']
                     },
                     woh_default: {
-                        bg: '#EAE6DF', fg: '#1C1A18',
+                        bg: '#EAE6DF', fg: '#1C1A18', sound: 'woh_default',
                         m: ['#D32F2F', '#C2185B', '#7B1FA2', '#512DA8', '#303F9F', '#1976D2', '#0288D1', '#0097A7', '#00796B', '#388E3C', '#689F38', '#AFB42B', '#FBC02D', '#E65100']
                     },
                     crimson_cult: {
-                        bg: '#1A0D0D', fg: '#FFEBEB',
+                        bg: '#1A0D0D', fg: '#FFEBEB', sound: 'crimson_cult',
                         m: ['#4A0000', '#660000', '#800000', '#990000', '#B30000', '#CC0000', '#E60000', '#FF1A1A', '#FF3333', '#FF4D4D', '#FF6666', '#FF8080', '#FF9999', '#FFB3B3']
                     },
                     midnight_fog: {
-                        bg: '#161924', fg: '#D8E2EC',
+                        bg: '#161924', fg: '#D8E2EC', sound: 'midnight_fog',
                         m: ['#1F2430', '#2B3242', '#374154', '#47546C', '#586784', '#697B9C', '#7B8FB4', '#8DA3CC', '#9FB7E4', '#ADC3ED', '#BBD0F5', '#C9DCFC', '#D8E7FD', '#E6F0FE']
                     },
                     dark_manga: {
-                        bg: '#F2F2F2', fg: '#0F0F0F',
+                        bg: '#F2F2F2', fg: '#0F0F0F', sound: 'dark_manga',
                         m: ['#1A1A1A', '#2B2B2B', '#3D3D3D', '#4E4E4E', '#606060', '#717171', '#838383', '#949494', '#A6A6A6', '#B7B7B7', '#C9C9C9', '#DADADA', '#EBEBEB', '#FFFFFF']
                     },
                     pc98: {
-                        bg: '#000000', fg: '#FFFFFF',
+                        bg: '#000000', fg: '#FFFFFF', sound: 'pc98',
                         m: ['#000000', '#0000AA', '#00AA00', '#00AAAA', '#AA0000', '#AA00AA', '#AA5500', '#AAAAAA', '#555555', '#5555FF', '#55FF55', '#55FFFF', '#FF5555', '#FFFF55']
                     },
                     gameboy: {
-                        bg: '#9BBC0F', fg: '#0F380F',
+                        bg: '#9BBC0F', fg: '#0F380F', sound: 'gameboy',
                         m: ['#0F380F', '#194419', '#235023', '#306230', '#427330', '#548430', '#679620', '#7AA71F', '#8BAC0F', '#94B40F', '#9BBC0F', '#A8C71E', '#B5D22E', '#C2DD3E']
                     },
                     retro: {
-                        bg: '#FDF6E3', fg: '#2B261F',
+                        bg: '#FDF6E3', fg: '#2B261F', sound: 'retro',
                         m: ['#D97070', '#E88D8D', '#F2AFAF', '#7094D9', '#8DAEE8', '#AFC7F2', '#D9B870', '#E8D48D', '#F2E4AF', '#70D994', '#8DE8AE', '#AFECC7', '#B870D9', '#C48DE8']
                     },
                     cyber: {
-                        bg: '#121218', fg: '#FFFFFF',
+                        bg: '#121218', fg: '#FFFFFF', sound: 'cyber',
                         m: ['#FF0055', '#FF007F', '#FF00AA', '#BF00FF', '#7F00FF', '#0055FF', '#00A2FF', '#00F0FF', '#00FFB2', '#39FF14', '#CCFF00', '#FFE600', '#FF9900', '#FF5F1F']
                     },
                     blueprint: {
-                        bg: '#1B3B6F', fg: '#FFFFFF',
+                        bg: '#1B3B6F', fg: '#FFFFFF', sound: 'blueprint',
                         m: ['#152D54', '#1D3F75', '#245197', '#2C63B8', '#3475D9', '#4A86DE', '#6097E3', '#76A8E8', '#8CB9ED', '#A2CAF2', '#B8DBF7', '#CEECFC', '#E4F4FE', '#FFFFFF']
                     },
                     sepia_parchment: {
-                        bg: '#EFE5D0', fg: '#3E2723',
+                        bg: '#EFE5D0', fg: '#3E2723', sound: 'sepia_parchment',
                         m: ['#3E2723', '#4E342E', '#5D4037', '#6D4C41', '#795548', '#8D6E63', '#A1887F', '#BCAAA4', '#C68B59', '#D7CCC8', '#D7CCC8', '#EFEBE9', '#F5F2EB', '#FAF8F5']
                     }
                 };
@@ -3816,16 +3729,7 @@
                 const p = presets[presetKey];
                 if (!p) return;
 
-                const horrorPresets = ['woh_default', 'crimson_cult', 'midnight_fog'];
-                const hardwarePresets = ['pc98', 'gameboy', 'virtual_boy', 'amber_crt', 'green_phosphor', 'cga_mode'];
-
-                if (horrorPresets.includes(presetKey)) {
-                    WigglyAudio.setSoundMode('horror');
-                } else if (hardwarePresets.includes(presetKey)) {
-                    WigglyAudio.setSoundMode('retro_hardware');
-                } else {
-                    WigglyAudio.setSoundMode('classic');
-                }
+                WigglyAudio.setSoundTheme(p.sound || 'classic');
 
                 WigglyEngine.setCanvasBackground(p.bg);
                 WigglyEngine.setCanvasForeground(p.fg);
@@ -3883,12 +3787,10 @@
                 }
             },
             bindGlobalEvents() {
-                // 同時支援滑鼠點擊與行動端觸控
                 document.addEventListener('pointerdown', e => {
                     if (!e.target.closest('.menu-dropdown-container')) {
                         this.closeAllMenus();
                     }
-                    // 點擊 Ribbon 以外的區域才收起浮動面板，且排除點擊按鈕本身時的衝突
                     if (!e.target.closest('.ribbon-bar') && !e.target.closest('.ribbon-popover')) {
                         this.closeAllRibbonPopovers();
                     }
@@ -3904,7 +3806,7 @@
         };
 
         // =========================================================================
-        // MODULE 9: Application Bootstrap (非同步等待 IndexedDB 完整版)
+        // MODULE 9: Application Bootstrap
         // =========================================================================
         class ApplicationModule {
             async init() {

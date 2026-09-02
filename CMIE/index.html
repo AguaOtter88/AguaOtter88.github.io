@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生物巢穴：極致沉浸版 (Critter Mound: Immersive Evolution)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Tone.js for Procedural Audio and BGM -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            mound: {
+              50: '#fbf7ee',
+              100: '#f4ebd4',
+              200: '#ebd6ad',
+              700: '#8c591b',
+              800: '#633d16',
+              900: '#3d240e',
+              950: '#1e1106'
+            },
+            soil: '#2d221b',
+            grass: '#10b981',
+            royal: '#d97706'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(180, 140, 90, 0.4); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(180, 140, 90, 0.7); }
+    
+    .trait-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .trait-expressed {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.4));
+      border: 1px solid rgba(245, 158, 11, 0.8);
+      color: #fde047;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+    }
+    .trait-recessive {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px dashed rgba(148, 163, 184, 0.4);
+      color: #94a3b8;
+    }
+
+    /* Mobile-friendly touch & smooth scrolling */
+    html {
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .touch-pan-x {
+      touch-action: pan-x;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 640px) {
+      .stat-badge-text {
+        font-size: 0.65rem;
+        line-height: 0.85rem;
+      }
+      .stat-val-text {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-neutral-950 text-neutral-200 min-h-screen flex flex-col font-sans select-none overflow-x-hidden pb-[env(safe-area-inset-bottom)]">
+
+  <!-- Top Header Navigation & Resources Bar (Responsive RWD) -->
+  <header class="bg-neutral-900/95 backdrop-blur border-b border-neutral-800 sticky top-0 z-40 px-3 sm:px-4 py-2 sm:py-2.5 shadow-xl">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
+      <!-- Title & Main Info -->
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-500 shadow-inner shrink-0">
+            <i data-lucide="bug" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-sm sm:text-base font-bold text-amber-400 tracking-wide flex items-center gap-1.5 truncate">
+              生物巢穴 <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono border border-purple-500/30">v3.5 RWD</span>
+            </h1>
+            <p class="text-[10px] sm:text-[11px] text-neutral-400 truncate hidden xs:block">孟德爾遺傳學・自動化分派・遠征戰役</p>
+          </div>
+        </div>
+
+        <!-- Audio & System Controls (Visible on mobile right next to title) -->
+        <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+          <button onclick="toggleMusic()" id="btn-music" title="BGM 開關" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 transition flex items-center justify-center min-w-[32px] min-h-[32px]">
+            <i data-lucide="music" id="icon-music" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+          <button onclick="toggleAudio()" id="btn-sound" title="音效 SFX 開關" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 transition flex items-center justify-center min-w-[32px] min-h-[32px]">
+            <i data-lucide="volume-2" id="icon-sound" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+          <button onclick="togglePauseGame()" id="btn-pause" title="暫停/繼續遊戲" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition min-w-[32px] min-h-[32px]">
+            <i data-lucide="pause" id="icon-pause" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+          <button onclick="openModal('modal-codex')" title="40 大基因圖鑑" class="p-1.5 sm:p-2 rounded-lg bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 border border-purple-700/50 transition flex items-center gap-1 text-[11px] sm:text-xs px-2 sm:px-2.5 min-h-[32px]">
+            <i data-lucide="book-open" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-400"></i> <span class="hidden xs:inline">圖鑑 (40)</span>
+          </button>
+          <button onclick="openModal('modal-settings')" title="系統設定與存檔" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition min-w-[32px] min-h-[32px]">
+            <i data-lucide="settings" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Resource Counters Bar (Responsive Scroll / Wrap) -->
+      <div class="flex items-center gap-1.5 sm:gap-3 overflow-x-auto no-scrollbar touch-pan-x py-0.5 text-xs sm:text-sm">
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
+          <i data-lucide="dna" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400"></i>
+          <div>
+            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">世代</span>
+            <span id="res-gen" class="font-bold text-purple-300 font-mono text-xs sm:text-sm">Gen 1</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
+          <i data-lucide="layers" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400"></i>
+          <div>
+            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">草皮 (Sod)</span>
+            <div class="flex items-baseline gap-1">
+              <span id="res-sod" class="font-bold text-emerald-300 font-mono text-xs sm:text-sm">20</span>
+              <span id="res-sod-rate" class="text-[9px] sm:text-[10px] text-emerald-500">(+0.0/s)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
+          <i data-lucide="mountain" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600"></i>
+          <div>
+            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">泥土</span>
+            <span id="res-dirt" class="font-bold text-amber-200 font-mono text-xs sm:text-sm">0</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
+          <i data-lucide="sprout" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-lime-400"></i>
+          <div>
+            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">草料</span>
+            <span id="res-grass" class="font-bold text-lime-200 font-mono text-xs sm:text-sm">0</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-purple-950/50 px-2.5 py-1 sm:py-1.5 rounded-lg border border-purple-700/60 shadow-inner shrink-0">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 animate-pulse"></i>
+          <div>
+            <span class="text-[9px] sm:text-[10px] text-purple-300 block leading-tight">DNA</span>
+            <span id="res-dna" class="font-bold text-purple-200 font-mono text-xs sm:text-sm">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs (Touch-friendly & Fluid) -->
+  <nav class="bg-neutral-900 border-b border-neutral-800 px-3 sm:px-4">
+    <div class="max-w-7xl mx-auto flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-pan-x py-2">
+      <button onclick="switchTab('tab-hatchery')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-amber-400 bg-neutral-800 border-b-2 border-amber-500 whitespace-nowrap" data-target="tab-hatchery">
+        <i data-lucide="egg" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 王室孵化室
+      </button>
+      <button onclick="switchTab('tab-workers')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-workers">
+        <i data-lucide="pickaxe" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 殖民微觀物流 (<span id="tab-worker-count">0</span>)
+      </button>
+      <button onclick="switchTab('tab-army')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-army">
+        <i data-lucide="swords" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400"></i> 實況遠征戰役 (<span id="tab-soldier-count">0</span>)
+      </button>
+      <button onclick="switchTab('tab-talents')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-talents">
+        <i data-lucide="git-branch" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400"></i> 演化天賦樹 (<span id="tab-talent-points">3 點</span>)
+      </button>
+      <button onclick="switchTab('tab-auto')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-auto">
+        <i data-lucide="sliders" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 自動化管線 <span id="tab-auto-badge" class="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">未激活</span>
+      </button>
+      <button onclick="switchTab('tab-achievements')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-achievements">
+        <i data-lucide="trophy" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 成就里程碑 (<span id="achieve-count">0/10</span>)
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Container (Fluid & Responsive Spacing) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 md:p-6 overflow-y-auto space-y-5 sm:space-y-6">
+
+    <!-- TAB 1: 王室孵化室 -->
+    <div id="tab-hatchery" class="tab-content space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Queen Panel -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="p-2 rounded-lg bg-pink-500/20 text-pink-400 border border-pink-500/30">
+                <i data-lucide="crown" class="w-5 h-5"></i>
+              </span>
+              <div>
+                <h2 class="text-base font-bold text-neutral-100 flex items-center gap-1.5">蟻后 (Queen)</h2>
+                <span id="queen-subtitle" class="text-xs text-neutral-400 font-mono">第 1 代 創始之后</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-neutral-400 block">綜合評分</span>
+              <span id="queen-score" class="text-xl font-bold font-mono text-pink-400">25.0</span>
+            </div>
+          </div>
+          <div id="queen-stats-grid" class="grid grid-cols-5 gap-2 my-3 text-center"></div>
+          <div class="text-xs text-neutral-400 bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
+            <div class="font-semibold text-neutral-300 mb-1.5 flex items-center gap-1.5">
+              <i data-lucide="dna" class="w-3.5 h-3.5 text-pink-400"></i> 遺傳顯隱性基因組：
+            </div>
+            <div id="queen-traits-container" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+
+        <!-- King Panel -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2.5">
+              <span class="p-2 rounded-lg bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                <i data-lucide="crown" class="w-5 h-5"></i>
+              </span>
+              <div>
+                <h2 class="text-base font-bold text-neutral-100 flex items-center gap-1.5">蟻王 (King)</h2>
+                <span id="king-subtitle" class="text-xs text-neutral-400 font-mono">第 1 代 創始之王</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-neutral-400 block">綜合評分</span>
+              <span id="king-score" class="text-xl font-bold font-mono text-blue-400">25.0</span>
+            </div>
+          </div>
+          <div id="king-stats-grid" class="grid grid-cols-5 gap-2 my-3 text-center"></div>
+          <div class="text-xs text-neutral-400 bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
+            <div class="font-semibold text-neutral-300 mb-1.5 flex items-center gap-1.5">
+              <i data-lucide="dna" class="w-3.5 h-3.5 text-blue-400"></i> 遺傳顯隱性基因組：
+            </div>
+            <div id="king-traits-container" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breeding Cycle Bar -->
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+        <div class="flex-1 w-full">
+          <div class="flex justify-between text-xs mb-1.5">
+            <span class="text-neutral-400 font-medium flex items-center gap-1.5">
+              <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500 animate-pulse"></i> 繁育進度 (受敏捷與費洛蒙基因動態縮時)
+            </span>
+            <span id="breeding-time-text" class="text-neutral-300 font-mono font-semibold">0.0s / 10.0s</span>
+          </div>
+          <div class="w-full bg-neutral-950 h-3.5 rounded-full overflow-hidden border border-neutral-800">
+            <div id="breeding-progress" class="bg-gradient-to-r from-amber-600 via-amber-500 to-yellow-400 h-full w-0 transition-all duration-100"></div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+          <button onclick="boostMating()" id="btn-boost" class="w-full md:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 active:scale-95 text-neutral-950 font-bold rounded-lg text-xs transition flex items-center justify-center gap-2 shadow-md">
+            <i data-lucide="zap" class="w-4 h-4"></i> 刺激交配 (<span id="boost-count">10.0</span> / <span id="boost-max">10.0</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- Eggs in Hatchery -->
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-lg">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-neutral-800">
+          <div>
+            <h3 class="text-sm font-bold text-neutral-200 flex items-center gap-2">
+              <i data-lucide="box" class="w-4 h-4 text-amber-500"></i> 保溫孵化槽
+              <span id="hatchery-capacity-badge" class="px-2.5 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono text-xs border border-neutral-700">0 / 4</span>
+            </h3>
+            <p class="text-xs text-neutral-400 mt-0.5">幼蟲遵循連續浮點遺傳與孟德爾法則；金色為顯性全效，灰色為隱性帶因</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="upgradeHatcheryCapacity()" class="text-xs px-3.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 transition flex items-center gap-1.5 shadow">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-emerald-400"></i> 擴建槽位 (<span id="hatchery-upgrade-cost">50</span> 草皮)
+            </button>
+            <button onclick="cullAllEggs()" class="text-xs px-3.5 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/50 transition">
+              一鍵全數汰除
+            </button>
+          </div>
+        </div>
+        <div id="eggs-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 殖民微觀物流 -->
+    <div id="tab-workers" class="tab-content hidden space-y-6">
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <h2 class="text-base font-bold text-neutral-200">殖民物料吞吐儀表 (Colony Production Flow)</h2>
+          </div>
+          <span class="text-xs text-neutral-400 font-mono">即時平衡指標</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 text-center">
+          <div class="bg-neutral-950 p-3 rounded-lg border border-neutral-800/80">
+            <div class="text-[11px] text-neutral-400 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span> 泥土開採量
+            </div>
+            <div id="flow-dirt-rate" class="text-base font-bold font-mono text-amber-400 mt-1">0.0 /s</div>
+          </div>
+          <div class="bg-neutral-950 p-3 rounded-lg border border-neutral-800/80">
+            <div class="text-[11px] text-neutral-400 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-lime-500"></span> 草料收割量
+            </div>
+            <div id="flow-grass-rate" class="text-base font-bold font-mono text-lime-400 mt-1">0.0 /s</div>
+          </div>
+          <div class="bg-neutral-950 p-3 rounded-lg border border-neutral-800/80">
+            <div class="text-[11px] text-neutral-400 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-blue-500"></span> 搬運吞吐量
+            </div>
+            <div id="flow-carry-rate" class="text-base font-bold font-mono text-blue-400 mt-1">0.0 /s</div>
+          </div>
+          <div class="bg-neutral-950 p-3 rounded-lg border border-neutral-800/80">
+            <div class="text-[11px] text-neutral-400 flex items-center justify-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 草皮淨產能
+            </div>
+            <div id="flow-factory-rate" class="text-base font-bold font-mono text-emerald-400 mt-1">0.0 /s</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Facilities -->
+      <div>
+        <h3 class="text-sm font-bold text-amber-400 mb-3 flex items-center gap-2">
+          <i data-lucide="hammer" class="w-4 h-4"></i> 基礎物料與製造設施 (Core Logistics)
+        </h3>
+        <div id="core-facilities-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+      </div>
+
+      <!-- Advanced Facilities -->
+      <div class="pt-4 border-t border-neutral-800">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-purple-400 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i> 後期特化專家建築
+          </h3>
+          <span id="adv-fac-status-badge" class="text-xs text-neutral-400 font-mono">工人上限 = 設施等級</span>
+        </div>
+        <div id="advanced-facilities-container">
+          <div id="advanced-facilities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: 實況遠征戰役 -->
+    <div id="tab-army" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left: Campaign Exploration Control -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-bold text-neutral-100 flex items-center gap-2">
+                  <i data-lucide="swords" class="w-5 h-5 text-red-400"></i> 遠征軍事指揮部
+                </h2>
+                <span id="current-zone-label" class="text-xs text-neutral-400 font-mono">當前目標: 蟋蟀聚落 (Crickets)</span>
+              </div>
+              <span id="battle-status-badge" class="px-2.5 py-1 rounded bg-neutral-800 text-neutral-300 text-xs font-mono font-semibold">
+                待命中
+              </span>
+            </div>
+
+            <!-- Exploration Progress -->
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-neutral-400">領地探索進度</span>
+                <span id="war-map-progress-text" class="text-neutral-300 font-mono font-bold">0.0%</span>
+              </div>
+              <div class="w-full bg-neutral-950 h-3 rounded-full overflow-hidden border border-neutral-800">
+                <div id="war-map-progress-bar" class="bg-gradient-to-r from-red-600 to-amber-500 h-full w-0 transition-all duration-100"></div>
+              </div>
+            </div>
+
+            <!-- War Toggle Button -->
+            <button onclick="toggleWarState()" id="btn-war-toggle" class="w-full py-3 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg">
+              <i data-lucide="sword" class="w-4 h-4"></i> 發動全面進攻
+            </button>
+          </div>
+
+          <!-- Target Selection -->
+          <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow space-y-3">
+            <h3 class="text-sm font-bold text-neutral-200">選擇征伐目標領地</h3>
+            <div id="campaign-targets" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+          </div>
+
+          <!-- Battle Log -->
+          <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow space-y-3">
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-2">
+              <h3 class="text-sm font-bold text-neutral-200 flex items-center gap-2">
+                <i data-lucide="scroll-text" class="w-4 h-4 text-neutral-400"></i> 前線戰報日誌
+              </h3>
+              <button onclick="clearCombatLog()" class="text-xs text-neutral-400 hover:text-neutral-200">清空紀錄</button>
+            </div>
+            <div id="battle-log" class="h-44 overflow-y-auto space-y-1.5 font-mono text-xs text-neutral-400 bg-neutral-950/70 p-3 rounded-lg border border-neutral-800">
+              <div class="text-neutral-500">部隊整裝待發，尚未進入敵對領域。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Army Roster & Officers -->
+        <div class="space-y-6">
+          <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow space-y-4">
+            <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+              <div>
+                <h3 class="font-bold text-sm text-neutral-100 flex items-center gap-2">
+                  <i data-lucide="shield" class="w-4 h-4 text-amber-400"></i> 巢穴衛隊軍營
+                </h3>
+                <span id="army-capacity-badge" class="text-xs font-mono text-neutral-400">0 / 6 兵員</span>
+              </div>
+              <button onclick="upgradeBarracksCapacity()" class="text-xs px-2.5 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-amber-300 border border-neutral-700">
+                擴建 (<span id="cost-barracks">300</span> 草皮)
+              </button>
+            </div>
+
+            <!-- Officers -->
+            <div class="space-y-2 text-xs">
+              <div class="bg-neutral-950 p-2.5 rounded border border-neutral-800 flex justify-between items-center">
+                <span class="text-amber-400 font-bold">👑 將軍 (首位)</span>
+                <span id="officer-general" class="font-mono text-neutral-300 text-[11px]">尚未任命</span>
+              </div>
+              <div class="bg-neutral-950 p-2.5 rounded border border-neutral-800 flex justify-between items-center">
+                <span class="text-blue-400 font-bold">⚡ 斥候 (次位)</span>
+                <span id="officer-scout" class="font-mono text-neutral-300 text-[11px]">尚未任命</span>
+              </div>
+              <div class="bg-neutral-950 p-2.5 rounded border border-neutral-800 flex justify-between items-center">
+                <span class="text-emerald-400 font-bold">✚ 醫護 (三位)</span>
+                <span id="officer-medic" class="font-mono text-neutral-300 text-[11px]">尚未任命</span>
+              </div>
+            </div>
+
+            <!-- Soldiers List -->
+            <div class="pt-2 border-t border-neutral-800">
+              <div class="text-xs font-bold text-neutral-300 mb-2">現役士兵名冊</div>
+              <div id="soldiers-list" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 演化天賦樹 -->
+    <div id="tab-talents" class="tab-content hidden space-y-6">
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow">
+        <div class="flex items-center gap-3">
+          <span class="p-2.5 rounded-lg bg-purple-500/20 text-purple-400 border border-purple-500/30">
+            <i data-lucide="git-branch" class="w-5 h-5"></i>
+          </span>
+          <div>
+            <h2 class="text-base font-bold text-neutral-100 flex items-center gap-2">基因演化天賦樹 (Colony Mastery)</h2>
+            <p class="text-xs text-neutral-400">研發自動化管線、專家建築藍圖與雙生孵化，支援隨時 100% 免費重置點數！</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+          <div class="bg-neutral-950 px-4 py-2 rounded-lg border border-purple-700/50 text-right">
+            <span class="text-[10px] text-neutral-400 block">可用 DNA 點數</span>
+            <span id="talent-points-available" class="text-lg font-bold font-mono text-purple-300">3</span>
+          </div>
+          <button onclick="respecTalents()" class="px-4 py-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 text-xs font-medium transition flex items-center gap-2">
+            <i data-lucide="rotate-ccw" class="w-4 h-4 text-amber-400"></i> 免費重置天賦
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Branch 1: 遺傳專精 -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-3 shadow">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
+            <i data-lucide="dna" class="w-4 h-4 text-purple-400"></i>
+            <h3 class="font-bold text-sm text-neutral-200">遺傳與育種專精</h3>
+          </div>
+          <div id="branch-breeding" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Branch 2: 工業專精 -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-3 shadow">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
+            <i data-lucide="hammer" class="w-4 h-4 text-emerald-400"></i>
+            <h3 class="font-bold text-sm text-neutral-200">工業與建築專精</h3>
+          </div>
+          <div id="branch-industry" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Branch 3: 軍事專精 -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-3 shadow">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
+            <i data-lucide="swords" class="w-4 h-4 text-red-400"></i>
+            <h3 class="font-bold text-sm text-neutral-200">軍事與遠征專精</h3>
+          </div>
+          <div id="branch-military" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Branch 4: 自動化專精 -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 space-y-3 shadow">
+          <div class="flex items-center gap-2 pb-2.5 border-b border-neutral-800">
+            <i data-lucide="cpu" class="w-4 h-4 text-cyan-400"></i>
+            <h3 class="font-bold text-sm text-neutral-200">神經網絡與自動化</h3>
+          </div>
+          <div id="branch-automation" class="space-y-2.5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 自動化管線 -->
+    <div id="tab-auto" class="tab-content hidden space-y-6">
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow">
+        <h2 class="text-base font-bold text-neutral-200 flex items-center gap-2 mb-2">
+          <i data-lucide="sliders" class="w-5 h-5 text-cyan-400"></i> 智慧育種自動化管線 (Colony Automation)
+        </h2>
+        <p class="text-xs text-neutral-400 mb-6">各項自動化指令皆須在演化天賦樹的【神經網絡與自動化】專精中研發對應神經節點方可啟用。</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-neutral-200">自動王室加冕 (Auto-Ascend)</h3>
+                <span id="badge-req-ascend" class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800">需天賦解鎖</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="auto-ascend-toggle" class="sr-only peer" onchange="toggleAutoAscend(this.checked)">
+                <div class="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+              </label>
+            </div>
+            <p class="text-xs text-neutral-400">當孵化出總分超越現任蟻王或蟻后的後代時，自動晉升為新王/新后。</p>
+            <div class="text-[11px] text-cyan-400/80 pt-1 border-t border-neutral-900">前置天賦：【王室血脈共鳴 (Royal Resonance)】</div>
+          </div>
+
+          <div class="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-neutral-200">自動適性分派 (Auto-Worker)</h3>
+                <span id="badge-req-worker" class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800">需天賦解鎖</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="auto-worker-toggle" class="sr-only peer" onchange="toggleAutoWorker(this.checked)">
+                <div class="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+            <p class="text-xs text-neutral-400">未晉升王室的後代，將依據專屬詞條與屬性分派至最適生產崗位（若優於現役工人則晉升換血，舊工自動級聯替補）。</p>
+            <div class="text-[11px] text-cyan-400/80 pt-1 border-t border-neutral-900">前置天賦：【本能分派協議 (Instinctive Protocol)】</div>
+          </div>
+
+          <div class="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-neutral-200">滿溢自動物料淨化 (Auto-Purge)</h3>
+                <span id="badge-req-cull" class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800">需天賦解鎖</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="auto-cull-toggle" class="sr-only peer" onchange="toggleAutoCull(this.checked)">
+                <div class="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+              </label>
+            </div>
+            <p class="text-xs text-neutral-400">當孵化槽已滿且全設施皆無法勝任時，自動將多餘幼蟲安全分解為泥土、草料與草皮。</p>
+            <div class="text-[11px] text-cyan-400/80 pt-1 border-t border-neutral-900">前置天賦：【自動物料淨化 (Bio-Purge)】</div>
+          </div>
+
+          <div class="bg-neutral-950 p-4 rounded-xl border border-neutral-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-neutral-200">神經刺激自動脈衝 (Auto-Boost)</h3>
+                <span id="badge-req-boost" class="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800">需天賦解鎖</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="auto-boost-toggle" class="sr-only peer" onchange="toggleAutoBoost(this.checked)">
+                <div class="w-9 h-5 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyan-600"></div>
+              </label>
+            </div>
+            <p class="text-xs text-neutral-400">刺激交配能量蓄滿至 1.0 點以上時，自動觸發即時交配，徹底解放手動點擊。</p>
+            <div class="text-[11px] text-cyan-400/80 pt-1 border-t border-neutral-900">前置天賦：【神經刺激反射 (Synaptic Pulse)】</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: 成就里程碑 -->
+    <div id="tab-achievements" class="tab-content hidden space-y-6">
+      <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow">
+        <h2 class="text-base font-bold text-neutral-200 flex items-center gap-2 mb-2">
+          <i data-lucide="trophy" class="w-5 h-5 text-amber-400"></i> 生態成就里程碑
+        </h2>
+        <p class="text-xs text-neutral-400 mb-5">達成培育、詞條收集與軍事遠征成就，獲取豐厚基因點數與榮譽。</p>
+        <div id="achievements-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: 15 大基因圖鑑手冊 -->
+  <div id="modal-codex" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-neutral-900 border border-purple-700/50 rounded-xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-neutral-800 flex items-center justify-between bg-neutral-950">
+        <div class="flex items-center gap-2 text-purple-400">
+          <i data-lucide="dna" class="w-5 h-5"></i>
+          <h3 class="font-bold text-sm">孟德爾顯隱性 40 大質變基因圖鑑庫</h3>
+        </div>
+        <button onclick="closeModal('modal-codex')" class="text-neutral-400 hover:text-neutral-200">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-3 text-xs" id="codex-list"></div>
+      <div class="p-3 bg-neutral-950 border-t border-neutral-800 text-right">
+        <button onclick="closeModal('modal-codex')" class="px-4 py-1.5 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition shadow">關閉圖鑑</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 系統設定與存檔管理 -->
+  <div id="modal-settings" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+        <h3 class="font-bold text-sm text-neutral-200 flex items-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4 text-neutral-400"></i> 存檔與系統設定
+        </h3>
+        <button onclick="closeModal('modal-settings')" class="text-neutral-400 hover:text-neutral-200">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <button onclick="saveGameManual()" class="w-full py-2.5 rounded-lg bg-emerald-800/40 hover:bg-emerald-700/50 text-emerald-200 border border-emerald-700/50 font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="save" class="w-4 h-4"></i> 手動立即儲存進度
+        </button>
+        <button onclick="exportSaveData()" class="w-full py-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="download" class="w-4 h-4"></i> 匯出存檔代碼至剪貼簿
+        </button>
+        <button onclick="promptImportData()" class="w-full py-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 font-medium transition flex items-center justify-center gap-2">
+          <i data-lucide="upload" class="w-4 h-4"></i> 匯入存檔代碼
+        </button>
+        <div class="pt-2 border-t border-neutral-800">
+          <button onclick="openModal('modal-confirm-reset')" class="w-full py-2.5 rounded-lg bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/60 font-medium transition flex items-center justify-center gap-2">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> 重置並清除所有存檔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: 自訂重置確認對話框 -->
+  <div id="modal-confirm-reset" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-neutral-900 border border-red-800 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center gap-2 text-red-400">
+        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+        <h3 class="font-bold text-sm">確認重置所有進度？</h3>
+      </div>
+      <p class="text-xs text-neutral-300 leading-relaxed">
+        此操作將徹底清空本地的所有世代紀錄、基因庫、設施與遠征成就，且無法復原！
+      </p>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal('modal-confirm-reset')" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 text-xs">取消</button>
+        <button onclick="executeResetGame()" class="px-3.5 py-1.5 rounded bg-red-600 hover:bg-red-500 text-white text-xs font-bold">確定重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <script>
+    /* ==========================================================================
+       40 大質變基因詞條矩陣 (全方位生產、物流、王室、繁衍、戰鬥與特異機制)
+       ========================================================================== */
+    const TRAIT_AFFIXES_DEF = {
+      // 1. 原生生產與戰鬥核心 (01 ~ 15)
+      carapace_armor: { id: 'carapace_armor', name: '鐵壁甲殼', en: 'Carapace Armor', rarity: 'rare', spontaneousRate: 0.004, desc: '免死護體', expressedDesc: '戰鬥遭受致死攻擊時，有 60% 機率免疫致死並保留 1 點生命續戰', recessiveDesc: '20% 機率免疫致死', bestRole: '衛隊 / 將軍' },
+      acidic_glands: { id: 'acidic_glands', name: '強酸唾腺', en: 'Acidic Glands', rarity: 'rare', spontaneousRate: 0.004, desc: '破甲開礦', expressedDesc: '忽視敵方 35% 防禦；地下礦坑泥土產量額外 +35%', recessiveDesc: '忽視 10% 防禦 / 採礦 +10%', bestRole: '採礦隊 / 突擊兵' },
+      titan_load: { id: 'titan_load', name: '巨力駝峰', en: 'Titan Load', rarity: 'common', spontaneousRate: 0.015, desc: '極限搬運', expressedDesc: '搬運負載量提升 150%，移動敏捷微降 15%', recessiveDesc: '搬運負載 +40%', bestRole: '搬運隊' },
+      pheromone_pulse: { id: 'pheromone_pulse', name: '催化費洛蒙', en: 'Pheromone Pulse', rarity: 'epic', spontaneousRate: 0.001, desc: '群落加速', expressedDesc: '處於王室或育嬰室時，使繁育與周圍設施產出週期縮短 25%', recessiveDesc: '產出週期縮短 8%', bestRole: '蟻后 / 育嬰室' },
+      nocturnal_hunt: { id: 'nocturnal_hunt', name: '夜行擬態', en: 'Nocturnal Hunt', rarity: 'rare', spontaneousRate: 0.004, desc: '暗夜加成', expressedDesc: '離線掛機期間或夜間時段，自身產能與戰鬥力暴增 100%', recessiveDesc: '自身產能與戰鬥力 +30%', bestRole: '任意工種 / 士兵' },
+      chrysalis_midas: { id: 'chrysalis_midas', name: '黃金甲蟲', en: 'Chrysalis Midas', rarity: 'legendary', spontaneousRate: 0.0003, desc: '汰除黃金', expressedDesc: '汰除回收此個體時，給予當前世代 × 80 草皮與 3 點 DNA', recessiveDesc: '汰除獲得當前世代 × 20 草皮', bestRole: '孵化室待汰除' },
+      serrated_mandibles: { id: 'serrated_mandibles', name: '鋸齒巨顎', en: 'Serrated Mandibles', rarity: 'common', spontaneousRate: 0.015, desc: '割草暴擊', expressedDesc: '農場草料收割速度 +45%；戰鬥有 25% 機率造成雙倍暴擊傷害', recessiveDesc: '草料收割 +15% / 暴擊率 +8%', bestRole: '農場 / 前線士兵' },
+      bioluminescence: { id: 'bioluminescence', name: '生物發光', en: 'Bioluminescence', rarity: 'rare', spontaneousRate: 0.004, desc: '領班激勵', expressedDesc: '派駐於任何設施時，使該設施所有同僚產能額外 +20%', recessiveDesc: '同僚產能 +5%', bestRole: '任意設施領班' },
+      hyper_reflexes: { id: 'hyper_reflexes', name: '急速神經', en: 'Hyper Reflexes', rarity: 'epic', spontaneousRate: 0.001, desc: '光速行動', expressedDesc: '王室交配冷卻縮短 30%；遠征地圖斥候探索速度提高 80%', recessiveDesc: '交配冷卻 -10% / 斥候探索 +25%', bestRole: '蟻王 / 斥候' },
+      cannibal_regeneration: { id: 'cannibal_regeneration', name: '吞噬再生', en: 'Cannibal Regeneration', rarity: 'epic', spontaneousRate: 0.001, desc: '擊殺吸血', expressedDesc: '擊殺敵軍時立刻為全軍回復該敵人最大生命值 30% 的血量', recessiveDesc: '擊殺回復 10% 血量', bestRole: '醫護兵 / 突擊兵' },
+      symbiotic_mycelium: { id: 'symbiotic_mycelium', name: '共生真菌', en: 'Symbiotic Mycelium', rarity: 'rare', spontaneousRate: 0.004, desc: '菌絲自生', expressedDesc: '工廠只要有泥土，每秒自然增生 5% 草料，大幅緩解收割壓力', recessiveDesc: '每秒自然增生 1.5% 草料', bestRole: '草皮工廠' },
+      neurotoxic_sting: { id: 'neurotoxic_sting', name: '破甲毒囊', en: 'Neurotoxic Sting', rarity: 'rare', spontaneousRate: 0.004, desc: '劇毒灼燒', expressedDesc: '攻擊附帶劇毒，每秒對敵軍造成其最大生命值 4% 的真實傷害', recessiveDesc: '每秒造成 1.2% 真實傷害', bestRole: '衛隊 / 突擊兵' },
+      swarm_zealotry: { id: 'swarm_zealotry', name: '工蜂狂熱', en: 'Swarm Zealotry', rarity: 'common', spontaneousRate: 0.015, desc: '蟲海疊加', expressedDesc: '設施內每多 1 隻同種工人，自身產速額外疊加 +3%（最高 +30%）', recessiveDesc: '每多 1 隻疊加 +1%（最高 +10%）', bestRole: '採礦 / 農場大部隊' },
+      ancestral_echo: { id: 'ancestral_echo', name: '遠古記憶', en: 'Ancestral Echo', rarity: 'legendary', spontaneousRate: 0.0003, desc: '血脈回響', expressedDesc: '升任王室時，有 40% 機率直接保留上一任雙親的最高屬性極值', recessiveDesc: '15% 機率繼承極值', bestRole: '王室繼承者' },
+      cryostasis: { id: 'cryostasis', name: '不死休眠', en: 'Cryostasis', rarity: 'legendary', spontaneousRate: 0.0003, desc: '蛹化生還', expressedDesc: '遭受致死傷時轉為蟲蛹狀態，戰役結束後 100% 無損復活重返軍營', recessiveDesc: '陣亡有 35% 機率無損生還', bestRole: '高級將領' },
+
+      // 2. 資源與物流特化 (16 ~ 23)
+      magnetic_antenna: { id: 'magnetic_antenna', name: '磁化觸角', en: 'Magnetic Antenna', rarity: 'common', spontaneousRate: 0.015, desc: '高效搬運', expressedDesc: '搬運隊負載量額外 +60%，物料搬運零損耗', recessiveDesc: '搬運負載量 +20%', bestRole: '搬運隊' },
+      humus_digester: { id: 'humus_digester', name: '腐質分解', en: 'Humus Digester', rarity: 'common', spontaneousRate: 0.015, desc: '採礦兼產草', expressedDesc: '於地下礦坑作業時，每次產泥同時伴隨產出 15% 草料', recessiveDesc: '產泥同時額外產出 5% 草料', bestRole: '地下礦坑' },
+      honey_sac: { id: 'honey_sac', name: '嗜甜蜜囊', en: 'Honey Sac', rarity: 'common', spontaneousRate: 0.015, desc: '蜜露充能', expressedDesc: '派駐於蜜露窖時，全巢穴交配 Boost 能量回充速率提高 40%', recessiveDesc: 'Boost 回充速率 +12%', bestRole: '蜜露貯藏窖' },
+      diamond_drill: { id: 'diamond_drill', name: '金剛鑽甲', en: 'Diamond Drill', rarity: 'rare', spontaneousRate: 0.004, desc: '深層掘進', expressedDesc: '破開硬質岩層，地下礦坑基礎泥土產能暴增 80%', recessiveDesc: '泥土產能 +25%', bestRole: '地下礦坑' },
+      photosynthesis: { id: 'photosynthesis', name: '葉脈同化', en: 'Photosynthesis', rarity: 'rare', spontaneousRate: 0.004, desc: '共生光合', expressedDesc: '汲取環境微光，培育農場草料收割產能提升 75%', recessiveDesc: '草料產能 +25%', bestRole: '培育農場' },
+      swarm_synergy: { id: 'swarm_synergy', name: '工蜂狂潮', en: 'Swarm Synergy', rarity: 'rare', spontaneousRate: 0.004, desc: '同儕共鳴', expressedDesc: '設施內每多 1 名工人，使全體同儕產能額外 +8%（可堆疊）', recessiveDesc: '每名同僚 +2.5% 產能', bestRole: '草皮工廠 / 農場' },
+      pocket_dimension: { id: 'pocket_dimension', name: '虛空囊袋', en: 'Pocket Dimension', rarity: 'epic', spontaneousRate: 0.001, desc: '空間壓縮', expressedDesc: '搬運負載量激增 +250%，但移動敏捷略降 20%', recessiveDesc: '負載量 +70%', bestRole: '搬運隊' },
+      transmutation: { id: 'transmutation', name: '點石成金', en: 'Transmutation', rarity: 'legendary', spontaneousRate: 0.0003, desc: '轉化為晶', expressedDesc: '壓製廠每壓制產出 100 塊草皮，額外提煉出 1 點純淨 DNA', recessiveDesc: '每壓制 350 塊草皮產出 1 點 DNA', bestRole: '草皮壓製廠' },
+
+      // 3. 育種與王室血統 (24 ~ 29)
+      hyper_ovulation: { id: 'hyper_ovulation', name: '超頻排卵', en: 'Hyper Ovulation', rarity: 'rare', spontaneousRate: 0.004, desc: '頻繁產卵', expressedDesc: '身為蟻后時，受精繁殖的基礎冷卻時間永久縮減 35%', recessiveDesc: '繁殖冷卻縮短 12%', bestRole: '蟻后 (Queen)' },
+      alpha_pheromone: { id: 'alpha_pheromone', name: '遠古雄風', en: 'Alpha Pheromone', rarity: 'rare', spontaneousRate: 0.004, desc: '極值遺傳', expressedDesc: '身為蟻王時，子代繼承雙親最高屬性值的機率大幅提高至 80%', recessiveDesc: '繼承極限值機率 +25%', bestRole: '蟻王 (King)' },
+      genetic_anchor: { id: 'genetic_anchor', name: '基因錨定', en: 'Genetic Anchor', rarity: 'epic', spontaneousRate: 0.001, desc: '消除負差', expressedDesc: '王室交配時，後代五維屬性絕對不低於雙親屬性平均值', recessiveDesc: '負向浮動區間縮小 50%', bestRole: '蟻王 / 蟻后' },
+      inbreeding_zenith: { id: 'inbreeding_zenith', name: '近親昇華', en: 'Inbreeding Zenith', rarity: 'epic', spontaneousRate: 0.001, desc: '純血奇蹟', expressedDesc: '雙親同世代或近親交配時，自發突變機率激增 400%', recessiveDesc: '自發突變機率 +100%', bestRole: '王室種蟲' },
+      polyembryony: { id: 'polyembryony', name: '多胞胎宿命', en: 'Polyembryony', rarity: 'legendary', spontaneousRate: 0.0003, desc: '一胎多產', expressedDesc: '王室交配成功時，有 25% 機率直接產出 3 隻幼蟲', recessiveDesc: '12% 機率產出雙生幼蟲', bestRole: '蟻后 (Queen)' },
+      progenitor_core: { id: 'progenitor_core', name: '始祖之血', en: 'Progenitor Core', rarity: 'legendary', spontaneousRate: 0.0003, desc: '神聖血源', expressedDesc: '自身全屬性視為 +50%，子代 100% 保證遺傳至少 1 個隨機顯性詞條', recessiveDesc: '自身全屬性 +15%', bestRole: '蟻王 / 蟻后' },
+
+      // 4. 遠征作戰與軍事 (30 ~ 36)
+      compound_sight: { id: 'compound_sight', name: '致命複眼', en: 'Compound Sight', rarity: 'common', spontaneousRate: 0.015, desc: '鷹眼巡獵', expressedDesc: '身為斥候時地圖探索速度 +50%；作戰時士兵暴擊率提高 15%', recessiveDesc: '探索速度 +15% / 暴擊率 +5%', bestRole: '斥候 / 前線部隊' },
+      thorn_carapace: { id: 'thorn_carapace', name: '反傷尖刺', en: 'Thorn Carapace', rarity: 'rare', spontaneousRate: 0.004, desc: '尖刺甲殼', expressedDesc: '戰場遭受攻擊時，將所受傷害的 50% 以真傷直接反彈敵軍', recessiveDesc: '反彈 15% 傷害', bestRole: '前線衛隊' },
+      neurotoxin: { id: 'neurotoxin', name: '神經毒素', en: 'Neurotoxin', rarity: 'rare', spontaneousRate: 0.004, desc: '麻痺毒腺', expressedDesc: '螫刺附帶麻痺毒素，使敵軍戰力強度實質削弱 40%', recessiveDesc: '敵軍戰力削弱 12%', bestRole: '突擊兵 / 衛隊' },
+      pack_ferocity: { id: 'pack_ferocity', name: '同袍狂怒', en: 'Pack Ferocity', rarity: 'rare', spontaneousRate: 0.004, desc: '戰損激勵', expressedDesc: '戰場上每當有 1 名同袍戰死，自身戰鬥力即時飆升 +30%', recessiveDesc: '每名同袍戰死戰力 +10%', bestRole: '軍隊衛士' },
+      tactical_mastermind: { id: 'tactical_mastermind', name: '鷹眼軍師', en: 'Tactical Mastermind', rarity: 'epic', spontaneousRate: 0.001, desc: '全軍號令', expressedDesc: '身為將軍時，全軍戰鬥總評分額外獲得 +35% 指揮加成', recessiveDesc: '全軍戰力 +10%', bestRole: '將軍 (General)' },
+      combat_triage: { id: 'combat_triage', name: '戰地縫合', en: 'Combat Triage', rarity: 'epic', spontaneousRate: 0.001, desc: '起死回生', expressedDesc: '身為醫護兵時，隊友免死急救生還率額外激增 +40%', recessiveDesc: '急救生還率 +15%', bestRole: '醫護兵 (Medic)' },
+      apex_mandible: { id: 'apex_mandible', name: '湮滅巨顎', en: 'Apex Mandible', rarity: 'legendary', spontaneousRate: 0.0003, desc: '處決斬殺', expressedDesc: '撕咬有 20% 機率直接觸發斬殺，一擊消滅敵方殘血部隊', recessiveDesc: '撕咬傷害額外 +35%', bestRole: '突擊前鋒' },
+
+      // 5. 異變與特殊機制 (37 ~ 40)
+      radioactive: { id: 'radioactive', name: '放射性外殼', en: 'Radioactive', rarity: 'rare', spontaneousRate: 0.004, desc: '高能誘變', expressedDesc: '自身全工種產能與戰力 +50%，並使相鄰工人突變率提升 50%', recessiveDesc: '自身產能與戰力 +15%', bestRole: '基因實驗室 / 工廠' },
+      cryptobiosis: { id: 'cryptobiosis', name: '休眠孢子', en: 'Cryptobiosis', rarity: 'rare', spontaneousRate: 0.004, desc: '離線特化', expressedDesc: '離線掛機結算時，自身產能與戰力以 200% 超頻效率結算', recessiveDesc: '離線效益提升 50%', bestRole: '任意在崗工人' },
+      bio_capacitor: { id: 'bio_capacitor', name: '生物電池', en: 'Bio-Capacitor', rarity: 'epic', spontaneousRate: 0.001, desc: '充能反饋', expressedDesc: '汰除回收此個體時，立即全額充盈當前交配 Boost 能量池', recessiveDesc: '汰除時回復 3.0 點 Boost', bestRole: '孵化槽待汰除' },
+      divine_chrysalis: { id: 'divine_chrysalis', name: '天選皇嗣', en: 'Divine Chrysalis', rarity: 'legendary', spontaneousRate: 0.0003, desc: '神聖皇權', expressedDesc: '晉升為新王或蟻后時，直接額外獲贈等同於世代 × 10 的 DNA 點數', recessiveDesc: '晉升時獲贈 2 點 DNA', bestRole: '王室繼承者' }
+    };
+
+    const TRAIT_KEYS = ['vitality', 'strength', 'agility', 'bite', 'sting'];
+    const TRAIT_INFO = {
+      vitality: { name: '生命', color: 'text-red-400', bg: 'bg-red-950/40', border: 'border-red-800/60' },
+      strength: { name: '力量', color: 'text-amber-400', bg: 'bg-amber-950/40', border: 'border-amber-800/60' },
+      agility: { name: '敏捷', color: 'text-blue-400', bg: 'bg-blue-950/40', border: 'border-blue-800/60' },
+      bite: { name: '撕咬', color: 'text-lime-400', bg: 'bg-lime-950/40', border: 'border-lime-800/60' },
+      sting: { name: '螫刺', color: 'text-purple-400', bg: 'bg-purple-950/40', border: 'border-purple-800/60' }
+    };
+
+    const FACILITY_CONFIG = {
+      mine: { name: '地下礦坑', icon: 'pickaxe', desc: '受【螫刺】與【強酸】加成，開採泥土', baseCost: 100, color: 'amber', isAdvanced: false },
+      farm: { name: '培育農場', icon: 'sprout', desc: '受【撕咬】與【鋸齒】加成，收割草料', baseCost: 100, color: 'lime', isAdvanced: false },
+      carry: { name: '後勤搬運隊', icon: 'truck', desc: '受【力量】與【駝峰】加成，輸送資源', baseCost: 100, color: 'blue', isAdvanced: false },
+      factory: { name: '草皮壓製廠', icon: 'boxes', desc: '受【生命】與【真菌】加成，壓製草皮', baseCost: 100, color: 'emerald', isAdvanced: false },
+      nursery: { name: '育嬰保育室', icon: 'heart', desc: '受【敏捷】加成，大幅縮減交配週期', baseCost: 250, color: 'pink', isAdvanced: true },
+      genelab: { name: '基因實驗室', icon: 'flask-conical', desc: '淬鍊多餘生物質，持續產出純淨 DNA 點數', baseCost: 400, color: 'purple', isAdvanced: true },
+      armory: { name: '甲殼軍械坊', icon: 'shield-alert', desc: '打磨甲殼外骨骼，提升全軍全域戰力', baseCost: 500, color: 'rose', isAdvanced: true },
+      forager: { name: '野外覓食隊', icon: 'binoculars', desc: '深入荒野採集，源源不絕產出全域物料', baseCost: 300, color: 'amber', isAdvanced: true },
+      nectar: { name: '蜜露貯藏窖', icon: 'droplet', desc: '提高 Boost 次數上限與回充速率', baseCost: 350, color: 'yellow', isAdvanced: true },
+      hospital: { name: '戰地救護所', icon: 'cross', desc: '戰鬥時大幅提高衛隊急救生還率', baseCost: 450, color: 'emerald', isAdvanced: true },
+      relay: { name: '費洛蒙信息塔', icon: 'radio', desc: '廣播群落費洛蒙，提供全巢穴全域產能加成', baseCost: 600, color: 'indigo', isAdvanced: true },
+      greenhouse: { name: '真菌溫室', icon: 'flower-2', desc: '共生真菌將泥土高效轉化為肥沃草料', baseCost: 350, color: 'teal', isAdvanced: true }
+    };
+
+    const TALENT_DEFS = {
+      // 遺傳專精
+      t_mutation_rate: { id: 't_mutation_rate', branch: 'breeding', name: '狂暴突變', desc: '每級提升自發基因突變機率 +100%', maxLevel: 5, costPerLevel: [1, 1, 2, 2, 3], getEffectDesc: (lvl) => `突變倍率: ${(1 + lvl * 1.0).toFixed(1)}x` },
+      t_gene_stability: { id: 't_gene_stability', branch: 'breeding', name: '基因穩定', desc: '提升屬性浮動下限，減少劣質衰退個體', maxLevel: 3, costPerLevel: [1, 2, 3], getEffectDesc: (lvl) => `下限保底 +${lvl * 10}%` },
+      t_mating_speed: { id: 't_mating_speed', branch: 'breeding', name: '繁衍荷爾蒙', desc: '大幅縮減王室交配週期', maxLevel: 5, costPerLevel: [1, 2, 2, 3, 4], getEffectDesc: (lvl) => `孕育速度 +${lvl * 15}%` },
+      t_ancestral_potency: { id: 't_ancestral_potency', branch: 'breeding', name: '顯性激發', desc: '提高孟德爾隱性基因提純為顯性的機率', maxLevel: 3, costPerLevel: [2, 3, 4], getEffectDesc: (lvl) => `顯性提純機率 +${lvl * 12}%` },
+      t_twin_larvae: { id: 't_twin_larvae', branch: 'breeding', name: '雙生蟲卵', desc: '繁衍成功時，有機率一次產出 2 隻幼蟲', maxLevel: 3, costPerLevel: [2, 3, 4], getEffectDesc: (lvl) => `雙胞胎機率: ${lvl * 15}%` },
+
+      // 工業專精
+      t_unlock_advanced_facilities: { id: 't_unlock_advanced_facilities', branch: 'industry', name: '專家建築藍圖', desc: '解鎖 8 座特化專家建築（育嬰室、實驗室等）', maxLevel: 1, costPerLevel: [2], getEffectDesc: (lvl) => lvl > 0 ? '已解鎖特化建築' : '未解鎖' },
+      t_worker_power: { id: 't_worker_power', branch: 'industry', name: '外骨骼硬化', desc: '提高全工種基礎產量與吞吐量', maxLevel: 5, costPerLevel: [1, 1, 2, 2, 3], getEffectDesc: (lvl) => `全工種產能 +${lvl * 20}%` },
+      t_reclaim_sod: { id: 't_reclaim_sod', branch: 'industry', name: '生物質重塑', desc: '汰除幼蟲時額外返還草皮 (Sod)', maxLevel: 3, costPerLevel: [1, 2, 3], getEffectDesc: (lvl) => `每次汰除 +${lvl * 8} 草皮` },
+      t_factory_efficiency: { id: 't_factory_efficiency', branch: 'industry', name: '催化壓制', desc: '工廠壓制轉化效率大幅增益', maxLevel: 5, costPerLevel: [2, 2, 3, 3, 4], getEffectDesc: (lvl) => `工廠產能 +${lvl * 25}%` },
+      t_logistics_overdrive: { id: 't_logistics_overdrive', branch: 'industry', name: '物流疾行', desc: '搬運工蟻移動敏捷與吞吐負載激增', maxLevel: 3, costPerLevel: [1, 2, 3], getEffectDesc: (lvl) => `搬運吞吐 +${lvl * 30}%` },
+      t_sod_preservation: { id: 't_sod_preservation', branch: 'industry', name: '儲量深窖', desc: '設施與軍營升級草皮消耗折扣', maxLevel: 3, costPerLevel: [2, 3, 4], getEffectDesc: (lvl) => `升級消耗 -${lvl * 12}%` },
+
+      // 軍事專精
+      t_soldier_vigor: { id: 't_soldier_vigor', branch: 'military', name: '劇毒利爪', desc: '全體士兵獲得額外屬性加成', maxLevel: 5, costPerLevel: [1, 1, 2, 2, 3], getEffectDesc: (lvl) => `全軍戰力 +${lvl * 15}%` },
+      t_scout_swiftness: { id: 't_scout_swiftness', branch: 'military', name: '全域巡獵', desc: '大幅提升斥候於遠征地圖上的探索速度', maxLevel: 4, costPerLevel: [1, 2, 2, 3], getEffectDesc: (lvl) => `探索速度 +${lvl * 25}%` },
+      t_spoils_of_war: { id: 't_spoils_of_war', branch: 'military', name: '領地掠奪', desc: '戰役獲勝奪取的草皮額外倍增', maxLevel: 4, costPerLevel: [1, 2, 3, 4], getEffectDesc: (lvl) => `獲勝草皮 +${lvl * 40}%` },
+      t_medic_mastery: { id: 't_medic_mastery', branch: 'military', name: '戰地急救術', desc: '強化醫護兵救治傷兵的生還率', maxLevel: 3, costPerLevel: [1, 2, 3], getEffectDesc: (lvl) => `救援生還率 +${lvl * 18}%` },
+      t_carapace_reinforce: { id: 't_carapace_reinforce', branch: 'military', name: '重甲重裝', desc: '衛隊外骨骼鍍層加厚，降低戰損', maxLevel: 3, costPerLevel: [2, 3, 4], getEffectDesc: (lvl) => `承傷弱化 -${lvl * 15}%` },
+
+      // 自動化專精
+      t_unlock_auto_ascend: { id: 't_unlock_auto_ascend', branch: 'automation', name: '王室血脈共鳴', desc: '解鎖【自動王室加冕】管線', maxLevel: 1, costPerLevel: [2], getEffectDesc: (lvl) => lvl > 0 ? '已解鎖自動加冕' : '未解鎖' },
+      t_unlock_auto_worker: { id: 't_unlock_auto_worker', branch: 'automation', name: '本能分派協議', desc: '解鎖【自動適性分派】與級聯替補', maxLevel: 1, costPerLevel: [2], getEffectDesc: (lvl) => lvl > 0 ? '已解鎖自動分派' : '未解鎖' },
+      t_unlock_auto_cull: { id: 't_unlock_auto_cull', branch: 'automation', name: '自動物料淨化', desc: '解鎖【滿溢自動汰除】安全分解', maxLevel: 1, costPerLevel: [1], getEffectDesc: (lvl) => lvl > 0 ? '已解鎖自動汰除' : '未解鎖' },
+      t_auto_boost: { id: 't_auto_boost', branch: 'automation', name: '神經刺激反射', desc: '能量累積滿 1.0 點時自動釋放交配脈衝', maxLevel: 1, costPerLevel: [2], getEffectDesc: (lvl) => lvl > 0 ? '已解鎖自動交配' : '未解鎖' },
+      t_smart_sort: { id: 't_smart_sort', branch: 'automation', name: '全域超頻運算', desc: '自動化運轉時工人生產力額外飆升', maxLevel: 3, costPerLevel: [2, 3, 4], getEffectDesc: (lvl) => `超頻產能 +${lvl * 12}%` }
+    };
+
+    const CAMPAIGN_ZONES = {
+      crickets: { id: 'crickets', name: '蟋蟀聚落 (Crickets)', minScore: 5, maxScore: 50, mapLength: 100, color: '#a3e635' },
+      ants: { id: 'ants', name: '游牧兵蟻 (Army Ants)', minScore: 30, maxScore: 120, mapLength: 200, color: '#f87171' },
+      bees: { id: 'bees', name: '狂暴蜂群 (Wild Bees)', minScore: 80, maxScore: 260, mapLength: 350, color: '#facc15' },
+      mantis: { id: 'mantis', name: '巨角螳螂 (Mantises)', minScore: 200, maxScore: 600, mapLength: 500, color: '#34d399' }
+    };
+
+    const ACHIEVEMENTS_DEF = [
+      { id: 'first_egg', name: '生命起源', desc: '成功孵化第 1 隻後代', check: () => gameState.birthCounter >= 3 },
+      { id: 'first_trait', name: '基因覺醒', desc: '培育出帶有任一顯性基因詞條的個體', check: () => hasAnyExpressedTrait(gameState.royal.queen) || hasAnyExpressedTrait(gameState.royal.king) },
+      { id: 'gen_5', name: '世代躍遷', desc: '繁衍推展至第 5 世代', check: () => gameState.generation >= 5 },
+      { id: 'gen_20', name: '演化奇蹟', desc: '繁衍推展至第 20 世代', check: () => gameState.generation >= 20 },
+      { id: 'score_50', name: '超凡個體', desc: '培育出評分超越 50 的生物', check: () => getCritterScore(gameState.royal.queen) >= 50 || getCritterScore(gameState.royal.king) >= 50 },
+      { id: 'score_200', name: '蟲族之神', desc: '培育出評分超越 200 的生物', check: () => getCritterScore(gameState.royal.queen) >= 200 || getCritterScore(gameState.royal.king) >= 200 },
+      { id: 'sod_500', name: '富饒綠洲', desc: '儲備草皮達到 500', check: () => gameState.resources.sod >= 500 },
+      { id: 'workers_10', name: '萬眾勞作', desc: '指派超過 10 名殖民地工人', check: () => getTotalWorkersCount() >= 10 },
+      { id: 'soldier_first', name: '立軍揚威', desc: '建立第 1 隻士兵部隊', check: () => gameState.military.soldiers.length >= 1 },
+      { id: 'first_victory', name: '領地征服', desc: '成功完成任一戰役地圖探勘', check: () => gameState.achievements['first_victory'] === true }
+    ];
+
+    const GAME_SAVE_KEY = 'critter_mound_tw_save_v3_5';
+
+    let gameState = {
+      isPaused: false,
+      soundEnabled: true,
+      musicEnabled: true,
+      generation: 1,
+      birthCounter: 2,
+      resources: { sod: 20, dirt: 0, grass: 0 },
+      dnaPoints: 3,
+      talents: {},
+      boost: { current: 10.0, max: 10.0, regenCounter: 0 },
+      breeding: { timer: 0, duration: 10 },
+      royal: { queen: null, king: null },
+      hatchery: { capacity: 4, cost: 50, eggs: [] },
+      facilities: {
+        mine: { level: 1, cost: 100, workers: [] },
+        farm: { level: 1, cost: 100, workers: [] },
+        carry: { level: 1, cost: 100, workers: [] },
+        factory: { level: 1, cost: 100, workers: [] },
+        nursery: { level: 0, cost: 250, workers: [] },
+        genelab: { level: 0, cost: 400, workers: [], progress: 0 },
+        armory: { level: 0, cost: 500, workers: [] },
+        forager: { level: 0, cost: 300, workers: [] },
+        nectar: { level: 0, cost: 350, workers: [] },
+        hospital: { level: 0, cost: 450, workers: [] },
+        relay: { level: 0, cost: 600, workers: [] },
+        greenhouse: { level: 0, cost: 350, workers: [] }
+      },
+      military: {
+        barracksCapacity: 6,
+        cost: 300,
+        soldiers: [],
+        atWar: false,
+        selectedZone: 'crickets',
+        mapProgress: 0,
+        battleTimer: 0,
+        currentEnemyHp: 50,
+        currentEnemyMaxHp: 50
+      },
+      automation: { autoAscend: false, autoWorker: false, autoCull: false, autoBoost: false },
+      achievements: {}
+    };
+
+    let audioEngine = {
+      ready: false,
+      sfxSynth: null,
+      polySynth: null,
+      noiseSynth: null,
+      bgmLoop: null,
+      ambientDrone: null,
+      bgmStep: 0
+    };
+
+    function initAudioEngine() {
+      if (audioEngine.ready) return;
+      try {
+        audioEngine.sfxSynth = new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.008, decay: 0.12, sustain: 0.05, release: 0.1 } }).toDestination();
+        audioEngine.sfxSynth.volume.value = -8;
+
+        audioEngine.polySynth = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.02, decay: 0.25, sustain: 0.15, release: 0.4 } }).toDestination();
+        audioEngine.polySynth.volume.value = -6;
+
+        audioEngine.noiseSynth = new Tone.NoiseSynth({ noise: { type: 'pink' }, envelope: { attack: 0.005, decay: 0.15, sustain: 0, release: 0.1 } }).toDestination();
+        audioEngine.noiseSynth.volume.value = -10;
+
+        audioEngine.ambientDrone = new Tone.PolySynth(Tone.AMSynth, { harmonicity: 1.5, oscillator: { type: 'sawtooth' }, envelope: { attack: 1.5, decay: 0.5, sustain: 0.8, release: 2.0 } }).toDestination();
+        audioEngine.ambientDrone.volume.value = -18;
+
+        audioEngine.ready = true;
+        startBgmLoop();
+      } catch (e) {}
+    }
+
+    function startBgmLoop() {
+      if (audioEngine.bgmLoop) clearInterval(audioEngine.bgmLoop);
+      const colonyScale = ['C2', 'G2', 'Eb3', 'G3', 'Bb3'];
+      const warDrumScale = ['C1', 'C2', 'Eb2', 'F2', 'G2'];
+
+      audioEngine.bgmLoop = setInterval(() => {
+        if (!gameState.musicEnabled || !audioEngine.ready || gameState.isPaused) return;
+        try {
+          if (Tone.context.state !== 'running') return;
+          const now = Tone.now();
+          audioEngine.bgmStep = (audioEngine.bgmStep + 1) % 16;
+          if (gameState.military.atWar) {
+            if (audioEngine.bgmStep % 2 === 0) {
+              const note = warDrumScale[Math.floor(Math.random() * warDrumScale.length)];
+              audioEngine.sfxSynth.triggerAttackRelease(note, '16n', now, 0.25);
+            }
+            if (audioEngine.bgmStep % 4 === 2) {
+              audioEngine.noiseSynth.triggerAttackRelease('16n', now, 0.22);
+            }
+          } else {
+            if (audioEngine.bgmStep % 8 === 0) {
+              audioEngine.ambientDrone.triggerAttackRelease([colonyScale[0], colonyScale[1], colonyScale[2]], '2n', now, 0.12);
+            }
+          }
+        } catch (err) {}
+      }, 350);
+    }
+
+    function playSfx(type) {
+      if (!gameState.soundEnabled) return;
+      initAudioEngine();
+      if (!audioEngine.ready) return;
+      try {
+        if (Tone.context.state !== 'running') Tone.start();
+        const now = Tone.now();
+        switch (type) {
+          case 'click': audioEngine.sfxSynth.triggerAttackRelease('C6', '32n', now, 0.15); break;
+          case 'birth': audioEngine.polySynth.triggerAttackRelease(['E5', 'G5', 'B5'], '16n', now, 0.25); break;
+          case 'royal': audioEngine.polySynth.triggerAttackRelease(['C5', 'E5', 'G5', 'C6'], '8n', now, 0.4); break;
+          case 'upgrade': audioEngine.sfxSynth.triggerAttackRelease('G4', '16n', now); audioEngine.sfxSynth.triggerAttackRelease('C5', '16n', now + 0.08); break;
+          case 'worker': audioEngine.sfxSynth.triggerAttackRelease('A4', '24n', now); break;
+          case 'attack': audioEngine.noiseSynth.triggerAttackRelease('16n', now, 0.3); break;
+          case 'victory': audioEngine.polySynth.triggerAttackRelease(['F5', 'A5', 'C6'], '8n', now); break;
+          case 'cull': audioEngine.sfxSynth.triggerAttackRelease('D3', '16n', now, 0.2); break;
+          case 'mutation': audioEngine.polySynth.triggerAttackRelease(['A5', 'C#6', 'E6'], '8n', now, 0.35); break;
+        }
+      } catch (err) {}
+    }
+
+    function toggleMusic() {
+      gameState.musicEnabled = !gameState.musicEnabled;
+      const btn = document.getElementById('btn-music');
+      if (gameState.musicEnabled) {
+        initAudioEngine();
+        Tone.start();
+        btn.classList.replace('text-neutral-500', 'text-amber-400');
+        showToast('氛圍 BGM 已開啟', 'info');
+      } else {
+        btn.classList.replace('text-amber-400', 'text-neutral-500');
+        showToast('氛圍 BGM 已靜音', 'info');
+      }
+    }
+
+    function toggleAudio() {
+      gameState.soundEnabled = !gameState.soundEnabled;
+      const btn = document.getElementById('btn-sound');
+      const icon = document.getElementById('icon-sound');
+      if (gameState.soundEnabled) {
+        btn.classList.replace('text-neutral-500', 'text-amber-400');
+        icon.setAttribute('data-lucide', 'volume-2');
+        showToast('操作音效已啟用', 'info');
+        playSfx('click');
+      } else {
+        btn.classList.replace('text-amber-400', 'text-neutral-500');
+        icon.setAttribute('data-lucide', 'volume-x');
+        showToast('操作音效已靜音', 'info');
+      }
+      lucide.createIcons();
+    }
+
+    function togglePauseGame() {
+      gameState.isPaused = !gameState.isPaused;
+      const btn = document.getElementById('btn-pause');
+      const icon = document.getElementById('icon-pause');
+      if (gameState.isPaused) {
+        btn.classList.add('text-amber-400', 'border-amber-500');
+        icon.setAttribute('data-lucide', 'play');
+        showToast('遊戲已暫停', 'info');
+      } else {
+        btn.classList.remove('text-amber-400', 'border-amber-500');
+        icon.setAttribute('data-lucide', 'pause');
+        showToast('遊戲繼續進行', 'info');
+      }
+      lucide.createIcons();
+    }
+    function setupInitialRoyals() {
+      gameState.generation = 1;
+      gameState.birthCounter = 2;
+      gameState.royal.queen = createCritter(1, 'F', { vitality: 5.2, strength: 4.8, agility: 5.4, bite: 4.9, sting: 5.1 }, {});
+      gameState.royal.king = createCritter(1, 'M', { vitality: 4.9, strength: 5.3, agility: 5.0, bite: 5.2, sting: 4.7 }, {});
+    }
+
+    function createCritter(generation, gender, customTraits = null, customAffixes = null) {
+      const critter = {
+        id: 'c_' + Math.random().toString(36).substr(2, 9),
+        generation: generation,
+        birthOrder: ++gameState.birthCounter,
+        gender: gender,
+        traits: {},
+        affixes: {}
+      };
+
+      if (customTraits) {
+        TRAIT_KEYS.forEach(k => {
+          critter.traits[k] = Math.round((parseFloat(customTraits[k]) || 5.0) * 10) / 10;
+        });
+      } else {
+        TRAIT_KEYS.forEach(k => { critter.traits[k] = 5.0; });
+      }
+
+      if (customAffixes) critter.affixes = { ...customAffixes };
+      return critter;
+    }
+
+    function getCritterScore(critter) {
+      if (!critter) return 0;
+      let total = 0;
+      TRAIT_KEYS.forEach(k => { total += (parseFloat(critter.traits[k]) || 0); });
+      let affixBonus = 0;
+      if (critter.affixes) {
+        Object.values(critter.affixes).forEach(state => {
+          if (state === 'expressed') affixBonus += 2.5;
+          else if (state === 'recessive') affixBonus += 0.8;
+        });
+      }
+      return Math.round((total + affixBonus) * 10) / 10;
+    }
+
+    function hasAnyExpressedTrait(critter) {
+      if (!critter || !critter.affixes) return false;
+      return Object.values(critter.affixes).some(v => v === 'expressed');
+    }
+
+    function resolveMendelianTrait(queenState, kingState, spontaneousRate) {
+      const pQ = queenState || 'none';
+      const pK = kingState || 'none';
+
+      if (pQ === 'none' && pK === 'none') {
+        const roll = Math.random();
+        if (roll < spontaneousRate * 0.1) return 'expressed';
+        if (roll < spontaneousRate) return 'recessive';
+        return 'none';
+      }
+
+      const key = [pQ, pK].sort().join('_');
+      const rand = Math.random() * 100;
+      switch (key) {
+        case 'none_none': return 'none';
+        case 'none_recessive': return rand < 50 ? 'none' : 'recessive';
+        case 'expressed_none': return 'recessive';
+        case 'recessive_recessive':
+          if (rand < 25) return 'none';
+          if (rand < 75) return 'recessive';
+          return 'expressed';
+        case 'expressed_recessive': return rand < 50 ? 'recessive' : 'expressed';
+        case 'expressed_expressed': return 'expressed';
+        default: return 'none';
+      }
+    }
+
+    function breedOffspring(parentQueen, parentKing) {
+      const nextGen = Math.max(parentQueen.generation, parentKing.generation) + 1;
+      const gender = Math.random() > 0.5 ? 'F' : 'M';
+      const childTraits = {};
+      const childAffixes = {};
+
+      const stabilityBonus = getTalentLevel('t_gene_stability') * 0.10;
+      let mutationMultiplier = 1 + (getTalentLevel('t_mutation_rate') * 1.0);
+
+      // 近親昇華 (Inbreeding Zenith)
+      const inbreedingBoost = Math.max(getAffixMultiplier(parentQueen, 'inbreeding_zenith'), getAffixMultiplier(parentKing, 'inbreeding_zenith'));
+      if (inbreedingBoost > 0 && parentQueen.generation === parentKing.generation) {
+        mutationMultiplier *= (1 + 4.0 * inbreedingBoost);
+      }
+
+      // 基因錨定 (Genetic Anchor)
+      const anchorMult = Math.max(getAffixMultiplier(parentQueen, 'genetic_anchor'), getAffixMultiplier(parentKing, 'genetic_anchor'));
+
+      // 遠古雄風 (Alpha Pheromone)
+      const alphaMult = getAffixMultiplier(parentKing, 'alpha_pheromone');
+
+      TRAIT_KEYS.forEach(k => {
+        let valQ = parseFloat(parentQueen.traits[k]) || 5.0;
+        let valK = parseFloat(parentKing.traits[k]) || 5.0;
+
+        // 始祖之血屬性加成
+        if (getAffixMultiplier(parentQueen, 'progenitor_core') > 0) valQ *= 1.5;
+        if (getAffixMultiplier(parentKing, 'progenitor_core') > 0) valK *= 1.5;
+
+        let minVal = Math.min(valQ, valK);
+        let maxVal = Math.max(valQ, valK);
+
+        if (stabilityBonus > 0) minVal = Math.min(maxVal, minVal * (1 + stabilityBonus));
+
+        // 基因錨定：底線不得低於平均值
+        if (anchorMult > 0) {
+          const avg = (valQ + valK) / 2;
+          minVal = Math.max(minVal, avg * (0.8 + 0.2 * anchorMult));
+        }
+
+        const spread = Math.max(0.5, maxVal * 0.12);
+        let base = minVal + Math.random() * (maxVal - minVal);
+
+        // 遠古雄風偏向高值
+        if (alphaMult > 0 && Math.random() < 0.8 * alphaMult) {
+          base = Math.max(base, maxVal * 0.95);
+        }
+
+        let jitter = (Math.random() * 2 - 1) * spread;
+        let traitVal = Math.max(1.0, base + jitter);
+
+        if (Math.random() < 0.05 * mutationMultiplier) {
+          traitVal += traitVal * (0.15 + Math.random() * 0.15);
+        }
+        childTraits[k] = Math.round(traitVal * 10) / 10;
+      });
+
+      let hasNewMutation = false;
+      Object.keys(TRAIT_AFFIXES_DEF).forEach(affixId => {
+        const def = TRAIT_AFFIXES_DEF[affixId];
+        const qState = (parentQueen.affixes && parentQueen.affixes[affixId]) || 'none';
+        const kState = (parentKing.affixes && parentKing.affixes[affixId]) || 'none';
+        const adjustedSpontaneous = def.spontaneousRate * mutationMultiplier;
+        const res = resolveMendelianTrait(qState, kState, adjustedSpontaneous);
+        if (res !== 'none') {
+          childAffixes[affixId] = res;
+          if (qState === 'none' && kState === 'none') hasNewMutation = true;
+        }
+      });
+
+      // 始祖之血 (Progenitor Core)：必定隨機遺傳 1 個顯性詞條
+      const progMult = Math.max(getAffixMultiplier(parentQueen, 'progenitor_core'), getAffixMultiplier(parentKing, 'progenitor_core'));
+      if (progMult > 0 && Math.random() < progMult) {
+        const affixKeys = Object.keys(TRAIT_AFFIXES_DEF);
+        const randomAffix = affixKeys[Math.floor(Math.random() * affixKeys.length)];
+        childAffixes[randomAffix] = 'expressed';
+        hasNewMutation = true;
+      }
+
+      if (hasNewMutation) playSfx('mutation');
+      return createCritter(nextGen, gender, childTraits, childAffixes);
+    }
+
+    function getAffixMultiplier(critter, affixId) {
+      if (!critter || !critter.affixes) return 0;
+      const state = critter.affixes[affixId];
+      if (state === 'expressed') return 1.0;
+      if (state === 'recessive') return 0.3;
+      return 0;
+    }
+
+    function getCritterFacilityValue(critter, role) {
+      if (!critter) return 0;
+      let score = 0;
+      switch (role) {
+        case 'mine':
+          score = critter.traits.sting * (1 + getAffixMultiplier(critter, 'acidic_glands') * 0.5 + getAffixMultiplier(critter, 'diamond_drill') * 0.8) + critter.traits.strength * 0.2;
+          break;
+        case 'farm':
+          score = critter.traits.bite * (1 + getAffixMultiplier(critter, 'serrated_mandibles') * 0.5 + getAffixMultiplier(critter, 'photosynthesis') * 0.75) + critter.traits.vitality * 0.2;
+          break;
+        case 'carry':
+          score = critter.traits.strength * (1 + getAffixMultiplier(critter, 'titan_load') * 1.5 + getAffixMultiplier(critter, 'pocket_dimension') * 2.5 + getAffixMultiplier(critter, 'magnetic_antenna') * 0.6) + critter.traits.agility * 0.2;
+          break;
+        case 'factory':
+          score = critter.traits.vitality * (1 + getAffixMultiplier(critter, 'symbiotic_mycelium') * 0.5 + getAffixMultiplier(critter, 'transmutation') * 0.8) + critter.traits.strength * 0.2;
+          break;
+        case 'nursery':
+          score = critter.traits.agility * (1 + getAffixMultiplier(critter, 'pheromone_pulse') * 0.8 + getAffixMultiplier(critter, 'hyper_ovulation') * 0.6) + critter.traits.vitality * 0.3;
+          break;
+        case 'nectar':
+          score = critter.traits.vitality * (1 + getAffixMultiplier(critter, 'honey_sac') * 1.2);
+          break;
+        case 'genelab':
+          score = critter.traits.sting * 0.6 + critter.traits.vitality * 0.4 + (getAffixMultiplier(critter, 'radioactive') * 5.0);
+          break;
+        case 'armory':
+          score = critter.traits.strength * 0.5 + critter.traits.bite * 0.5;
+          break;
+        case 'forager':
+          score = critter.traits.agility * 0.5 + critter.traits.strength * 0.5;
+          break;
+        case 'hospital':
+          score = critter.traits.vitality * 0.6 + critter.traits.agility * 0.4 + (getAffixMultiplier(critter, 'combat_triage') * 4.0);
+          break;
+        case 'relay':
+          score = getCritterScore(critter);
+          break;
+        case 'greenhouse':
+          score = critter.traits.vitality * 0.5 + critter.traits.bite * 0.5;
+          break;
+        default:
+          score = getCritterScore(critter);
+      }
+      return Math.round(score * 10) / 10;
+    }
+
+    function tickBreeding(dt) {
+      if (!gameState.royal.queen || !gameState.royal.king) return;
+
+      let duration = 10;
+      const agiQ = gameState.royal.queen.traits.agility || 5;
+      const pulseMult = getAffixMultiplier(gameState.royal.queen, 'pheromone_pulse');
+      const hyperMult = getAffixMultiplier(gameState.royal.queen, 'hyper_ovulation');
+      duration *= (5 / Math.max(2, agiQ));
+      if (pulseMult > 0) duration *= (1 - 0.25 * pulseMult);
+      if (hyperMult > 0) duration *= (1 - 0.35 * hyperMult);
+
+      const reflexMult = getAffixMultiplier(gameState.royal.king, 'hyper_reflexes');
+      if (reflexMult > 0) duration *= (1 - 0.3 * reflexMult);
+
+      const matingSpeedLvl = getTalentLevel('t_mating_speed');
+      if (matingSpeedLvl > 0) duration *= (1 - matingSpeedLvl * 0.12);
+
+      if (gameState.facilities.nursery && gameState.facilities.nursery.level > 0) {
+        const nurseryBonus = gameState.facilities.nursery.workers.reduce((acc, w) => acc + (w.traits.agility || 5), 0);
+        duration *= Math.max(0.3, 1 - nurseryBonus * 0.02);
+      }
+      duration = Math.max(1.5, duration);
+      gameState.breeding.duration = duration;
+
+      gameState.breeding.timer += dt;
+      if (gameState.breeding.timer >= duration) {
+        gameState.breeding.timer = 0;
+        triggerMatingSuccess();
+      }
+
+      const progEl = document.getElementById('breeding-progress');
+      const timeEl = document.getElementById('breeding-time-text');
+      if (progEl) {
+        const pct = Math.min(100, (gameState.breeding.timer / duration) * 100);
+        progEl.style.width = pct + '%';
+      }
+      if (timeEl) {
+        timeEl.textContent = `${gameState.breeding.timer.toFixed(1)}s / ${duration.toFixed(1)}s`;
+      }
+
+      // Boost 能量浮點回充
+      gameState.boost.regenCounter = (gameState.boost.regenCounter || 0) + dt;
+      const nectarLvl = (gameState.facilities.nectar && gameState.facilities.nectar.level) || 0;
+      const regenInterval = Math.max(0.4, 1.2 - nectarLvl * 0.1);
+      if (gameState.boost.regenCounter >= regenInterval) {
+        gameState.boost.regenCounter = 0;
+        if (gameState.boost.current < gameState.boost.max) {
+          gameState.boost.current = Math.min(gameState.boost.max, Math.round((gameState.boost.current + 0.1) * 10) / 10);
+          const bCount = document.getElementById('boost-count');
+          if (bCount) bCount.textContent = gameState.boost.current.toFixed(1);
+        }
+      }
+
+      if (gameState.automation.autoBoost && gameState.boost.current >= 1.0) {
+        boostMating();
+      }
+    }
+
+    function triggerMatingSuccess() {
+      if (!gameState.royal.queen || !gameState.royal.king) return;
+      playSfx('birth');
+
+      let offspringCount = 1;
+      const polyMult = getAffixMultiplier(gameState.royal.queen, 'polyembryony');
+      if (polyMult >= 1.0 && Math.random() < 0.25) offspringCount = 3;
+      else if (polyMult > 0 && Math.random() < 0.12) offspringCount = 2;
+
+      const twinLvl = getTalentLevel('t_twin_larvae');
+      if (offspringCount === 1 && twinLvl > 0 && Math.random() < twinLvl * 0.15) {
+        offspringCount = 2;
+      }
+
+      for (let i = 0; i < offspringCount; i++) {
+        const child = breedOffspring(gameState.royal.queen, gameState.royal.king);
+
+        // 自動化管線 1: 自動王室加冕
+        if (gameState.automation.autoAscend) {
+          const currentRoyal = child.gender === 'F' ? gameState.royal.queen : gameState.royal.king;
+          if (getCritterScore(child) > getCritterScore(currentRoyal)) {
+            promoteToRoyal(child, child.gender === 'F' ? 'queen' : 'king');
+            showToast(`【自動加冕】第 #${child.birthOrder} 號超越現任，晉升新王室！`, 'success');
+            continue;
+          }
+        }
+
+        // 自動化管線 2: 自動適性分派
+        if (gameState.automation.autoWorker) {
+          const assignRes = assignWorkerWithCascading(child);
+          if (assignRes.success) {
+            continue;
+          }
+        }
+
+        // 保溫槽正常收容或自動汰除
+        if (gameState.hatchery.eggs.length < gameState.hatchery.capacity) {
+          gameState.hatchery.eggs.push(child);
+        } else if (gameState.automation.autoCull) {
+          sacrificeEggObject(child);
+        }
+      }
+
+      renderHatchery();
+      renderFacilities();
+      checkAchievements();
+    }
+
+    function boostMating() {
+      if (gameState.boost.current < 1.0) {
+        showToast('刺激交配能量不足（需至少 1.0 點）', 'error');
+        return;
+      }
+      gameState.boost.current = Math.max(0, Math.round((gameState.boost.current - 1.0) * 10) / 10);
+      playSfx('click');
+      triggerMatingSuccess();
+      updateResourceHeaders();
+    }
+
+    function tickResources(dt) {
+      const workerPowerBonus = 1 + getTalentLevel('t_worker_power') * 0.2;
+      const relayLvl = (gameState.facilities.relay && gameState.facilities.relay.level) || 0;
+      const relayBonus = 1 + relayLvl * 0.08;
+
+      // 礦坑 -> 泥土
+      let dirtRate = 0;
+      const mineFac = gameState.facilities.mine;
+      if (mineFac) {
+        mineFac.workers.forEach(w => {
+          const acid = getAffixMultiplier(w, 'acidic_glands');
+          const drill = getAffixMultiplier(w, 'diamond_drill');
+          const wOutput = (w.traits.sting * 0.2) * (1 + acid * 0.35 + drill * 0.8) * workerPowerBonus * relayBonus;
+          dirtRate += wOutput;
+          const humus = getAffixMultiplier(w, 'humus_digester');
+          if (humus > 0) gameState.resources.grass += wOutput * 0.15 * dt;
+        });
+      }
+
+      // 農場 -> 草料
+      let grassRate = 0;
+      const farmFac = gameState.facilities.farm;
+      if (farmFac) {
+        farmFac.workers.forEach(w => {
+          const serr = getAffixMultiplier(w, 'serrated_mandibles');
+          const photo = getAffixMultiplier(w, 'photosynthesis');
+          const wOutput = (w.traits.bite * 0.2) * (1 + serr * 0.45 + photo * 0.75) * workerPowerBonus * relayBonus;
+          grassRate += wOutput;
+        });
+      }
+
+      // 真菌溫室轉換
+      const ghFac = gameState.facilities.greenhouse;
+      if (ghFac && ghFac.level > 0 && ghFac.workers.length > 0) {
+        const ghPower = ghFac.workers.reduce((s, w) => s + w.traits.bite * 0.15, 0);
+        const converted = Math.min(gameState.resources.dirt, ghPower * dt);
+        gameState.resources.dirt -= converted;
+        grassRate += ghPower * 1.5;
+      }
+
+      // 覓食隊全域採集
+      const foragerFac = gameState.facilities.forager;
+      if (foragerFac && foragerFac.level > 0) {
+        foragerFac.workers.forEach(w => {
+          dirtRate += w.traits.agility * 0.05;
+          grassRate += w.traits.agility * 0.05;
+          gameState.resources.sod += w.traits.agility * 0.02 * dt;
+        });
+      }
+
+      // 搬運隊吞吐量
+      let carryRate = 0;
+      const carryFac = gameState.facilities.carry;
+      if (carryFac) {
+        const logisticsOverdrive = 1 + getTalentLevel('t_logistics_overdrive') * 0.3;
+        carryFac.workers.forEach(w => {
+          const load = getAffixMultiplier(w, 'titan_load');
+          const pocket = getAffixMultiplier(w, 'pocket_dimension');
+          const mag = getAffixMultiplier(w, 'magnetic_antenna');
+          const wCarry = (w.traits.strength * 0.3) * (1 + load * 1.5 + pocket * 2.5 + mag * 0.6) * logisticsOverdrive * relayBonus;
+          carryRate += wCarry;
+        });
+      }
+
+      // 壓製廠 -> 草皮
+      let sodRate = 0;
+      const factoryFac = gameState.facilities.factory;
+      if (factoryFac) {
+        const factoryEff = 1 + getTalentLevel('t_factory_efficiency') * 0.25;
+        let factoryCap = 0;
+        factoryFac.workers.forEach(w => {
+          const mycel = getAffixMultiplier(w, 'symbiotic_mycelium');
+          const wCap = (w.traits.vitality * 0.2) * (1 + mycel * 0.5) * factoryEff * relayBonus;
+          factoryCap += wCap;
+        });
+
+        const maxTransfer = carryRate * dt;
+        const availableDirt = Math.min(gameState.resources.dirt, maxTransfer);
+        const availableGrass = Math.min(gameState.resources.grass, maxTransfer);
+        const sodToProduce = Math.min(factoryCap * dt, availableDirt, availableGrass);
+
+        if (sodToProduce > 0) {
+          gameState.resources.dirt = Math.max(0, gameState.resources.dirt - sodToProduce);
+          gameState.resources.grass = Math.max(0, gameState.resources.grass - sodToProduce);
+          gameState.resources.sod += sodToProduce;
+          sodRate = sodToProduce / Math.max(0.001, dt);
+
+          factoryFac.workers.forEach(w => {
+            const trans = getAffixMultiplier(w, 'transmutation');
+            if (trans > 0 && Math.random() < 0.01 * trans) {
+              addDnaPoints(1, '點石成金');
+            }
+          });
+        }
+      }
+
+      // 基因實驗室研發
+      const geneLab = gameState.facilities.genelab;
+      if (geneLab && geneLab.level > 0 && geneLab.workers.length > 0) {
+        const labPower = geneLab.workers.reduce((s, w) => s + (w.traits.sting * 0.1), 0);
+        geneLab.progress = (geneLab.progress || 0) + labPower * dt * 0.05;
+        if (geneLab.progress >= 10) {
+          geneLab.progress = 0;
+          addDnaPoints(1, '基因實驗室研發');
+        }
+      }
+
+      gameState.resources.dirt += dirtRate * dt;
+      gameState.resources.grass += grassRate * dt;
+
+      const fDirt = document.getElementById('flow-dirt-rate');
+      const fGrass = document.getElementById('flow-grass-rate');
+      const fCarry = document.getElementById('flow-carry-rate');
+      const fFac = document.getElementById('flow-factory-rate');
+      const sRate = document.getElementById('res-sod-rate');
+      if (fDirt) fDirt.textContent = `${dirtRate.toFixed(1)} /s`;
+      if (fGrass) fGrass.textContent = `${grassRate.toFixed(1)} /s`;
+      if (fCarry) fCarry.textContent = `${carryRate.toFixed(1)} /s`;
+      if (fFac) fFac.textContent = `${sodRate.toFixed(1)} /s`;
+      if (sRate) sRate.textContent = `(+${sodRate.toFixed(1)}/s)`;
+
+      updateResourceHeaders();
+    }
+
+    function tickMilitary(dt) {
+      if (!gameState.military.atWar || gameState.military.soldiers.length === 0) return;
+      const zone = CAMPAIGN_ZONES[gameState.military.selectedZone] || CAMPAIGN_ZONES.crickets;
+      const general = getGeneralOfficer();
+      const scout = getScoutOfficer();
+      const medic = getMedicOfficer();
+
+      let armyScore = gameState.military.soldiers.reduce((s, sol) => s + getCritterScore(sol), 0);
+      if (general) {
+        const tm = getAffixMultiplier(general, 'tactical_mastermind');
+        armyScore *= (1 + 0.15 + (tm > 0 ? 0.35 * tm : 0));
+      }
+      const soldierVigor = 1 + getTalentLevel('t_soldier_vigor') * 0.15;
+      armyScore *= soldierVigor;
+
+      let scoutSpeed = 1.0;
+      if (scout) {
+        const cs = getAffixMultiplier(scout, 'compound_sight');
+        const hr = getAffixMultiplier(scout, 'hyper_reflexes');
+        scoutSpeed += (scout.traits.agility * 0.1) * (1 + cs * 0.5 + hr * 0.8);
+      }
+      scoutSpeed *= (1 + getTalentLevel('t_scout_swiftness') * 0.25);
+
+      // 地圖探索推進
+      gameState.military.mapProgress = Math.min(100, gameState.military.mapProgress + (scoutSpeed * dt * 2.0));
+      const progBar = document.getElementById('war-map-progress-bar');
+      const progText = document.getElementById('war-map-progress-text');
+      if (progBar) progBar.style.width = `${gameState.military.mapProgress.toFixed(1)}%`;
+      if (progText) progText.textContent = `${gameState.military.mapProgress.toFixed(1)}%`;
+
+      gameState.military.battleTimer = (gameState.military.battleTimer || 0) + dt;
+      if (gameState.military.battleTimer >= 1.5) {
+        gameState.military.battleTimer = 0;
+
+        const damage = Math.max(5, Math.floor(armyScore * 0.25 + (Math.random() * 5)));
+        gameState.military.currentEnemyHp -= damage;
+        playSfx('attack');
+
+        if (gameState.military.currentEnemyHp <= 0) {
+          playSfx('victory');
+          const spoilMult = 1 + getTalentLevel('t_spoils_of_war') * 0.4;
+          const lootSod = Math.floor((zone.minScore * 4 + Math.random() * zone.maxScore) * spoilMult);
+          gameState.resources.sod += lootSod;
+          logBattle(`討伐成功！擊破敵軍，掠奪 +${lootSod} 草皮！`, 'text-emerald-400');
+
+          if (gameState.military.mapProgress >= 100) {
+            gameState.military.mapProgress = 0;
+            addDnaPoints(2, `征服【${zone.name}】`);
+            logBattle(`🏆 成功征服【${zone.name}】全域領地！獲得 2 點 DNA！`, 'text-amber-300 font-bold');
+            gameState.achievements['first_victory'] = true;
+          }
+
+          gameState.military.currentEnemyMaxHp = Math.floor(zone.minScore + Math.random() * (zone.maxScore - zone.minScore));
+          gameState.military.currentEnemyHp = gameState.military.currentEnemyMaxHp;
+        } else {
+          // 敵方反擊
+          const targetIdx = Math.floor(Math.random() * gameState.military.soldiers.length);
+          const targetSoldier = gameState.military.soldiers[targetIdx];
+
+          const carapaceMult = getAffixMultiplier(targetSoldier, 'carapace_armor');
+          const reinforceLvl = getTalentLevel('t_carapace_reinforce');
+          const surviveChance = (carapaceMult > 0 ? 0.6 * carapaceMult : 0) + (reinforceLvl * 0.1);
+
+          if (Math.random() > surviveChance && Math.random() < 0.25) {
+            const medicMult = medic ? getAffixMultiplier(medic, 'combat_triage') : 0;
+            const medicTalent = getTalentLevel('t_medic_mastery') * 0.18;
+            const hospitalLvl = (gameState.facilities.hospital && gameState.facilities.hospital.level) || 0;
+            const rescueChance = (medicMult > 0 ? 0.4 * medicMult : 0) + medicTalent + (hospitalLvl * 0.08);
+
+            if (Math.random() < rescueChance) {
+              logBattle(`醫護及時搶救！士兵 #${targetSoldier.birthOrder} 脫離險境！`, 'text-emerald-400');
+            } else {
+              const cryoMult = getAffixMultiplier(targetSoldier, 'cryostasis');
+              if (cryoMult >= 1.0) {
+                logBattle(`【不死休眠】士兵 #${targetSoldier.birthOrder} 進入蟲蛹休眠，免於陣亡！`, 'text-blue-300');
+              } else {
+                const fallen = gameState.military.soldiers.splice(targetIdx, 1)[0];
+                logBattle(`士兵 #${fallen.birthOrder} 戰死沙場！`, 'text-red-400');
+                renderArmyRoster();
+
+                if (gameState.military.soldiers.length === 0) {
+                  logBattle(`軍隊已全軍覆沒，撤回巢穴休整。`, 'text-amber-500');
+                  gameState.military.atWar = false;
+                  const btn = document.getElementById('btn-war-toggle');
+                  if (btn) {
+                    btn.innerHTML = '<i data-lucide="sword" class="w-4 h-4"></i> 發動全面進攻';
+                    btn.classList.replace('bg-neutral-700', 'bg-red-600');
+                  }
+                  const badge = document.getElementById('battle-status-badge');
+                  if (badge) {
+                    badge.textContent = '待命中';
+                    badge.classList.replace('bg-red-950/60', 'bg-neutral-800');
+                  }
+                  lucide.createIcons();
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    let lastTick = Date.now();
+    function gameLoop() {
+      if (gameState.isPaused) {
+        lastTick = Date.now();
+        return;
+      }
+      const now = Date.now();
+      const dt = Math.min(1.0, (now - lastTick) / 1000);
+      lastTick = now;
+
+      tickBreeding(dt);
+      tickResources(dt);
+      tickMilitary(dt);
+      checkAchievements();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-target') === tabId) {
+          btn.classList.add('text-amber-400', 'bg-neutral-800', 'border-b-2', 'border-amber-500');
+          btn.classList.remove('text-neutral-400');
+        } else {
+          btn.classList.remove('text-amber-400', 'bg-neutral-800', 'border-b-2', 'border-amber-500');
+          btn.classList.add('text-neutral-400');
+        }
+      });
+      lucide.createIcons();
+    }
+
+    function renderAll() {
+      updateResourceHeaders();
+      renderRoyals();
+      renderHatchery();
+      renderFacilities();
+      renderArmyRoster();
+      renderCampaignTargets();
+      renderTalents();
+      renderAchievements();
+
+      document.getElementById('auto-ascend-toggle').checked = !!gameState.automation.autoAscend;
+      document.getElementById('auto-worker-toggle').checked = !!gameState.automation.autoWorker;
+      document.getElementById('auto-cull-toggle').checked = !!gameState.automation.autoCull;
+      document.getElementById('auto-boost-toggle').checked = !!gameState.automation.autoBoost;
+
+      lucide.createIcons();
+    }
+
+    function updateResourceHeaders() {
+      document.getElementById('res-gen').textContent = `Gen ${gameState.generation}`;
+      document.getElementById('res-sod').textContent = Math.floor(gameState.resources.sod).toLocaleString();
+      document.getElementById('res-dirt').textContent = Math.floor(gameState.resources.dirt).toLocaleString();
+      document.getElementById('res-grass').textContent = Math.floor(gameState.resources.grass).toLocaleString();
+      document.getElementById('res-dna').textContent = gameState.dnaPoints.toLocaleString();
+      document.getElementById('tab-worker-count').textContent = getTotalWorkersCount();
+      document.getElementById('tab-soldier-count').textContent = gameState.military.soldiers.length;
+      document.getElementById('tab-talent-points').textContent = `${gameState.dnaPoints} 點`;
+      document.getElementById('talent-points-available').textContent = gameState.dnaPoints;
+
+      document.getElementById('boost-count').textContent = Number(gameState.boost.current || 0).toFixed(1);
+      document.getElementById('boost-max').textContent = Number(gameState.boost.max || 10).toFixed(1);
+    }
+
+    function renderRoyals() {
+      const q = gameState.royal.queen;
+      const k = gameState.royal.king;
+
+      if (q) {
+        document.getElementById('queen-subtitle').textContent = `第 ${q.generation} 代・#${q.birthOrder}`;
+        document.getElementById('queen-score').textContent = getCritterScore(q).toFixed(1);
+        renderStatsGrid('queen-stats-grid', q);
+        renderTraitsContainer('queen-traits-container', q);
+      }
+
+      if (k) {
+        document.getElementById('king-subtitle').textContent = `第 ${k.generation} 代・#${k.birthOrder}`;
+        document.getElementById('king-score').textContent = getCritterScore(k).toFixed(1);
+        renderStatsGrid('king-stats-grid', k);
+        renderTraitsContainer('king-traits-container', k);
+      }
+    }
+
+    function renderStatsGrid(containerId, critter) {
+      const container = document.getElementById(containerId);
+      if (!container || !critter) return;
+      let html = '';
+      TRAIT_KEYS.forEach(k => {
+        const info = TRAIT_INFO[k];
+        const val = Number(critter.traits[k] || 0).toFixed(1);
+        html += `
+          <div class="${info.bg} p-1.5 sm:p-2 rounded border ${info.border} min-w-0">
+            <div class="text-[9px] sm:text-[10px] text-neutral-400 truncate stat-badge-text">${info.name}</div>
+            <div class="text-xs sm:text-sm font-bold font-mono ${info.color} stat-val-text">${val}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderTraitsContainer(containerId, critter) {
+      const container = document.getElementById(containerId);
+      if (!container || !critter) return;
+      const affixes = critter.affixes || {};
+      const keys = Object.keys(affixes);
+      if (keys.length === 0) {
+        container.innerHTML = `<span class="text-[11px] text-neutral-500">暫無特殊詞條突變</span>`;
+        return;
+      }
+      let html = '';
+      keys.forEach(affixId => {
+        const state = affixes[affixId];
+        const def = TRAIT_AFFIXES_DEF[affixId];
+        if (!def) return;
+        const isExp = state === 'expressed';
+        html += `
+          <span class="trait-badge ${isExp ? 'trait-expressed' : 'trait-recessive'}" title="${isExp ? def.expressedDesc : def.recessiveDesc}">
+            ${def.name} (${isExp ? '顯性' : '隱性'})
+          </span>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderHatchery() {
+      const container = document.getElementById('eggs-container');
+      if (!container) return;
+      document.getElementById('hatchery-capacity-badge').textContent = `${gameState.hatchery.eggs.length} / ${gameState.hatchery.capacity}`;
+      document.getElementById('hatchery-upgrade-cost').textContent = gameState.hatchery.cost;
+
+      if (gameState.hatchery.eggs.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-8 text-neutral-500 text-xs border border-dashed border-neutral-800 rounded-xl">
+            孵化槽目前空缺，王室正加速孕育新一代幼蟲...
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      gameState.hatchery.eggs.forEach((egg, idx) => {
+        const score = getCritterScore(egg);
+        const isFemale = egg.gender === 'F';
+        html += `
+          <div class="bg-neutral-950 p-3.5 rounded-xl border border-neutral-800 space-y-2.5 relative group">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-xs ${isFemale ? 'text-pink-400' : 'text-blue-400'}">
+                  ${isFemale ? '♀ 雌性幼蟲' : '♂ 雄性幼蟲'}
+                </span>
+                <span class="text-[10px] font-mono text-neutral-400">Gen ${egg.generation}・#${egg.birthOrder}</span>
+              </div>
+              <span class="text-sm font-bold font-mono text-amber-400">${score.toFixed(1)}</span>
+            </div>
+
+            <div class="grid grid-cols-5 gap-1 text-center text-[10px] font-mono">
+              ${TRAIT_KEYS.map(k => `<div class="bg-neutral-900 py-1 rounded text-neutral-300">${Number(egg.traits[k] || 0).toFixed(1)}</div>`).join('')}
+            </div>
+
+            <div class="flex flex-wrap gap-1 min-h-[22px]">
+              ${Object.keys(egg.affixes || {}).map(affixId => {
+                const isExp = egg.affixes[affixId] === 'expressed';
+                return `<span class="trait-badge ${isExp ? 'trait-expressed' : 'trait-recessive'}">${TRAIT_AFFIXES_DEF[affixId].name}</span>`;
+              }).join('') || '<span class="text-[10px] text-neutral-600">無詞條</span>'}
+            </div>
+
+            <div class="grid grid-cols-2 gap-1.5 pt-1 text-xs">
+              <button onclick="promoteEggToRoyal(${idx})" class="py-1 rounded bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-600/40">
+                ${isFemale ? '晉升新后' : '晉升新王'}
+              </button>
+              <button onclick="promoteEggToWorker(${idx})" class="py-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-600/40">
+                指派工種
+              </button>
+              <button onclick="promoteEggToSoldier(${idx})" class="py-1 rounded bg-red-600/30 hover:bg-red-600/50 text-red-300 border border-red-600/40">
+                編派衛隊
+              </button>
+              <button onclick="sacrificeEgg(${idx})" class="py-1 rounded bg-neutral-800 hover:bg-red-950/60 text-neutral-400 hover:text-red-300 border border-neutral-700">
+                汰除回收
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderWorkerRosterHtml(key, fac) {
+      if (!fac.workers || fac.workers.length === 0) {
+        return `
+          <div class="text-[11px] text-neutral-500 py-2.5 text-center bg-neutral-950/60 rounded-lg border border-dashed border-neutral-800/80">
+            尚無工人進駐 (容量: ${fac.level})
+          </div>
+        `;
+      }
+
+      return fac.workers.map((w, wIdx) => {
+        const score = getCritterFacilityValue(w, key);
+        const isFemale = w.gender === 'F';
+        const affixes = Object.keys(w.affixes || {});
+        let affixBadges = '';
+        if (affixes.length > 0) {
+          affixBadges = `
+            <div class="flex flex-wrap gap-1 pt-1">
+              ${affixes.map(aid => {
+                const isExp = w.affixes[aid] === 'expressed';
+                const def = TRAIT_AFFIXES_DEF[aid];
+                const name = def ? def.name : aid;
+                return `<span class="trait-badge ${isExp ? 'trait-expressed' : 'trait-recessive'} text-[9px] px-1.5 py-0.5">${name}</span>`;
+              }).join('')}
+            </div>
+          `;
+        }
+
+        return `
+          <div class="bg-neutral-950/90 p-2.5 rounded-lg border border-neutral-800/90 text-xs space-y-1.5 relative group hover:border-neutral-700 transition shadow-inner">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-[11px] ${isFemale ? 'text-pink-400' : 'text-blue-400'}">
+                  ${isFemale ? '♀ 雌' : '♂ 雄'} Gen ${w.generation}
+                </span>
+                <span class="text-neutral-500 text-[10px] font-mono">#${w.birthOrder}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-mono font-bold border border-amber-500/30">
+                  適性: ${score}
+                </span>
+                <button onclick="dismissWorker('${key}', ${wIdx})" title="召回並汰除此工人" class="text-neutral-500 hover:text-red-400 p-1 rounded hover:bg-red-950/40 transition min-w-[24px] min-h-[24px] flex items-center justify-center">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-5 gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-mono text-center">
+              <div class="bg-neutral-900/90 py-0.5 sm:py-1 rounded ${key === 'factory' || key === 'hospital' ? 'border border-red-500/60 bg-red-950/30 text-red-300 font-bold' : 'text-neutral-300'}">
+                <span class="text-[7px] sm:text-[8px] text-neutral-500 block">命</span>${Number(w.traits.vitality || 0).toFixed(1)}
+              </div>
+              <div class="bg-neutral-900/90 py-0.5 sm:py-1 rounded ${key === 'carry' || key === 'armory' ? 'border border-amber-500/60 bg-amber-950/30 text-amber-300 font-bold' : 'text-neutral-300'}">
+                <span class="text-[7px] sm:text-[8px] text-neutral-500 block">力</span>${Number(w.traits.strength || 0).toFixed(1)}
+              </div>
+              <div class="bg-neutral-900/90 py-0.5 sm:py-1 rounded ${key === 'nursery' || key === 'forager' ? 'border border-blue-500/60 bg-blue-950/30 text-blue-300 font-bold' : 'text-neutral-300'}">
+                <span class="text-[7px] sm:text-[8px] text-neutral-500 block">敏</span>${Number(w.traits.agility || 0).toFixed(1)}
+              </div>
+              <div class="bg-neutral-900/90 py-0.5 sm:py-1 rounded ${key === 'farm' || key === 'greenhouse' ? 'border border-lime-500/60 bg-lime-950/30 text-lime-300 font-bold' : 'text-neutral-300'}">
+                <span class="text-[7px] sm:text-[8px] text-neutral-500 block">咬</span>${Number(w.traits.bite || 0).toFixed(1)}
+              </div>
+              <div class="bg-neutral-900/90 py-0.5 sm:py-1 rounded ${key === 'mine' || key === 'genelab' ? 'border border-purple-500/60 bg-purple-950/30 text-purple-300 font-bold' : 'text-neutral-300'}">
+                <span class="text-[7px] sm:text-[8px] text-neutral-500 block">刺</span>${Number(w.traits.sting || 0).toFixed(1)}
+              </div>
+            </div>
+            ${affixBadges}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFacilities() {
+      const coreContainer = document.getElementById('core-facilities-grid');
+      const advWrapper = document.getElementById('advanced-facilities-container');
+      if (!coreContainer || !advWrapper) return;
+
+      let coreHtml = '';
+      let advHtml = '';
+      const hasBlueprints = getTalentLevel('t_unlock_advanced_facilities') > 0;
+
+      if (document.getElementById('adv-fac-status-badge')) {
+        document.getElementById('adv-fac-status-badge').textContent = hasBlueprints ? '工人上限 = 設施等級' : '需在天賦樹解鎖【專家建築藍圖】';
+      }
+
+      if (!hasBlueprints) {
+        advWrapper.innerHTML = `
+          <div class="p-6 text-center border border-dashed border-purple-800/60 rounded-xl bg-purple-950/20 text-purple-300 space-y-2">
+            <i data-lucide="lock" class="w-6 h-6 mx-auto text-purple-400"></i>
+            <div class="font-bold text-sm">特化專家建築尚未解鎖</div>
+            <p class="text-xs text-neutral-400 max-w-md mx-auto">
+              此區域包含育嬰保育室、基因實驗室、甲殼軍械坊等 8 座專家設施。請先在【演化天賦樹】的【工業與建築專精】中研發【專家建築藍圖】！
+            </p>
+          </div>
+        `;
+      } else {
+        advWrapper.innerHTML = `<div id="advanced-facilities-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>`;
+      }
+
+      const effectiveAdvContainer = document.getElementById('advanced-facilities-grid');
+      const discount = 1 - (getTalentLevel('t_sod_preservation') * 0.12);
+
+      Object.keys(FACILITY_CONFIG).forEach(key => {
+        const cfg = FACILITY_CONFIG[key];
+        const fac = gameState.facilities[key];
+        const isBuilt = fac.level > 0;
+        const isFull = fac.workers.length >= fac.level;
+        const costToDisplay = Math.max(1, Math.floor(fac.cost * discount));
+
+        if (!cfg.isAdvanced) {
+          coreHtml += `
+            <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                  <span class="p-2 rounded-lg bg-${cfg.color}-500/20 text-${cfg.color}-400 border border-${cfg.color}-500/30">
+                    <i data-lucide="${cfg.icon}" class="w-5 h-5"></i>
+                  </span>
+                  <div>
+                    <h3 class="font-bold text-sm text-neutral-200">${cfg.name}</h3>
+                    <span class="text-xs text-neutral-400">${cfg.desc}</span>
+                  </div>
+                </div>
+                <span class="px-2.5 py-1 rounded bg-neutral-800 font-mono text-xs ${isFull ? 'text-amber-400 border border-amber-500/40' : 'text-neutral-300'}">
+                  ${fac.workers.length} / ${fac.level} 隻工人
+                </span>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-neutral-800/80">
+                <div class="text-[11px] font-semibold text-neutral-400 flex items-center justify-between">
+                  <span>在崗工人名冊 (${fac.workers.length}/${fac.level})：</span>
+                  <span class="text-[10px] text-neutral-500 font-mono">五維 (命/力/敏/咬/刺)</span>
+                </div>
+                <div class="space-y-1.5 max-h-56 overflow-y-auto pr-1">
+                  ${renderWorkerRosterHtml(key, fac)}
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs pt-3 border-t border-neutral-800">
+                <span class="text-neutral-400">設施等級: <b class="text-neutral-200 font-mono">${fac.level}</b></span>
+                <button onclick="upgradeFacility('${key}')" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-${cfg.color}-300 border border-neutral-700 transition shadow">
+                  升級容量 (${costToDisplay} 草皮)
+                </button>
+              </div>
+            </div>
+          `;
+        } else if (hasBlueprints && effectiveAdvContainer) {
+          advHtml += `
+            <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-800 flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-bold text-xs text-${cfg.color}-300 flex items-center gap-1.5">
+                    <i data-lucide="${cfg.icon}" class="w-3.5 h-3.5"></i> ${cfg.name}
+                  </span>
+                  <span class="text-[11px] font-mono ${!isBuilt ? 'text-neutral-500' : (isFull ? 'text-amber-400' : 'text-neutral-300')}">
+                    ${!isBuilt ? '未建造' : `${fac.workers.length}/${fac.level} 隻`}
+                  </span>
+                </div>
+                <p class="text-[11px] text-neutral-400 mb-2">${cfg.desc}</p>
+                ${isBuilt ? `
+                  <div class="space-y-1.5 pt-2 border-t border-neutral-800/80 max-h-48 overflow-y-auto pr-1">
+                    ${renderWorkerRosterHtml(key, fac)}
+                  </div>
+                ` : ''}
+              </div>
+              <button onclick="upgradeFacility('${key}')" class="w-full py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-${cfg.color}-300 text-xs border border-neutral-700">
+                ${!isBuilt ? `建造設施 (${costToDisplay} 草皮)` : `擴建升級 (${costToDisplay} 草皮)`}
+              </button>
+            </div>
+          `;
+        }
+      });
+
+      coreContainer.innerHTML = coreHtml;
+      if (hasBlueprints && effectiveAdvContainer) effectiveAdvContainer.innerHTML = advHtml;
+      lucide.createIcons();
+    }
+
+    function renderArmyRoster() {
+      const soldiers = gameState.military.soldiers;
+      document.getElementById('army-capacity-badge').textContent = `${soldiers.length} / ${gameState.military.barracksCapacity} 兵員`;
+      document.getElementById('cost-barracks').textContent = gameState.military.cost;
+
+      document.getElementById('officer-general').textContent = soldiers[0] ? `第 #${soldiers[0].birthOrder} 號 (分: ${getCritterScore(soldiers[0])})` : '尚未任命';
+      document.getElementById('officer-scout').textContent = soldiers[1] ? `第 #${soldiers[1].birthOrder} 號 (分: ${getCritterScore(soldiers[1])})` : '尚未任命';
+      document.getElementById('officer-medic').textContent = soldiers[2] ? `第 #${soldiers[2].birthOrder} 號 (分: ${getCritterScore(soldiers[2])})` : '尚未任命';
+
+      const container = document.getElementById('soldiers-list');
+      if (!container) return;
+      if (soldiers.length === 0) {
+        container.innerHTML = `<div class="text-neutral-500 text-xs py-2">目前無任何入伍士兵。</div>`;
+        return;
+      }
+      let html = '';
+      soldiers.forEach((s, idx) => {
+        const title = idx === 0 ? '👑 將軍' : (idx === 1 ? '⚡ 斥候' : (idx === 2 ? '✚ 醫護' : '衛隊'));
+        html += `
+          <div class="p-2 rounded bg-neutral-950 border border-neutral-800 flex items-center justify-between text-xs">
+            <span class="font-bold text-neutral-300">${title} #${s.birthOrder}</span>
+            <span class="font-mono text-amber-400 font-semibold">${getCritterScore(s)}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderCampaignTargets() {
+      const container = document.getElementById('campaign-targets');
+      if (!container) return;
+      let html = '';
+      Object.keys(CAMPAIGN_ZONES).forEach(zid => {
+        const zone = CAMPAIGN_ZONES[zid];
+        const isSelected = gameState.military.selectedZone === zid;
+        html += `
+          <button onclick="selectCampaignZone('${zid}')" class="p-2.5 rounded-lg border text-left transition ${isSelected ? 'border-red-500 bg-red-950/40 text-red-200 shadow' : 'border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-neutral-200'}">
+            <div class="font-bold text-xs">${zone.name}</div>
+            <div class="text-[10px] text-neutral-500 mt-1">戰力: ${zone.minScore} ~ ${zone.maxScore}</div>
+          </button>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderTalents() {
+      const branches = { breeding: 'branch-breeding', industry: 'branch-industry', military: 'branch-military', automation: 'branch-automation' };
+      Object.keys(branches).forEach(b => {
+        const el = document.getElementById(branches[b]);
+        if (el) el.innerHTML = '';
+      });
+
+      Object.keys(TALENT_DEFS).forEach(tid => {
+        const t = TALENT_DEFS[tid];
+        const curLvl = getTalentLevel(tid);
+        const isMax = curLvl >= t.maxLevel;
+        const nextCost = !isMax ? t.costPerLevel[curLvl] : 0;
+        const canAfford = gameState.dnaPoints >= nextCost;
+
+        const html = `
+          <div class="bg-neutral-950 p-2.5 rounded-lg border border-neutral-800 space-y-1.5 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-neutral-200">${t.name}</span>
+              <span class="font-mono text-purple-400 font-semibold">${curLvl} / ${t.maxLevel}</span>
+            </div>
+            <p class="text-[11px] text-neutral-400 leading-tight">${t.desc}</p>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[10px] text-neutral-500">${curLvl > 0 ? t.getEffectDesc(curLvl) : '尚未激活'}</span>
+              ${!isMax ? `
+                <button onclick="upgradeTalent('${tid}')" ${!canAfford ? 'disabled' : ''} class="px-2 py-0.5 rounded bg-purple-950/80 hover:bg-purple-900 border border-purple-700/60 text-purple-200 font-mono text-[11px] disabled:opacity-40 disabled:cursor-not-allowed">
+                  +1 (${nextCost} DNA)
+                </button>
+              ` : `<span class="text-neutral-500 font-mono text-[11px]">已滿級</span>`}
+            </div>
+          </div>
+        `;
+        const targetEl = document.getElementById(branches[t.branch]);
+        if (targetEl) targetEl.innerHTML += html;
+      });
+
+      updateAutomationTabBadges();
+    }
+
+    function updateAutomationTabBadges() {
+      const hasAscend = getTalentLevel('t_unlock_auto_ascend') > 0;
+      const hasWorker = getTalentLevel('t_unlock_auto_worker') > 0;
+      const hasCull = getTalentLevel('t_unlock_auto_cull') > 0;
+      const hasBoost = getTalentLevel('t_auto_boost') > 0;
+
+      const badgeAscend = document.getElementById('badge-req-ascend');
+      if (badgeAscend) {
+        badgeAscend.textContent = hasAscend ? '已解鎖' : '需天賦解鎖';
+        badgeAscend.className = hasAscend ? 'text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800';
+      }
+
+      const badgeWorker = document.getElementById('badge-req-worker');
+      if (badgeWorker) {
+        badgeWorker.textContent = hasWorker ? '已解鎖' : '需天賦解鎖';
+        badgeWorker.className = hasWorker ? 'text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800';
+      }
+
+      const badgeCull = document.getElementById('badge-req-cull');
+      if (badgeCull) {
+        badgeCull.textContent = hasCull ? '已解鎖' : '需天賦解鎖';
+        badgeCull.className = hasCull ? 'text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800';
+      }
+
+      const badgeBoost = document.getElementById('badge-req-boost');
+      if (badgeBoost) {
+        badgeBoost.textContent = hasBoost ? '已解鎖' : '需天賦解鎖';
+        badgeBoost.className = hasBoost ? 'text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-500 border border-neutral-800';
+      }
+
+      const tabBadge = document.getElementById('tab-auto-badge');
+      if (tabBadge) {
+        const anyUnlocked = hasAscend || hasWorker || hasCull || hasBoost;
+        tabBadge.textContent = anyUnlocked ? '已就緒' : '未激活';
+        tabBadge.className = anyUnlocked ? 'text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30' : 'text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono';
+      }
+    }
+
+    function renderAchievements() {
+      const container = document.getElementById('achievements-grid');
+      if (!container) return;
+      let unlockedCount = 0;
+      let html = '';
+
+      ACHIEVEMENTS_DEF.forEach(a => {
+        const isDone = !!gameState.achievements[a.id];
+        if (isDone) unlockedCount++;
+        html += `
+          <div class="p-3 rounded-xl border text-xs flex items-center gap-3 transition ${isDone ? 'bg-amber-950/20 border-amber-500/40 text-neutral-200' : 'bg-neutral-950/60 border-neutral-800 text-neutral-500'}">
+            <div class="p-2 rounded-lg ${isDone ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-neutral-900 text-neutral-600'}">
+              <i data-lucide="${isDone ? 'trophy' : 'lock'}" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="font-bold ${isDone ? 'text-amber-300' : 'text-neutral-400'}">${a.name}</div>
+              <div class="text-[11px] text-neutral-400 mt-0.5">${a.desc}</div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      document.getElementById('achieve-count').textContent = `${unlockedCount}/${ACHIEVEMENTS_DEF.length}`;
+      lucide.createIcons();
+    }
+
+    function renderCodex() {
+      const container = document.getElementById('codex-list');
+      if (!container) return;
+      let html = '';
+      Object.keys(TRAIT_AFFIXES_DEF).forEach(k => {
+        const t = TRAIT_AFFIXES_DEF[k];
+        html += `
+          <div class="p-3 rounded-lg bg-neutral-950 border border-neutral-800 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-neutral-200 text-sm">${t.name} <span class="text-neutral-500 font-mono text-xs">(${t.en})</span></span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950/80 text-purple-300 border border-purple-700/50">${t.rarity.toUpperCase()}</span>
+            </div>
+            <div class="text-amber-300 text-[11px]"><b>顯性全效：</b>${t.expressedDesc}</div>
+            <div class="text-neutral-400 text-[11px]"><b>隱性微效：</b>${t.recessiveDesc}</div>
+            <div class="text-neutral-500 text-[10px]">推薦分派：${t.bestRole}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+    function promoteToRoyal(critter, role) {
+      if (role === 'queen') {
+        gameState.royal.queen = critter;
+        gameState.generation = Math.max(gameState.generation, critter.generation);
+      } else {
+        gameState.royal.king = critter;
+        gameState.generation = Math.max(gameState.generation, critter.generation);
+      }
+
+      // 天選皇嗣 (Divine Chrysalis) 晉升加成
+      const divineMult = getAffixMultiplier(critter, 'divine_chrysalis');
+      if (divineMult > 0) {
+        const bonusDna = Math.floor(critter.generation * 10 * divineMult);
+        addDnaPoints(bonusDna, '天選皇嗣登基');
+      }
+
+      renderRoyals();
+      updateResourceHeaders();
+    }
+
+    function promoteEggToRoyal(idx) {
+      const egg = gameState.hatchery.eggs.splice(idx, 1)[0];
+      if (!egg) return;
+      promoteToRoyal(egg, egg.gender === 'F' ? 'queen' : 'king');
+      playSfx('royal');
+      renderHatchery();
+      showToast(`已晉升第 #${egg.birthOrder} 號為新王室！`, 'success');
+    }
+
+    function promoteEggToWorker(idx) {
+      const egg = gameState.hatchery.eggs[idx];
+      if (!egg) return;
+      const res = assignWorkerWithCascading(egg);
+      if (res.success) {
+        gameState.hatchery.eggs.splice(idx, 1);
+        playSfx('worker');
+        renderHatchery();
+        renderFacilities();
+        showToast(res.message, 'success');
+      } else {
+        showToast(res.message, 'error');
+      }
+    }
+
+    function promoteEggToSoldier(idx) {
+      const egg = gameState.hatchery.eggs[idx];
+      if (!egg) return;
+      if (gameState.military.soldiers.length >= gameState.military.barracksCapacity) {
+        showToast('軍營名額已滿！請升級擴充軍營上限。', 'error');
+        return;
+      }
+      gameState.hatchery.eggs.splice(idx, 1);
+      gameState.military.soldiers.push(egg);
+      gameState.military.soldiers.sort((a, b) => getCritterScore(b) - getCritterScore(a));
+      playSfx('worker');
+      renderHatchery();
+      renderArmyRoster();
+      showToast(`第 #${egg.birthOrder} 號士兵已編入巢穴衛隊`, 'success');
+    }
+
+    function assignWorkerWithCascading(critter) {
+      const allRoles = Object.keys(FACILITY_CONFIG);
+      const builtRoles = allRoles.filter(r => gameState.facilities[r] && gameState.facilities[r].level > 0);
+
+      if (builtRoles.length === 0) {
+        return { success: false, message: '目前無任何已建造的可用設施！' };
+      }
+
+      builtRoles.sort((a, b) => getCritterFacilityValue(critter, b) - getCritterFacilityValue(critter, a));
+
+      for (const role of builtRoles) {
+        const fac = gameState.facilities[role];
+        if (fac.workers.length < fac.level) {
+          fac.workers.push(critter);
+          return { success: true, message: `已成功分派至 ${FACILITY_CONFIG[role].name}` };
+        }
+      }
+
+      for (const role of builtRoles) {
+        const fac = gameState.facilities[role];
+        let minIdx = -1;
+        let minVal = Infinity;
+        for (let i = 0; i < fac.workers.length; i++) {
+          const val = getCritterFacilityValue(fac.workers[i], role);
+          if (val < minVal) {
+            minVal = val;
+            minIdx = i;
+          }
+        }
+
+        const candidateVal = getCritterFacilityValue(critter, role);
+        if (candidateVal > minVal) {
+          const oldWorker = fac.workers.splice(minIdx, 1)[0];
+          fac.workers.push(critter);
+          cascadeOldWorker(oldWorker, [role]);
+          return { success: true, message: `新工人超越原在崗工人，入職 ${FACILITY_CONFIG[role].name}（舊工級聯替補）` };
+        }
+      }
+
+      return { success: false, message: '全設施名額已滿且該幼蟲未能勝任汰換現役工人！' };
+    }
+
+    function cascadeOldWorker(worker, excludedRoles) {
+      const allRoles = Object.keys(FACILITY_CONFIG);
+      const builtRoles = allRoles.filter(r => gameState.facilities[r] && gameState.facilities[r].level > 0 && !excludedRoles.includes(r));
+      builtRoles.sort((a, b) => getCritterFacilityValue(worker, b) - getCritterFacilityValue(worker, a));
+
+      for (const role of builtRoles) {
+        const fac = gameState.facilities[role];
+        if (fac.workers.length < fac.level) {
+          fac.workers.push(worker);
+          return;
+        }
+      }
+
+      for (const role of builtRoles) {
+        const fac = gameState.facilities[role];
+        let minIdx = -1;
+        let minVal = Infinity;
+        for (let i = 0; i < fac.workers.length; i++) {
+          const val = getCritterFacilityValue(fac.workers[i], role);
+          if (val < minVal) {
+            minVal = val;
+            minIdx = i;
+          }
+        }
+
+        const candidateVal = getCritterFacilityValue(worker, role);
+        if (candidateVal > minVal) {
+          const displaced = fac.workers.splice(minIdx, 1)[0];
+          fac.workers.push(worker);
+          cascadeOldWorker(displaced, [...excludedRoles, role]);
+          return;
+        }
+      }
+
+      sacrificeEggObject(worker);
+    }
+
+    function sacrificeEgg(idx) {
+      const egg = gameState.hatchery.eggs.splice(idx, 1)[0];
+      if (!egg) return;
+      sacrificeEggObject(egg);
+      renderHatchery();
+    }
+
+    function sacrificeEggObject(egg) {
+      let bonusSod = getTalentLevel('t_reclaim_sod') * 8;
+      const midasMult = getAffixMultiplier(egg, 'chrysalis_midas');
+      if (midasMult > 0) {
+        bonusSod += Math.floor(egg.generation * 80 * midasMult);
+        addDnaPoints(3, '黃金甲蟲汰除');
+      }
+
+      // 生物電池 (Bio-Capacitor)
+      const capMult = getAffixMultiplier(egg, 'bio_capacitor');
+      if (capMult > 0) {
+        gameState.boost.current = Math.min(gameState.boost.max, gameState.boost.current + (capMult >= 1.0 ? gameState.boost.max : 3.0));
+        document.getElementById('boost-count').textContent = gameState.boost.current.toFixed(1);
+        showToast('【生物電池】汰除觸發，交配能量池已充盈！', 'info');
+      }
+
+      gameState.resources.dirt += 5;
+      gameState.resources.grass += 5;
+      gameState.resources.sod += bonusSod;
+      playSfx('cull');
+    }
+
+    function cullAllEggs() {
+      if (gameState.hatchery.eggs.length === 0) return;
+      while (gameState.hatchery.eggs.length > 0) {
+        const egg = gameState.hatchery.eggs.pop();
+        sacrificeEggObject(egg);
+      }
+      renderHatchery();
+      showToast('已清空孵化槽並回收原物料', 'info');
+    }
+
+    function getTotalWorkersCount() {
+      let count = 0;
+      Object.keys(gameState.facilities).forEach(k => { count += gameState.facilities[k].workers.length; });
+      return count;
+    }
+
+    function dismissWorker(role, workerIdx) {
+      const fac = gameState.facilities[role];
+      if (!fac || !fac.workers[workerIdx]) return;
+      const worker = fac.workers.splice(workerIdx, 1)[0];
+      sacrificeEggObject(worker);
+      playSfx('cull');
+      renderFacilities();
+      showToast(`已召回並汰除 ${FACILITY_CONFIG[role].name} 的第 #${worker.birthOrder} 號工人，回收原物料`, 'info');
+    }
+
+    function upgradeFacility(key) {
+      const fac = gameState.facilities[key];
+      if (!fac) return;
+      const discount = 1 - (getTalentLevel('t_sod_preservation') * 0.12);
+      const actualCost = Math.max(1, Math.floor(fac.cost * discount));
+
+      if (gameState.resources.sod >= actualCost) {
+        gameState.resources.sod -= actualCost;
+        fac.level++;
+        fac.cost = Math.floor(fac.cost * 1.6);
+
+        if (key === 'nectar') {
+          gameState.boost.max = Math.round((10.0 + fac.level * 2.0) * 10) / 10;
+          document.getElementById('boost-max').textContent = gameState.boost.max.toFixed(1);
+        }
+
+        playSfx('upgrade');
+        renderFacilities();
+        showToast(`${FACILITY_CONFIG[key].name} 擴建成功！工人上限增至 ${fac.level}`, 'success');
+      } else {
+        showToast(`草皮不足！需要 ${actualCost} 草皮`, 'error');
+      }
+    }
+
+    function upgradeHatcheryCapacity() {
+      if (gameState.resources.sod >= gameState.hatchery.cost) {
+        gameState.resources.sod -= gameState.hatchery.cost;
+        gameState.hatchery.capacity++;
+        gameState.hatchery.cost = Math.floor(gameState.hatchery.cost * 1.8);
+        playSfx('upgrade');
+        renderHatchery();
+        showToast(`孵化槽位擴增至 ${gameState.hatchery.capacity} 格`, 'success');
+      } else {
+        showToast(`草皮不足！需要 ${gameState.hatchery.cost} 草皮`, 'error');
+      }
+    }
+
+    function upgradeBarracksCapacity() {
+      if (gameState.resources.sod >= gameState.military.cost) {
+        gameState.resources.sod -= gameState.military.cost;
+        gameState.military.barracksCapacity += 2;
+        gameState.military.cost = Math.floor(gameState.military.cost * 1.8);
+        playSfx('upgrade');
+        renderArmyRoster();
+        showToast(`軍營上限擴增至 ${gameState.military.barracksCapacity} 名`, 'success');
+      } else {
+        showToast(`草皮不足！需要 ${gameState.military.cost} 草皮`, 'error');
+      }
+    }
+
+    function getGeneralOfficer() { return gameState.military.soldiers[0] || null; }
+    function getScoutOfficer() { return gameState.military.soldiers[1] || null; }
+    function getMedicOfficer() { return gameState.military.soldiers[2] || null; }
+
+    function toggleWarState() {
+      if (gameState.military.soldiers.length === 0) {
+        showToast('軍營內尚無任何士兵！請先編派衛隊。', 'error');
+        return;
+      }
+      gameState.military.atWar = !gameState.military.atWar;
+      const btn = document.getElementById('btn-war-toggle');
+      const badge = document.getElementById('battle-status-badge');
+
+      if (gameState.military.atWar) {
+        btn.innerHTML = '<i data-lucide="shield-alert" class="w-4 h-4"></i> 召回駐防休整';
+        btn.classList.replace('bg-red-600', 'bg-neutral-700');
+        badge.textContent = '交戰中';
+        badge.classList.replace('bg-neutral-800', 'bg-red-950/60');
+        logBattle(`【出征】衛隊已深入荒野，正在討伐【${CAMPAIGN_ZONES[gameState.military.selectedZone].name}】！`, 'text-red-400');
+      } else {
+        btn.innerHTML = '<i data-lucide="sword" class="w-4 h-4"></i> 發動全面進攻';
+        btn.classList.replace('bg-neutral-700', 'bg-red-600');
+        badge.textContent = '待命中';
+        badge.classList.replace('bg-red-950/60', 'bg-neutral-800');
+        logBattle('我軍部隊已撤回巢穴駐守修整。', 'text-neutral-400');
+      }
+      lucide.createIcons();
+    }
+
+    function selectCampaignZone(zid) {
+      gameState.military.selectedZone = zid;
+      gameState.military.mapProgress = 0;
+      const zone = CAMPAIGN_ZONES[zid];
+      gameState.military.currentEnemyHp = zone.maxScore;
+      gameState.military.currentEnemyMaxHp = zone.maxScore;
+      document.getElementById('current-zone-label').textContent = `當前目標: ${zone.name}`;
+      renderCampaignTargets();
+    }
+
+    function logBattle(msg, colorClass = 'text-neutral-300') {
+      const container = document.getElementById('battle-log');
+      if (!container) return;
+      const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+      const row = document.createElement('div');
+      row.className = colorClass;
+      row.textContent = `[${time}] ${msg}`;
+      container.appendChild(row);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function clearCombatLog() {
+      const container = document.getElementById('battle-log');
+      if (container) container.innerHTML = `<div class="text-neutral-500">日誌已清空。</div>`;
+    }
+
+    function getTalentLevel(tid) { return gameState.talents[tid] || 0; }
+
+    function upgradeTalent(tid) {
+      const t = TALENT_DEFS[tid];
+      const curLvl = getTalentLevel(tid);
+      if (curLvl >= t.maxLevel) return;
+      const cost = t.costPerLevel[curLvl];
+      if (gameState.dnaPoints >= cost) {
+        gameState.dnaPoints -= cost;
+        gameState.talents[tid] = curLvl + 1;
+        playSfx('upgrade');
+        renderTalents();
+        renderFacilities();
+        updateResourceHeaders();
+        showToast(`天賦【${t.name}】已提升至 Lv.${curLvl + 1}`, 'success');
+      } else {
+        showToast('DNA 點數不足！', 'error');
+      }
+    }
+
+    function respecTalents() {
+      let refund = 0;
+      Object.keys(gameState.talents).forEach(tid => {
+        const lvl = gameState.talents[tid];
+        const t = TALENT_DEFS[tid];
+        for (let i = 0; i < lvl; i++) refund += t.costPerLevel[i];
+      });
+      gameState.talents = {};
+      gameState.dnaPoints += refund;
+      playSfx('cull');
+      renderTalents();
+      renderFacilities();
+      updateResourceHeaders();
+      showToast(`已重置天賦，全額返還 ${refund} 點 DNA！`, 'info');
+    }
+
+    function addDnaPoints(pts, reason = '') {
+      gameState.dnaPoints += pts;
+      updateResourceHeaders();
+      renderTalents();
+      if (reason) showToast(`獲得 +${pts} DNA 點數 (${reason})`, 'success');
+    }
+
+    function toggleAutoAscend(val) {
+      if (val && getTalentLevel('t_unlock_auto_ascend') <= 0) {
+        showToast('請先在天賦樹【神經網絡】中研發【王室血脈共鳴】！', 'error');
+        document.getElementById('auto-ascend-toggle').checked = false;
+        gameState.automation.autoAscend = false;
+        return;
+      }
+      gameState.automation.autoAscend = val;
+      showToast(`自動王室加冕: ${val ? '已啟用' : '已停用'}`, 'info');
+    }
+
+    function toggleAutoWorker(val) {
+      if (val && getTalentLevel('t_unlock_auto_worker') <= 0) {
+        showToast('請先在天賦樹【神經網絡】中研發【本能分派協議】！', 'error');
+        document.getElementById('auto-worker-toggle').checked = false;
+        gameState.automation.autoWorker = false;
+        return;
+      }
+      gameState.automation.autoWorker = val;
+      showToast(`自動適性分派: ${val ? '已啟用' : '已停用'}`, 'info');
+    }
+
+    function toggleAutoCull(val) {
+      if (val && getTalentLevel('t_unlock_auto_cull') <= 0) {
+        showToast('請先在天賦樹【神經網絡】中研發【自動物料淨化】！', 'error');
+        document.getElementById('auto-cull-toggle').checked = false;
+        gameState.automation.autoCull = false;
+        return;
+      }
+      gameState.automation.autoCull = val;
+      showToast(`滿溢自動汰除: ${val ? '已啟用' : '已停用'}`, 'info');
+    }
+
+    function toggleAutoBoost(val) {
+      if (val && getTalentLevel('t_auto_boost') <= 0) {
+        showToast('請先在天賦樹【神經網絡】中研發【神經刺激反射】！', 'error');
+        document.getElementById('auto-boost-toggle').checked = false;
+        gameState.automation.autoBoost = false;
+        return;
+      }
+      gameState.automation.autoBoost = val;
+      showToast(`自動刺激交配脈衝: ${val ? '已啟用' : '已停用'}`, 'info');
+    }
+
+    function checkAchievements() {
+      ACHIEVEMENTS_DEF.forEach(a => {
+        if (!gameState.achievements[a.id] && a.check()) {
+          gameState.achievements[a.id] = true;
+          addDnaPoints(2, `成就【${a.name}】`);
+          showToast(`🏆 解鎖成就：${a.name}！獲得 2 點 DNA`, 'success');
+          renderAchievements();
+        }
+      });
+    }
+
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.add('hidden');
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-950 border-emerald-700 text-emerald-200',
+        error: 'bg-red-950 border-red-700 text-red-200',
+        info: 'bg-neutral-900 border-neutral-700 text-neutral-200'
+      };
+      toast.className = `px-3.5 py-2 rounded-lg border text-xs shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 ${colors[type] || colors.info}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => { toast.remove(); }, 300);
+      }, 3000);
+    }
+
+    function saveGameManual() {
+      localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(gameState));
+      showToast('進度已成功儲存！', 'success');
+    }
+
+    function autoSaveGame() {
+      localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(gameState));
+    }
+
+    function exportSaveData() {
+      const data = btoa(unescape(encodeURIComponent(JSON.stringify(gameState))));
+      const ta = document.createElement('textarea');
+      ta.value = data;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('存檔代碼已複製至剪貼簿！', 'success');
+    }
+
+    function promptImportData() {
+      const code = prompt('請貼上存檔代碼 (Base64)：');
+      if (!code) return;
+      try {
+        const parsed = JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+        gameState = parsed;
+        saveGameManual();
+        renderAll();
+        showToast('存檔匯入成功！', 'success');
+        closeModal('modal-settings');
+      } catch (e) {
+        showToast('存檔代碼無效，解析失敗！', 'error');
+      }
+    }
+
+    function executeResetGame() {
+      localStorage.removeItem(GAME_SAVE_KEY);
+      location.reload();
+    }
+
+    function initGame() {
+      const saved = localStorage.getItem(GAME_SAVE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          gameState = Object.assign(gameState, parsed);
+
+          const advancedFacs = ['nursery', 'genelab', 'armory', 'forager', 'nectar', 'hospital', 'relay', 'greenhouse'];
+          advancedFacs.forEach(af => {
+            if (!gameState.facilities[af]) {
+              gameState.facilities[af] = { level: 0, cost: FACILITY_CONFIG[af].baseCost, workers: [] };
+            }
+          });
+
+          if (!gameState.royal || !gameState.royal.queen || !gameState.royal.king) {
+            setupInitialRoyals();
+          }
+        } catch (e) {
+          setupInitialRoyals();
+        }
+      } else {
+        setupInitialRoyals();
+      }
+
+      ACHIEVEMENTS_DEF.forEach(a => {
+        if (gameState.achievements[a.id] === undefined) gameState.achievements[a.id] = false;
+      });
+
+      renderAll();
+      renderCodex();
+
+      setInterval(gameLoop, 100);
+      setInterval(autoSaveGame, 15000);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initGame();
+      document.body.addEventListener('click', () => {
+        if (!audioEngine.ready) initAudioEngine();
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

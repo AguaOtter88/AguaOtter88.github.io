@@ -97,101 +97,106 @@
     }
   </style>
 </head>
-<body class="bg-neutral-950 text-neutral-200 min-h-screen flex flex-col font-sans select-none overflow-x-hidden pb-[env(safe-area-inset-bottom)]">
+<body class="bg-neutral-950 text-neutral-100 min-h-screen overflow-x-hidden w-full select-none">
 
-  <header class="bg-neutral-900/95 backdrop-blur border-b border-neutral-800 sticky top-0 z-40 px-3 sm:px-4 py-2 sm:py-2.5 shadow-xl">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2.5">
-      <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-500 shadow-inner shrink-0">
-            <i data-lucide="compass" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+  <!-- 頂部固定導航列 (修復結構與手機適配) -->
+  <header class="bg-neutral-900/95 backdrop-blur border-b border-neutral-800 sticky top-0 z-40 px-3 sm:px-4 py-2 shadow-xl">
+    <div class="w-full max-w-5xl mx-auto space-y-2">
+      <!-- 第一行：標題 + 右側工具列 (手機版精簡間距與圖示大小) -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-600/20 border border-amber-500/40 flex items-center justify-center text-amber-500 shrink-0">
+            <i data-lucide="compass" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
           </div>
           <div class="min-w-0">
-            <h1 class="text-sm sm:text-base font-bold text-amber-400 tracking-wide flex items-center gap-1.5 truncate">
-              生物巢穴 <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono border border-purple-500/30">v4.8 地城迷宮版</span>
+            <h1 class="text-xs sm:text-base font-bold text-amber-400 tracking-wide flex items-center gap-1.5 truncate">
+              生物巢穴 <span class="text-[9px] sm:text-[10px] px-1 py-0.2 rounded bg-purple-500/20 text-purple-300 font-mono border border-purple-500/30 shrink-0">v4.8</span>
             </h1>
-            <p class="text-[10px] sm:text-[11px] text-neutral-400 truncate hidden xs:block">迷宮步進探索・隨機遭遇事件・首領霸主決戰</p>
           </div>
         </div>
 
-        <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
-          <button onclick="openGuideModal()" title="母巢演化指南與操作手冊" class="p-1.5 sm:p-2 rounded-lg bg-sky-950/60 hover:bg-sky-900/60 text-sky-400 border border-sky-700/50 transition flex items-center justify-center min-w-[32px] min-h-[32px]">
-            <i data-lucide="book" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+        <!-- 功能按鈕群：縮小 padding (p-1) 與間隔 (gap-1)，避免超出螢幕 -->
+        <div class="flex items-center gap-1 shrink-0">
+          <button onclick="openGuideModal()" title="母巢演化指南" class="p-1 sm:p-1.5 rounded-lg bg-sky-950/60 hover:bg-sky-900/60 text-sky-400 border border-sky-700/50 transition">
+            <i data-lucide="book" class="w-3.5 h-3.5"></i>
           </button>
-          <button onclick="openPrivacyModal()" title="Cookie 與隱私權政策" class="p-1.5 sm:p-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-700/50 transition flex items-center justify-center min-w-[32px] min-h-[32px]">
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <button onclick="openPrivacyModal()" title="隱私權政策" class="p-1 sm:p-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-700/50 transition">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
           </button>
-          <button onclick="toggleAudio()" id="btn-sound" title="音效 SFX 開關" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 transition flex items-center justify-center min-w-[32px] min-h-[32px]">
-            <i data-lucide="volume-2" id="icon-sound" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <button onclick="toggleAudio()" id="btn-sound" title="音效開關" class="p-1 sm:p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-amber-400 border border-neutral-700 transition">
+            <i data-lucide="volume-2" id="icon-sound" class="w-3.5 h-3.5"></i>
           </button>
-          <button onclick="togglePauseGame()" id="btn-pause" title="暫停/繼續遊戲" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition min-w-[32px] min-h-[32px]">
-            <i data-lucide="pause" id="icon-pause" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <button onclick="togglePauseGame()" id="btn-pause" title="暫停/繼續" class="p-1 sm:p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition">
+            <i data-lucide="pause" id="icon-pause" class="w-3.5 h-3.5"></i>
           </button>
-          <button onclick="openModal('modal-codex')" title="40 大基因圖鑑" class="p-1.5 sm:p-2 rounded-lg bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 border border-purple-700/50 transition flex items-center gap-1 text-[11px] sm:text-xs px-2 sm:px-2.5 min-h-[32px]">
-            <i data-lucide="book-open" class="w-3.5 h-3.5 text-purple-400"></i> <span class="hidden xs:inline">圖鑑 (40)</span>
+          <button onclick="openModal('modal-codex')" title="基因圖鑑" class="p-1 sm:p-1.5 rounded-lg bg-purple-950/60 hover:bg-purple-900/60 text-purple-300 border border-purple-700/50 transition flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2">
+            <i data-lucide="book-open" class="w-3.5 h-3.5 text-purple-400"></i>
+            <span class="hidden md:inline">圖鑑 (40)</span>
           </button>
-          <button onclick="openModal('modal-settings')" title="系統設定與存檔" class="p-1.5 sm:p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition min-w-[32px] min-h-[32px]">
-            <i data-lucide="settings" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <button onclick="openModal('modal-settings')" title="設定" class="p-1 sm:p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i>
           </button>
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-3 overflow-x-auto no-scrollbar touch-pan-x py-0.5 text-xs sm:text-sm">
-        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
-          <i data-lucide="dna" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400"></i>
-          <div>
-            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">世代</span>
-            <span id="res-gen" class="font-bold text-purple-300 font-mono text-xs sm:text-sm">Gen 1</span>
+      <!-- 第二行：3 欄自適應資源列 (改用 3 等分 Grid，保證手機完全對齊) -->
+      <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2 py-1 rounded-lg border border-neutral-800">
+          <i data-lucide="dna" class="w-3.5 h-3.5 text-purple-400 shrink-0"></i>
+          <div class="min-w-0">
+            <span class="text-[9px] text-neutral-400 block leading-tight">世代</span>
+            <span id="res-gen" class="font-bold text-purple-300 font-mono text-xs truncate block">Gen 1</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2.5 py-1 sm:py-1.5 rounded-lg border border-neutral-800 shrink-0">
-          <i data-lucide="layers" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400"></i>
-          <div>
-            <span class="text-[9px] sm:text-[10px] text-neutral-400 block leading-tight">草皮 (Sod)</span>
-            <div class="flex items-baseline gap-1">
-              <span id="res-sod" class="font-bold text-emerald-300 font-mono text-xs sm:text-sm">20</span>
-              <span id="res-sod-rate" class="text-[9px] sm:text-[10px] text-emerald-500">(+0.0/s)</span>
+        <div class="flex items-center gap-1.5 bg-neutral-950/90 px-2 py-1 rounded-lg border border-neutral-800">
+          <i data-lucide="layers" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+          <div class="min-w-0">
+            <span class="text-[9px] text-neutral-400 block leading-tight">草皮 (Sod)</span>
+            <div class="flex items-baseline gap-1 truncate">
+              <span id="res-sod" class="font-bold text-emerald-300 font-mono text-xs">20</span>
+              <span id="res-sod-rate" class="text-[8px] sm:text-[9px] text-emerald-500">(+0.0/s)</span>
             </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-1.5 bg-purple-950/50 px-2.5 py-1 sm:py-1.5 rounded-lg border border-purple-700/60 shadow-inner shrink-0">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 animate-pulse"></i>
-          <div>
-            <span class="text-[9px] sm:text-[10px] text-purple-300 block leading-tight">DNA 點數</span>
-            <span id="res-dna" class="font-bold text-purple-200 font-mono text-xs sm:text-sm">3.0</span>
+        <div class="flex items-center gap-1.5 bg-purple-950/50 px-2 py-1 rounded-lg border border-purple-700/60 shadow-inner">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-400 animate-pulse shrink-0"></i>
+          <div class="min-w-0">
+            <span class="text-[9px] text-purple-300 block leading-tight">DNA</span>
+            <span id="res-dna" class="font-bold text-purple-200 font-mono text-xs truncate block">3.0</span>
           </div>
         </div>
       </div>
     </div>
   </header>
 
+  <!-- 次分頁導航列 (支援流暢橫向滑動且不換行) -->
   <nav class="bg-neutral-900 border-b border-neutral-800 px-3 sm:px-4">
-    <div class="max-w-7xl mx-auto flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-pan-x py-2">
-      <button onclick="switchTab('tab-hatchery')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-amber-400 bg-neutral-800 border-b-2 border-amber-500 whitespace-nowrap" data-target="tab-hatchery">
-        <i data-lucide="egg" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 王室孵化室
+    <div class="w-full max-w-5xl mx-auto flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-pan-x py-1.5">
+      <button onclick="switchTab('tab-hatchery')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-amber-400 bg-neutral-800 border-b-2 border-amber-500 whitespace-nowrap" data-target="tab-hatchery">
+        <i data-lucide="egg" class="w-3.5 h-3.5"></i> 王室孵化室
       </button>
-      <button onclick="switchTab('tab-workers')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-workers">
-        <i data-lucide="pickaxe" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 殖民物流與設施 (<span id="tab-worker-count">0</span>)
+      <button onclick="switchTab('tab-workers')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-workers">
+        <i data-lucide="pickaxe" class="w-3.5 h-3.5"></i> 殖民物流 (<span id="tab-worker-count">0</span>)
       </button>
-      <button onclick="switchTab('tab-army')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-army">
-        <i data-lucide="swords" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400"></i> 地城迷宮遠征 (<span id="tab-soldier-count">0</span>)
+      <button onclick="switchTab('tab-army')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-army">
+        <i data-lucide="swords" class="w-3.5 h-3.5 text-red-400"></i> 地城遠征 (<span id="tab-soldier-count">0</span>)
       </button>
-      <button onclick="switchTab('tab-talents')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-talents">
-        <i data-lucide="git-branch" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400"></i> 演化天賦樹 (<span id="tab-talent-points">3.0 點</span>)
+      <button onclick="switchTab('tab-talents')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-talents">
+        <i data-lucide="git-branch" class="w-3.5 h-3.5 text-purple-400"></i> 演化天賦 (<span id="tab-talent-points">3.0</span>)
       </button>
-      <button onclick="switchTab('tab-auto')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-auto">
-        <i data-lucide="sliders" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 自動化管線 <span id="tab-auto-badge" class="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 font-mono">未激活</span>
+      <button onclick="switchTab('tab-auto')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-auto">
+        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> 自動化 <span id="tab-auto-badge" class="text-[9px] px-1 py-0.2 rounded bg-neutral-800 text-neutral-400 font-mono">OFF</span>
       </button>
-      <button onclick="switchTab('tab-achievements')" class="tab-btn shrink-0 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-achievements">
-        <i data-lucide="trophy" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i> 成就里程碑 (<span id="achieve-count">0/30</span>)
+      <button onclick="switchTab('tab-achievements')" class="tab-btn shrink-0 px-2.5 sm:px-4 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 text-neutral-400 hover:text-neutral-200 hover:bg-neutral-800/60 whitespace-nowrap" data-target="tab-achievements">
+        <i data-lucide="trophy" class="w-3.5 h-3.5 text-amber-400"></i> 成就 (<span id="achieve-count">0/30</span>)
       </button>
     </div>
   </nav>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 md:p-6 overflow-y-auto space-y-5 sm:space-y-6">
+  <!-- 遊戲主內容容器 (放在 header 與 nav 之後，並加上 pb-20 避免被底部隱私條遮擋) -->
+  <main class="w-full max-w-5xl mx-auto px-3 py-3 pb-24 space-y-4">
 
     <!-- Hatchery Tab -->
     <div id="tab-hatchery" class="tab-content space-y-6">
@@ -260,7 +265,7 @@
         <div class="flex-1 w-full">
           <div class="flex justify-between text-xs mb-1.5">
             <span class="text-neutral-400 font-medium flex items-center gap-1.5">
-              <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500 animate-pulse"></i> 繁育進度 (基礎 15.0s・受敏捷與保育室縮時)
+              <i data-lucide="flame" class="w-3.5 h-3.5 text-amber-500 animate-pulse"></i> 繁育進度
             </span>
             <span id="breeding-time-text" class="text-neutral-300 font-mono font-semibold">0.0s / 15.0s</span>
           </div>
@@ -283,7 +288,7 @@
               <i data-lucide="columns-2" class="w-4 h-4 text-amber-500"></i> 保溫孵化室 
               <span id="hatchery-capacity-badge" class="px-2.5 py-0.5 rounded bg-neutral-800 text-neutral-300 font-mono text-xs border border-neutral-700">0 / 4</span>
             </h3>
-            <p class="text-xs text-neutral-400 mt-0.5">左欄專屬雌性，右欄專屬雄性；活性槽位（<span id="active-slots-label" class="text-amber-400 font-mono font-bold">10</span> 格）內生效，超額詞條進入底層休眠</p>
+            <p class="text-xs text-neutral-400 mt-0.5">活性槽位（<span id="active-slots-label" class="text-amber-400 font-mono font-bold">10</span> 格）內生效，超額詞條進入底層休眠</p>
           </div>
           <div class="flex items-center gap-2">
             <button onclick="upgradeHatcheryCapacity()" class="text-xs px-3.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 transition flex items-center gap-1.5 shadow">
